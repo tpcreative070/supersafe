@@ -76,18 +76,15 @@
                     android:background="@drawable/bg_button_rounded"
                     android:layout_width="200dp"
                     android:layout_height="@dimen/button_high" />
-                <fr.castorflex.android.circularprogressbar.CircularProgressBar
-                    android:visibility="invisible"
-                    android:layout_centerInParent="true"
-                    android:id="@+id/progressbar_circular"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
-                    android:indeterminate="true"
-                    android:indeterminateOnly="false"/>
+                <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+                    android:id="@+id/progressbar_circular_request_code"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:elevation="10dp"
+                    android:background="?attr/colorAccent"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="invisible" />
             </RelativeLayout>
             <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
@@ -120,16 +117,31 @@
                 app:met_primaryColor="?attr/colorAccent"
                 app:met_textColor="?attr/colorAccent"
                 app:met_textColorHint="?attr/colorAccent" />
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnReset"
-                android:enabled="false"
-                android:textColor="@color/white"
-                android:text="@string/reset_pin"
+
+            <RelativeLayout
                 android:layout_marginTop="20dp"
-                android:padding="10dp"
-                android:background="@drawable/bg_button_disable_rounded"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/button_high"/>
+                android:layout_height="wrap_content">
+                <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+                    android:id="@+id/progressbar_circular_reset_pin"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:elevation="10dp"
+                    android:background="?attr/colorAccent"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="invisible" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnReset"
+                    android:enabled="false"
+                    android:textColor="@color/white"
+                    android:text="@string/reset_pin"
+                    android:padding="10dp"
+                    android:background="@drawable/bg_button_disable_rounded"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_high"/>
+            </RelativeLayout>
+
             <LinearLayout
                 android:id="@+id/llSupport"
                 android:layout_marginTop="20dp"

@@ -5,61 +5,50 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonResetPin
 import co.tpcreative.supersafe.common.extension.toSpanned
-import co.tpcreative.supersafe.common.request.VerifyCodeRequest
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.ThemeApp
-import co.tpcreative.supersafe.model.User
-import com.afollestad.materialdialogs.checkbox.checkBoxPrompt
+import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.ResetPinViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
-import com.google.gson.Gson
 import com.snatik.storage.security.SecurityUtil
-import fr.castorflex.android.circularprogressbar.CircularProgressDrawable
 import kotlinx.android.synthetic.main.activity_reset_pin.*
+import kotlinx.android.synthetic.main.activity_reset_pin.btnSendRequest
+import kotlinx.android.synthetic.main.activity_reset_pin.edtCode
+import kotlinx.android.synthetic.main.activity_reset_pin.toolbar
+import kotlinx.android.synthetic.main.activity_reset_pin.tvStep1
 
 fun ResetPinAct.initUI(){
     TAG = this::class.java.simpleName
+    setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    presenter = ResetPinPresenter()
-    presenter?.bindView(this)
-    if (presenter?.mUser != null) {
-        val email: String? = presenter?.mUser?.email
-        if (email != null) {
-            val result: String? = Utils.getFontString(R.string.request_an_access_code, email)
-            tvStep1?.text = result?.toSpanned()
-            val support: String? = Utils.getFontString(R.string.send_an_email_to, SecurityUtil.MAIL)
-            tvSupport?.text = support?.toSpanned()
-        }
-    }
+    val result: String? = Utils.getFontString(R.string.request_an_access_code, Utils.getUserId() ?: "")
+    tvStep1?.text = result?.toSpanned()
+    val support: String? = Utils.getFontString(R.string.send_an_email_to, SecurityUtil.MAIL)
+    tvSupport?.text = support?.toSpanned()
     edtCode?.addTextChangedListener(mTextWatcher)
     edtCode?.setOnEditorActionListener(this)
     try {
-        val bundle: Bundle? = getIntent().getExtras()
+        val bundle: Bundle? = intent.extras
         isRestoreFiles = bundle?.get(ResetPinAct::class.java.simpleName) as Boolean
     } catch (e: Exception) {
         e.printStackTrace()
     }
 
     btnReset.setOnClickListener {
-        onVerifyCode()
+        verifyCode()
     }
 
     btnSendRequest.setOnClickListener {
-        btnSendRequest?.isEnabled = false
-        btnSendRequest?.setText("")
-        onStartLoading(EnumStatus.OTHER)
-        if (presenter?.mUser != null) {
-            if (presenter?.mUser?.email != null) {
-                val request = VerifyCodeRequest()
-                request.user_id = presenter?.mUser?.email
-                presenter?.onRequestCode(request)
-            }
-        }
+        sendRequestCode()
     }
 
     llSupport.setOnClickListener {
@@ -72,46 +61,99 @@ fun ResetPinAct.initUI(){
             e.printStackTrace()
         }
     }
+
+    viewModel.isLoading.observe(this, Observer {
+        if (it){
+            if (progressing == EnumStepProgressing.REQUEST_CODE){
+                progressbar_circular_request_code?.visibility = View.VISIBLE
+            }else{
+                progressbar_circular_reset_pin.visibility = View.VISIBLE
+            }
+        }else{
+            if (progressing == EnumStepProgressing.REQUEST_CODE){
+                progressbar_circular_request_code?.visibility = View.INVISIBLE
+            }else{
+                progressbar_circular_reset_pin.visibility = View.INVISIBLE
+            }
+        }
+    })
+
+    viewModel.errorMessages.observe(this,{mResult ->
+        mResult?.let {
+            if (it.values.isEmpty()){
+                btnReset?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
+                btnReset?.setTextColor(ContextCompat.getColor(this,R.color.white))
+                btnReset?.isEnabled = true
+                isNext = true
+            }else{
+                btnReset?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
+                btnReset?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
+                btnReset?.isEnabled = false
+                isNext = false
+            }
+        }
+    })
+
+    viewModel.errorResponseMessage.observe(this,{mResult ->
+        mResult?.let {
+            edtCode.error = it.get(EnumValidationKey.EDIT_TEXT_CODE.name)
+            if (it.values.isEmpty()){
+                btnReset?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
+                btnReset?.setTextColor(ContextCompat.getColor(this,R.color.white))
+                btnReset?.isEnabled = true
+                isNext = true
+            }else{
+                btnReset?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
+                btnReset?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
+                btnReset?.isEnabled = false
+                isNext = false
+            }
+        }
+    })
 }
 
-fun ResetPinAct.setProgressValue() {
-    var circularProgressDrawable: CircularProgressDrawable? = null
-    val b = CircularProgressDrawable.Builder(this)
-            .colors(resources.getIntArray(R.array.gplus_colors))
-            .sweepSpeed(2f)
-            .rotationSpeed(2f)
-            .strokeWidth(Utils.dpToPx(3).toFloat())
-            .style(CircularProgressDrawable.STYLE_ROUNDED)
-    progressbar_circular?.indeterminateDrawable = b.build().also { circularProgressDrawable = it }
-    // /!\ Terrible hack, do not do this at home!
-    progressbar_circular?.width?.let {
-        circularProgressDrawable?.setBounds(0,
-                0,
-                it,
-                progressbar_circular?.height!!)
-    }
-    progressbar_circular?.visibility = View.INVISIBLE
-    progressbar_circular?.visibility = View.VISIBLE
-    Utils.Log(TAG, "Action here set progress")
+private fun ResetPinAct.sendRequestCode(){
+    btnSendRequest?.isEnabled = false
+    btnSendRequest?.text = ""
+    progressing = EnumStepProgressing.REQUEST_CODE
+    viewModel.sendRequestCode().observe(this, Observer{
+        when(it.status){
+            Status.SUCCESS -> {
+                onShowDialogWaitingCode()
+            }
+            else -> {
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.request_code_occurred_error))
+            }
+        }
+        btnSendRequest?.isEnabled = true
+        btnSendRequest.text = getString(R.string.send_verification_code)
+    })
 }
 
-
-fun ResetPinAct.onVerifyCode() {
-    if (isNext) {
-        val code: String = edtCode?.text.toString().trim({ it <= ' ' })
-        val request = VerifyCodeRequest()
-        request.code = code
-        request.user_id = presenter?.mUser?.email
-        request._id = presenter?.mUser?._id
-        request.device_id = SuperSafeApplication.getInstance().getDeviceId()
-        presenter?.onVerifyCode(request)
-    }
+fun ResetPinAct.verifyCode(){
+    progressing = EnumStepProgressing.VERIFY_CODE
+    btnReset?.isEnabled = false
+    btnReset?.text = ""
+    viewModel.verifyCode().observe(this, Observer {
+        when(it.status){
+            Status.SUCCESS -> {
+                if (isRestoreFiles!!) {
+                    Navigator.onMoveToResetPin(this, EnumPinAction.RESTORE)
+                } else {
+                    Navigator.onMoveToResetPin(this, EnumPinAction.NONE)
+                }
+            }
+            else -> {
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.verify_occurred_error))
+            }
+        }
+        btnReset?.isEnabled = true
+        btnReset?.text = getString(R.string.reset_pin)
+    })
 }
 
 fun ResetPinAct.onShowDialogWaitingCode() {
     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-    val mUser: User? = Utils.getUserInfo()
-    Utils.Log(TAG, "Preparing " + Gson().toJson(mUser))
     MaterialStyledDialog.Builder(this)
             .setTitle(R.string.send_code_later)
             .setDescription(R.string.send_code_later_detail)
@@ -124,12 +166,20 @@ fun ResetPinAct.onShowDialogWaitingCode() {
             .setCheckBox(false, R.string.enable_cloud)
             .onPositive {
                 Utils.Log(TAG, "positive")
-                val mUser: User? = Utils.getUserInfo()
-                Utils.Log(TAG, "Pressed " + Gson().toJson(mUser))
                 SingletonResetPin.getInstance()?.onStartTimer(300000)
+                btnSendRequest.isEnabled = false
+                btnReset.isEnabled = false
             }
             .onNegative { finish() }
             .show()
 }
+
+private fun ResetPinAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(ResetPinViewModel::class.java)
+}
+
 
 

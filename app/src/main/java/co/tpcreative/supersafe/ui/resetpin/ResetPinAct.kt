@@ -1,30 +1,27 @@
 package co.tpcreative.supersafe.ui.resetpin
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity
 import co.tpcreative.supersafe.common.controller.SingletonResetPin
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import com.google.gson.Gson
+import co.tpcreative.supersafe.viewmodel.ResetPinViewModel
 import kotlinx.android.synthetic.main.activity_reset_pin.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class ResetPinAct : BaseVerifyPinActivity(), BaseView<EmptyModel>, TextView.OnEditorActionListener {
-    var presenter: ResetPinPresenter? = null
+class ResetPinAct : BaseVerifyPinActivity(),TextView.OnEditorActionListener {
     var isNext = false
     var isRestoreFiles: Boolean? = null
+    lateinit var viewModel : ResetPinViewModel
+    var progressing : EnumStepProgressing = EnumStepProgressing.NONE
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reset_pin)
@@ -38,10 +35,14 @@ class ResetPinAct : BaseVerifyPinActivity(), BaseView<EmptyModel>, TextView.OnEd
                 Navigator.onMoveToFaceDown(this)
             }
             EnumStatus.WAITING_LEFT -> {
-                runOnUiThread(Runnable { edtCode?.setHint(kotlin.String.format(getString(R.string.waiting_left), SingletonResetPin.getInstance()?.waitingLeft.toString() + "")) })
+                runOnUiThread(Runnable { edtCode?.hint = kotlin.String.format(getString(R.string.waiting_left), SingletonResetPin.getInstance()?.waitingLeft.toString() + "") })
             }
             EnumStatus.WAITING_DONE -> {
-                runOnUiThread(Runnable { edtCode?.setHint(getString(R.string.code)) })
+                runOnUiThread(Runnable {
+                    edtCode?.hint = getString(R.string.code)
+                    btnReset.isEnabled = true
+                    btnSendRequest.isEnabled = true
+                })
             }
             else -> Utils.Log(TAG,"Nothing")
         }
@@ -58,27 +59,15 @@ class ResetPinAct : BaseVerifyPinActivity(), BaseView<EmptyModel>, TextView.OnEd
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
     }
 
     override fun onOrientationChange(isFaceDown: Boolean) {
         onFaceDown(isFaceDown)
     }
 
-    val mTextWatcher: TextWatcher? = object : TextWatcher {
+    val mTextWatcher: TextWatcher = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val value = s.toString().trim { it <= ' ' }
-            isNext = if (Utils.isValid(value)) {
-                btnReset?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
-                btnReset?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
-                btnReset?.isEnabled = true
-                true
-            } else {
-                btnReset?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_disable_rounded)
-                btnReset?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
-                btnReset?.isEnabled = false
-                false
-            }
+            viewModel.code = s.toString()
         }
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: android.text.Editable?) {}
@@ -91,71 +80,13 @@ class ResetPinAct : BaseVerifyPinActivity(), BaseView<EmptyModel>, TextView.OnEd
                 return false
             }
             if (isNext) {
-                onVerifyCode()
+                verifyCode()
                 return true
             }
             return false
         }
         return false
     }
-
-    override fun onStartLoading(status: EnumStatus) {
-        setProgressValue()
-    }
-
-    override fun onStopLoading(status: EnumStatus) {
-        Utils.Log(TAG, "Stop progressing")
-        if (progressbar_circular != null) {
-            progressbar_circular?.progressiveStop()
-        }
-    }
-
-    override fun getContext(): Context? {
-        return applicationContext
-    }
-
-    override fun getActivity(): Activity? {
-        return this
-    }
-
-    override fun onError(message: String?, status: EnumStatus?) {
-        onStopLoading(EnumStatus.OTHER)
-        when (status) {
-            EnumStatus.REQUEST_CODE -> {
-                btnSendRequest?.setText(getString(R.string.send_verification_code))
-                btnSendRequest?.isEnabled = true
-                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.request_code_occurred_error))
-            }
-            EnumStatus.VERIFY -> {
-                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.verify_occurred_error))
-            }
-        }
-    }
-
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.REQUEST_CODE -> {
-                val mUser: User? = Utils.getUserInfo()
-                Utils.Log(TAG, Gson().toJson(mUser))
-                btnSendRequest?.text = getString(R.string.send_verification_code)
-                btnSendRequest?.isEnabled = false
-                onStopLoading(EnumStatus.OTHER)
-                onShowDialogWaitingCode()
-            }
-            EnumStatus.VERIFY -> {
-                if (isRestoreFiles!!) {
-                    Navigator.onMoveToResetPin(this, EnumPinAction.RESTORE)
-                } else {
-                    Navigator.onMoveToResetPin(this, EnumPinAction.NONE)
-                }
-            }
-        }
-    }
-
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
 
     override fun onBiometricSuccessful() {
     }

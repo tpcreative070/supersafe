@@ -50,6 +50,9 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(AlbumCoverViewModel::class.java)){
             return AlbumCoverViewModel() as T
         }
+        else if (modelClass.isAssignableFrom(ResetPinViewModel::class.java)){
+            return ResetPinViewModel(UserViewModel(UserService(),MicService())) as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 }
