@@ -254,6 +254,7 @@ class ServiceManager : BaseServiceView<Any?> {
         }
         Utils.Log(TAG,"Sync completely done")
         isRequestingSyncCor = false
+        SingletonPrivateFragment.getInstance()?.onUpdateView()
     }
 
 

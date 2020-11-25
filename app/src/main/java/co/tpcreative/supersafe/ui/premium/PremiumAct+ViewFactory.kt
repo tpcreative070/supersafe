@@ -111,47 +111,41 @@ fun PremiumAct.onCheckout(data: PurchaseData?, purchase: EnumPurchase?) {
     when (purchase) {
         EnumPurchase.LIFETIME -> {
             if (mCheckout != null) {
-                mCheckout.isPurchasedLifeTime = Utils.isRealCheckedOut(data?.orderId!!)
+                mCheckout.isPurchasedLifeTime = Utils.isRealCheckedOut(data?.orderId ?: "")
             } else {
                 mCheckout = CheckoutItems()
-                mCheckout.isPurchasedLifeTime = Utils.isRealCheckedOut(data?.orderId!!)
+                mCheckout.isPurchasedLifeTime = Utils.isRealCheckedOut(data?.orderId ?: "")
             }
             Utils.setCheckoutItems(mCheckout)
         }
         EnumPurchase.SIX_MONTHS -> {
             if (mCheckout != null) {
-                if (Utils.isRealCheckedOut(data?.orderId!!)) {
-                    mCheckout.isPurchasedSixMonths = data.autoRenewing
+                if (Utils.isRealCheckedOut(data?.orderId ?:"")) {
+                    mCheckout.isPurchasedSixMonths = data?.autoRenewing ?: false
                 } else {
                     mCheckout.isPurchasedSixMonths = false
                 }
             } else {
                 mCheckout = CheckoutItems()
-                if (Utils.isRealCheckedOut(data?.orderId!!)) {
-                    mCheckout.isPurchasedSixMonths = data.autoRenewing
+                if (Utils.isRealCheckedOut(data?.orderId ?: "")) {
+                    mCheckout.isPurchasedSixMonths = data?.autoRenewing ?: false
                 } else {
                     mCheckout.isPurchasedSixMonths = false
                 }
-            }
-            Utils.setCheckoutItems(mCheckout)
-            if (Utils.isRealCheckedOut(data.orderId)) {
-                mCheckout.isPurchasedOneYears = data.autoRenewing
-            } else {
-                mCheckout.isPurchasedOneYears = false
             }
             Utils.setCheckoutItems(mCheckout)
         }
         EnumPurchase.ONE_YEAR -> {
             if (mCheckout != null) {
-                if (Utils.isRealCheckedOut(data?.orderId!!)) {
-                    mCheckout.isPurchasedOneYears = data.autoRenewing
+                if (Utils.isRealCheckedOut(data?.orderId ?: "")) {
+                    mCheckout.isPurchasedOneYears = data?.autoRenewing ?: false
                 } else {
                     mCheckout.isPurchasedOneYears = false
                 }
             } else {
                 mCheckout = CheckoutItems()
-                if (Utils.isRealCheckedOut(data?.orderId!!)) {
-                    mCheckout.isPurchasedOneYears = data.autoRenewing
+                if (Utils.isRealCheckedOut(data?.orderId ?: "")) {
+                    mCheckout.isPurchasedOneYears = data?.autoRenewing ?: false
                 } else {
                     mCheckout.isPurchasedOneYears = false
                 }

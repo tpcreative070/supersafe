@@ -88,10 +88,11 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                         mCheckout.isPurchasedSixMonths = false
                     }
                 }
-                Utils.Log(TAG,"Preparing save ${Gson().toJson(mCheckout)}")
                 Utils.setCheckoutItems(mCheckout)
+                Utils.Log(TAG,"Preparing save ${Gson().toJson(mCheckout)}")
             }
             EnumPurchase.ONE_YEAR -> {
+                Utils.Log(TAG,"one year...")
                 if (mCheckout != null) {
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedOneYears = data.autoRenewing
