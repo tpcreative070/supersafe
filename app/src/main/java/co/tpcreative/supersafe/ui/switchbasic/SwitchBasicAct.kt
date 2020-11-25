@@ -21,6 +21,7 @@ class SwitchBasicAct : BaseActivity() {
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
