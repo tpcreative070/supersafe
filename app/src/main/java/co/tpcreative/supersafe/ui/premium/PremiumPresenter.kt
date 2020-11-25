@@ -18,7 +18,6 @@ import co.tpcreative.supersafe.model.User
 import com.anjlab.android.iab.v3.PurchaseData
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody

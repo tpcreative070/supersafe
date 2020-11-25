@@ -3,6 +3,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.*
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
@@ -13,6 +14,7 @@ import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.common.views.SquaredImageView
 import co.tpcreative.supersafe.model.EnumFormatType
 import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.model.MainCategoryModel
@@ -23,8 +25,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.private_item.view.*
 
-class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener) : BaseAdapter<MainCategoryModel, BaseHolder<MainCategoryModel>>(inflater) {
-    private val itemSelectedListener: ItemSelectedListener?
+class PrivateAdapter(inflater: LayoutInflater, private val context: Context?,private val itemSelectedListener: ItemSelectedListener) : BaseAdapter<MainCategoryModel, BaseHolder<MainCategoryModel>>(inflater) {
     private val TAG = PrivateAdapter::class.java.simpleName
     var themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     var note1: Drawable? = ContextCompat.getDrawable(SuperSafeApplication.getInstance(),themeApp?.getAccentColor()!!)
@@ -47,9 +48,9 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
 
     inner class ItemHolder(itemView: View) : BaseHolder<MainCategoryModel>(itemView) {
         private var data: MainCategoryModel? = null
-        val imgAlbum = itemView.imgAlbum
-        val tvTitle = itemView.tvTitle
-        var imgIcon = itemView.imgIcon
+        val imgAlbum: SquaredImageView = itemView.imgAlbum
+        val tvTitle: AppCompatTextView = itemView.tvTitle
+        var imgIcon: SquaredImageView = itemView.imgIcon
         var mPosition = 0
         override fun bind(data: MainCategoryModel, position: Int) {
             super.bind(data, position)
@@ -64,32 +65,32 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                                 Glide.with(context)
                                         .load(note1)
                                         .apply(options)
-                                        .into(imgAlbum!!)
+                                        .into(imgAlbum)
                             }
-                            imgIcon?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_music_note_white_48))
+                            imgIcon.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_music_note_white_48))
                         }
                         EnumFormatType.FILES -> {
                             Glide.with(context!!)
                                     .load(note1)
                                     .apply(options)
-                                    .into(imgAlbum!!)
-                            imgIcon?.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.baseline_insert_drive_file_white_48))
+                                    .into(imgAlbum)
+                            imgIcon.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.baseline_insert_drive_file_white_48))
                         }
                         else -> {
                             try {
                                 if (items.getThumbnail().isFileExist()) {
-                                    imgAlbum?.rotation =items.degrees.toFloat()
+                                    imgAlbum.rotation =items.degrees.toFloat()
                                     Glide.with(context!!)
                                             .load(items.getThumbnail().readFile())
                                             .apply(options)
-                                            .into(imgAlbum!!)
-                                    imgIcon?.visibility = View.INVISIBLE
+                                            .into(imgAlbum)
+                                    imgIcon.visibility = View.INVISIBLE
                                 } else {
-                                    imgAlbum?.setImageResource(0)
+                                    imgAlbum.setImageResource(0)
                                     val myColor = Color.parseColor(data.image)
-                                    imgAlbum?.setBackgroundColor(myColor)
-                                    imgIcon?.setImageDrawable(SQLHelper.getDrawable(context, data.icon))
-                                    imgIcon?.visibility = View.VISIBLE
+                                    imgAlbum.setBackgroundColor(myColor)
+                                    imgIcon.setImageDrawable(SQLHelper.getDrawable(context, data.icon))
+                                    imgIcon.visibility = View.VISIBLE
                                 }
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -97,46 +98,46 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                         }
                     }
                 } else {
-                    imgAlbum?.setImageResource(0)
+                    imgAlbum.setImageResource(0)
                     val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesPosition(data.mainCategories_Local_Id)
                     if (mainCategories != null) {
-                        imgIcon?.setImageDrawable(SQLHelper.getDrawable(SuperSafeApplication.getInstance(), mainCategories.icon))
-                        imgIcon?.visibility = View.VISIBLE
+                        imgIcon.setImageDrawable(SQLHelper.getDrawable(SuperSafeApplication.getInstance(), mainCategories.icon))
+                        imgIcon.visibility = View.VISIBLE
                         try {
                             val myColor = Color.parseColor(mainCategories.image)
-                            imgAlbum?.setBackgroundColor(myColor)
+                            imgAlbum.setBackgroundColor(myColor)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     } else {
-                        imgAlbum?.setImageResource(0)
-                        imgIcon?.setImageDrawable(SQLHelper.getDrawable(context, data.icon))
-                        imgIcon?.visibility = View.VISIBLE
+                        imgAlbum.setImageResource(0)
+                        imgIcon.setImageDrawable(SQLHelper.getDrawable(context, data.icon))
+                        imgIcon.visibility = View.VISIBLE
                         try {
                             val myColor = Color.parseColor(data.image)
-                            imgAlbum?.setBackgroundColor(myColor)
+                            imgAlbum.setBackgroundColor(myColor)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     }
                 }
             } else {
-                imgAlbum?.setImageResource(0)
-                imgIcon?.setImageResource(R.drawable.baseline_https_white_48)
-                imgIcon?.visibility = View.VISIBLE
+                imgAlbum.setImageResource(0)
+                imgIcon.setImageResource(R.drawable.baseline_https_white_48)
+                imgIcon.visibility = View.VISIBLE
                 try {
                     val myColor = Color.parseColor(data.image)
-                    imgAlbum?.setBackgroundColor(myColor)
+                    imgAlbum.setBackgroundColor(myColor)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
-            tvTitle?.text = data.categories_name
+            tvTitle.text = data.categories_name
             Utils.Log(TAG,"Category name "+ data.categories_name)
             mPosition = position
             itemView.rlHome.setOnClickListener {
                 Utils.Log(TAG, "Position $mPosition")
-                itemSelectedListener?.onClickItem(mPosition)
+                itemSelectedListener.onClickItem(mPosition)
             }
 
             itemView.overflow.setOnClickListener {
@@ -167,15 +168,15 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
         override fun onMenuItemClick(menuItem: MenuItem?): Boolean {
             when (menuItem?.itemId) {
                 R.id.action_settings -> {
-                    itemSelectedListener?.onSetting(position)
+                    itemSelectedListener.onSetting(position)
                     return true
                 }
                 R.id.action_delete -> {
-                    itemSelectedListener?.onDeleteAlbum(position)
+                    itemSelectedListener.onDeleteAlbum(position)
                     return true
                 }
                 R.id.action_empty_trash -> {
-                    itemSelectedListener?.onEmptyTrash(position)
+                    itemSelectedListener.onEmptyTrash(position)
                     return true
                 }
                 else -> {
@@ -183,7 +184,6 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
             }
             return false
         }
-
     }
 
     interface ItemSelectedListener {
@@ -191,9 +191,5 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
         fun onSetting(position: Int)
         fun onDeleteAlbum(position: Int)
         fun onEmptyTrash(position: Int)
-    }
-
-    init {
-        this.itemSelectedListener = itemSelectedListener
     }
 }

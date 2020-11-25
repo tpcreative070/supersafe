@@ -34,6 +34,7 @@ fun PrivateFragment.getData(){
     viewModel.getData().observe(this, Observer {
         CoroutineScope(Dispatchers.Main).launch {
             val mResult = async {
+                Utils.Log(TAG,"updated data source")
                 adapter?.setDataSource(it)
             }
             mResult.await()
