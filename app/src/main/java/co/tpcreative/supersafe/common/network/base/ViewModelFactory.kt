@@ -53,6 +53,9 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(ResetPinViewModel::class.java)){
             return ResetPinViewModel(UserViewModel(UserService(),MicService())) as T
         }
+        else if (modelClass.isAssignableFrom(PrivateViewModel::class.java)){
+            return PrivateViewModel() as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 }

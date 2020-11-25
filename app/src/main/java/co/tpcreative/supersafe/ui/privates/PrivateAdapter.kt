@@ -8,6 +8,8 @@ import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
+import co.tpcreative.supersafe.common.extension.isFileExist
+import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
@@ -19,11 +21,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.private_item.view.*
 
 class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener) : BaseAdapter<MainCategoryModel, BaseHolder<MainCategoryModel>>(inflater) {
-    private val storage: Storage?
     private val itemSelectedListener: ItemSelectedListener?
     private val TAG = PrivateAdapter::class.java.simpleName
     var themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
@@ -77,10 +77,10 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                         }
                         else -> {
                             try {
-                                if (storage?.isFileExist("" + items.getThumbnail())!!) {
+                                if (items.getThumbnail().isFileExist()) {
                                     imgAlbum?.rotation =items.degrees.toFloat()
                                     Glide.with(context!!)
-                                            .load(storage.readFile(items.getThumbnail()))
+                                            .load(items.getThumbnail().readFile())
                                             .apply(options)
                                             .into(imgAlbum!!)
                                     imgIcon?.visibility = View.INVISIBLE
@@ -194,8 +194,6 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
     }
 
     init {
-        storage = Storage(context)
-        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
         this.itemSelectedListener = itemSelectedListener
     }
 }

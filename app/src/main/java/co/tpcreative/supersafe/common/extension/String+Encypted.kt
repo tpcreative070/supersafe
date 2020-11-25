@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.extension
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import java.io.File
 
 fun String.readFile() : ByteArray?{
@@ -17,4 +18,8 @@ fun String.createDirectory(){
 fun String.deleteFile(){
     val file = File(this)
     file.delete()
+}
+
+fun String.deleteDirectory() : Boolean? {
+    return EncryptDecryptFilesHelper.getInstance()?.deleteDirectory(this)
 }
