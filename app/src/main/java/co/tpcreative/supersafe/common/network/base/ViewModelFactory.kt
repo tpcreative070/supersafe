@@ -56,6 +56,12 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(PrivateViewModel::class.java)){
             return PrivateViewModel() as T
         }
+        else if (modelClass.isAssignableFrom(PremiumViewModel::class.java)){
+            return PremiumViewModel(UserViewModel(UserService(),MicService())) as T
+        }
+        else if (modelClass.isAssignableFrom(MeViewModel::class.java)){
+            return MeViewModel() as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 }

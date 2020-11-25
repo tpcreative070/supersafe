@@ -15,6 +15,7 @@ import co.tpcreative.supersafe.model.CheckoutItems
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumPurchase
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.viewmodel.PremiumViewModel
 import com.anjlab.android.iab.v3.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_premium.*
@@ -22,10 +23,10 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBillingHandler {
+class PremiumAct : BaseActivity(), BillingProcessor.IBillingHandler {
 
     /*In app purchase*/
-    var presenter: PremiumPresenter? = null
+    lateinit var viewModel : PremiumViewModel
 
     /*New version*/
     var bp: BillingProcessor? = null
@@ -63,7 +64,6 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
     }
 
     override fun onStopListenerAWhile() {
@@ -86,37 +86,6 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
         if (!(bp?.handleActivityResult(requestCode, resultCode, data))!!) super.onActivityResult(requestCode, resultCode, data)
     }
 
-    /*Presenter*/
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun onError(message: String?) {}
-    override fun onError(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.CHECKOUT -> {
-                Toast.makeText(applicationContext, "Message $message", Toast.LENGTH_SHORT).show()
-            }
-            else -> Utils.Log(TAG, "Nothing")
-        }
-    }
-
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        if (status == EnumStatus.CHECKOUT) {
-            Utils.Log(TAG, message + "-" + status.name)
-            onUpdatedView()
-        }
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
-    override fun getContext(): Context? {
-        return this
-    }
-
-    override fun getActivity(): Activity? {
-        return this
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -136,7 +105,7 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
             if (mInfo != null) {
                 val mData: PurchaseData? = mInfo.purchaseData
                 if (mData != null) {
-                    presenter?.onAddCheckout(mData)
+                    checkout(mData)
                     if (Utils.isRealCheckedOut(mData.orderId)) {
                         onCheckout(mData, EnumPurchase.fromString(mData.productId))
                     }
@@ -181,6 +150,6 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
     }
 
     companion object {
-        val FRAGMENT_TAG: String? = SettingsFragment::class.java.getSimpleName() + "::fragmentTag"
+        val FRAGMENT_TAG: String = SettingsFragment::class.java.getSimpleName() + "::fragmentTag"
     }
 }

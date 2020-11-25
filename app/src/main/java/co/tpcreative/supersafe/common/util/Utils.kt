@@ -1043,6 +1043,10 @@ object Utils {
         return mAuthor?.driveConnected ?: false
     }
 
+    fun getSyncData() : SyncData? {
+        return getUserInfo()?.syncData
+    }
+
     fun onBasicAlertNotify(context: Activity, title: String? = "Warning", message: String) {
         val theme = ThemeApp.getInstance()?.getThemeInfo()
         Alerter.create(context)
