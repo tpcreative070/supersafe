@@ -5,13 +5,8 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
-import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
-import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_restore.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,11 +24,7 @@ fun RestoreAct.initUI(){
         if (pin == edtPreviousPIN?.getText().toString()) {
             Utils.hideKeyboard(currentFocus)
             onStartProgressing()
-            Utils.onObserveData(2000, object : Listener {
-                override fun onStart() {
-                    onRestore()
-                }
-            })
+            onRestore()
         } else {
             edtPreviousPIN?.setText("")
             tvWrongPin?.visibility = View.VISIBLE

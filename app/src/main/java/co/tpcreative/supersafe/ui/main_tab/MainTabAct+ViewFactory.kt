@@ -63,11 +63,7 @@ fun MainTabAct.initUI(){
         if (NetworkUtil.pingIpAddress(this)) {
             return
         }
-        Utils.onObserveData(2000, object : Listener {
-            override fun onStart() {
-                onAnimationIcon(EnumStatus.DONE)
-            }
-        })
+        onAnimationIcon(EnumStatus.DONE)
     }
 }
 

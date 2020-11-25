@@ -1,20 +1,28 @@
 package co.tpcreative.supersafe.ui.accountmanager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.adapter.DividerItemDecoration
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.ui.albumcover.AlbumCoverAct
+import co.tpcreative.supersafe.viewmodel.AccountManagerViewModel
+import co.tpcreative.supersafe.viewmodel.AlbumCoverViewModel
 import kotlinx.android.synthetic.main.activity_account_manager.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 fun AccountManagerAct.intUI(){
     TAG = this::class.java.simpleName
+    setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    presenter = AccountManagerPresenter()
-    presenter?.bindView(this)
-    presenter?.getData()
+    getData()
     onUpdatedView()
     scrollView?.smoothScrollTo(0, 0)
     initRecycleView()
@@ -52,4 +60,19 @@ fun AccountManagerAct.initRecycleView() {
     recyclerView?.layoutManager = mLayoutManager
     recyclerView?.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
     recyclerView?.adapter = adapter
+}
+
+fun AccountManagerAct.getData(){
+    viewModel.getData().observe(this, Observer {
+        CoroutineScope(Dispatchers.Main).launch {
+            adapter?.setDataSource(it)
+        }
+    })
+}
+
+private fun AccountManagerAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(AccountManagerViewModel::class.java)
 }

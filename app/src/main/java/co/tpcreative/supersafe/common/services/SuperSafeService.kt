@@ -7,19 +7,14 @@ import android.os.Bundle
 import android.os.IBinder
 import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.presenter.PresenterService
-import co.tpcreative.supersafe.common.services.download.DownloadService
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.common.utilimport.NetworkUtil
 import co.tpcreative.supersafe.model.*
 class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeReceiver.ConnectivityReceiverListener {
     private val mBinder: IBinder? = LocalBinder() // Binder given to clients
     private var androidReceiver: SuperSafeReceiver? = null
-    private var downloadService: DownloadService? = null
-    private var isCallRefreshToken = false
     override fun onCreate() {
         super.onCreate()
         Utils.Log(TAG, "onCreate")
-        downloadService = DownloadService()
         onInitReceiver()
         SuperSafeApplication.getInstance().setConnectivityListener(this)
     }
@@ -84,31 +79,6 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         fun getService(): SuperSafeService? {
             return this@SuperSafeService
         }
-    }
-
-    private fun <T> isCheckNull(view: T?, status: EnumFunc): Boolean {
-        if (subscriptions == null) {
-            Utils.Log(TAG, "Subscriptions is null " + status.name)
-            return true
-        } else if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            Utils.Log(TAG, "No connection " + status.name)
-            return true
-        } else if (view == null) {
-            Utils.Log(TAG, "View is null " + status.name)
-            return true
-        }
-        when (status) {
-            EnumFunc.GET_USER_INFO -> {
-                Utils.Log(TAG, status.name)
-                val mUser: User = Utils.getUserInfo() ?: return true
-                mUser.author ?: return true
-            }
-            EnumFunc.UPDATE_USER_TOKEN -> {
-                Utils.getUserInfo() ?: return true
-            }
-            else -> Utils.Log(TAG, "Nothing")
-        }
-        return false
     }
 
     companion object {

@@ -32,7 +32,6 @@ import com.google.gson.Gson
 import com.snatik.storage.EncryptConfiguration
 import com.snatik.storage.Storage
 import com.snatik.storage.security.SecurityUtil
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
@@ -60,16 +59,12 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     private var secretKey: String? = null
     private var activity: Activity? = null
     private var mMapMigrationItem: MutableMap<String, MigrationModel> = HashMap<String, MigrationModel>()
-    private var compositeDisposable: CompositeDisposable? = null
     override fun onCreate() {
         super.onCreate()
         mInstance = this
         isLive = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
-        serverDriveApi = RetrofitHelper().getService(getString(R.string.url_google))
-        serviceGraphMicrosoft = RetrofitHelper().getService(getString(R.string.url_graph_microsoft))
-        serverAPI = RetrofitHelper().getTPCreativeService(getUrl())
         serverApiCor = RetrofitBuilder.getService(typeService = EnumTypeServices.SYSTEM)
         serverDriveApiCor = RetrofitBuilder.getService(getString(R.string.url_google),typeService = EnumTypeServices.GOOGLE_DRIVE)
         serverMicCor = RetrofitBuilder.getService(getString(R.string.url_graph_microsoft),typeService = EnumTypeServices.EMAIL_OUTLOOK)
@@ -410,12 +405,9 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         private var started = 0
         private var stopped = 0
         private var url: String? = null
-        var serverAPI: ApiService? = null
         var serverApiCor : ApiService? = null
         var serverDriveApiCor : ApiService? = null
         var serverMicCor : ApiService? = null
-        var serverDriveApi: ApiService? = null
-        var serviceGraphMicrosoft: ApiService? = null
         @Volatile
         private var mInstance: SuperSafeApplication? = null
         fun getInstance(): SuperSafeApplication {

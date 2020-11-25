@@ -119,9 +119,6 @@ dependencies {
 
     /*Retrofit and RXJava 2*/
     implementation 'com.jakewharton.timber:timber:4.7.1'
-    implementation "io.reactivex.rxjava2:rxandroid:$appReactivexAndroid"
-    implementation "io.reactivex.rxjava2:rxjava:$appReactivexJava"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$appRetrofit"
     implementation "com.squareup.retrofit2:retrofit:$appRetrofit"
     implementation "com.squareup.retrofit2:converter-gson:$appRetrofit"
     implementation "com.squareup.retrofit2:converter-scalars:$appRetrofit"

@@ -73,31 +73,27 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                 onMessageEvent(EnumStatus.MIGRATION_DONE)
             }
         }else {
-            Utils.onObserveData(DELAY.toLong(), object : Listener {
-                override fun onStart() {
-                    if (grant_access) {
-                        if (isRunning) {
-                            if ("" != value) {
-                                PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
-                                Navigator.onMoveToMainTab(this@SplashScreenAct, false)
-                            } else {
-                                SuperSafeApplication.getInstance().deleteFolder()
-                                SuperSafeApplication.getInstance().initFolder()
-                                SQLHelper.onCleanDatabase()
-                                Utils.setUserPreShare(User())
-                                SQLHelper.getList()
-                                PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), true)
-                                Navigator.onMoveToDashBoard(this@SplashScreenAct)
-                            }
-                        } else {
-                            Navigator.onMoveToDashBoard(this@SplashScreenAct)
-                        }
+            if (grant_access) {
+                if (isRunning) {
+                    if ("" != value) {
+                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
+                        Navigator.onMoveToMainTab(this@SplashScreenAct, false)
                     } else {
-                        Navigator.onMoveGrantAccess(this@SplashScreenAct)
+                        SuperSafeApplication.getInstance().deleteFolder()
+                        SuperSafeApplication.getInstance().initFolder()
+                        SQLHelper.onCleanDatabase()
+                        Utils.setUserPreShare(User())
+                        SQLHelper.getList()
+                        PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), true)
+                        Navigator.onMoveToDashBoard(this@SplashScreenAct)
                     }
-                    finish()
+                } else {
+                    Navigator.onMoveToDashBoard(this@SplashScreenAct)
                 }
-            })
+            } else {
+                Navigator.onMoveGrantAccess(this@SplashScreenAct)
+            }
+            finish()
         }
     }
 

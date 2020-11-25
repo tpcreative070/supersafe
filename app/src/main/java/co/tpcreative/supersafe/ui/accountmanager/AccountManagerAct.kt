@@ -1,7 +1,5 @@
 package co.tpcreative.supersafe.ui.accountmanager
-import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,20 +9,17 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
 import co.tpcreative.supersafe.common.extension.toSpanned
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.AppLists
-import co.tpcreative.supersafe.model.EmptyModel
-import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.AccountManagerViewModel
 import kotlinx.android.synthetic.main.activity_account_manager.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerAdapter.ItemSelectedListener {
-    var presenter: AccountManagerPresenter? = null
+class AccountManagerAct : BaseGoogleApi(), AccountManagerAdapter.ItemSelectedListener {
     var adapter: AccountManagerAdapter? = null
+    lateinit var viewModel : AccountManagerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_manager)
@@ -59,7 +54,7 @@ class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerA
     }
 
     override fun onClickItem(position: Int) {
-        val app: AppLists = presenter?.mList!!.get(position)
+        val app: AppLists = dataSource[position]
         val isInstalled: Boolean = app.isInstalled
         if (!isInstalled) {
             val uri = Uri.parse("market://details?id=" + app.packageName)
@@ -99,7 +94,6 @@ class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerA
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
     }
 
     override fun onStopListenerAWhile() {
@@ -128,35 +122,20 @@ class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerA
         Utils.Log(TAG, "onDriveRevokeAccess")
     }
 
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun startServiceNow() {}
-    override fun getContext(): Context? {
-        return applicationContext
-    }
-
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.RELOAD -> {
-                adapter?.setDataSource(presenter?.mList)
-            }
-        }
-    }
-
-    override fun getActivity(): Activity? {
-        return this
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
     override fun isSignIn(): Boolean {
         return false
     }
 
+    override fun startServiceNow() {
+    }
+
+    val dataSource : MutableList<AppLists>
+        get() {
+            return adapter?.getDataSource() ?: mutableListOf()
+        }
+
     companion object {
         private val TAG = AccountManagerAct::class.java.simpleName
     }
+
 }

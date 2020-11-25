@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.main_tab
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -15,14 +14,12 @@ import co.tpcreative.supersafe.common.controller.PremiumManager
 import co.tpcreative.supersafe.common.dialog.DialogListener
 import co.tpcreative.supersafe.common.dialog.DialogManager
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main_tab.*
 import kotlinx.android.synthetic.main.activity_main_tab.toolbar
 import org.greenrobot.eventbus.EventBus

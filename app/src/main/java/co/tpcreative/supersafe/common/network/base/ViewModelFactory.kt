@@ -74,6 +74,15 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(HelpAndSupportViewModel::class.java)){
             return HelpAndSupportViewModel(EmailOutlookViewModel(MicService())) as T
         }
+        else if (modelClass.isAssignableFrom(AccountManagerViewModel::class.java)){
+            return AccountManagerViewModel() as T
+        }
+        else if (modelClass.isAssignableFrom(BreakInAlertsViewModel::class.java)){
+            return BreakInAlertsViewModel() as T
+        }
+        else if (modelClass.isAssignableFrom(LockScreenViewModel::class.java)){
+            return LockScreenViewModel() as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 }

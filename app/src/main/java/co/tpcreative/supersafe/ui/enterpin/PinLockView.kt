@@ -3,7 +3,6 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -11,16 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
-
-/**
- * Represents a numeric lock view which can used to taken numbers as input.
- * The length of the input can be customized using [PinLockView.setPinLength], the default value being 4
- *
- *
- * It can also be used as dial pad for taking number inputs.
- * Optionally, [IndicatorDots] can be attached to this view to indicate the length of the input taken
- * Created by aritraroy on 31/05/16.
- */
 class PinLockView : RecyclerView {
     private var mPin: String? = ""
     private var mPinLength = 0

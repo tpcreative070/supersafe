@@ -1,7 +1,5 @@
 package co.tpcreative.supersafe.ui.enterpin
-
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,6 +8,7 @@ import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import co.infinum.goldfinger.Goldfinger
@@ -19,16 +18,15 @@ import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity
 import co.tpcreative.supersafe.common.controller.*
 import co.tpcreative.supersafe.common.extension.instantiate
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.preference.MyPreference
 import co.tpcreative.supersafe.common.preference.MySwitchPreference
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.*
 import co.tpcreative.supersafe.model.BreakInAlertsModel
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.viewmodel.LockScreenViewModel
 import com.cottacush.android.hiddencam.CameraType
 import com.cottacush.android.hiddencam.HiddenCam
 import com.cottacush.android.hiddencam.OnImageCapturedListener
@@ -36,7 +34,7 @@ import kotlinx.android.synthetic.main.activity_enterpin.*
 import kotlinx.android.synthetic.main.include_calculator.*
 import java.io.File
 
-class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator, SingletonMultipleListener.Listener, SingletonScreenLock.SingletonScreenLockListener, OnImageCapturedListener {
+class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListener.Listener, SingletonScreenLock.SingletonScreenLockListener, OnImageCapturedListener {
     var count = 0
     var countAttempt = 0
     var isFingerprint = false
@@ -190,7 +188,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         super.onPause()
     }
 
-    override fun onSuccessful(message: String?, status: EnumStatus?, action: EnumPinAction?) {
+    fun onSuccessful(status: EnumStatus?, action: EnumPinAction?) {
         Utils.Log(TAG, "EnumPinAction 1:...." + action?.name)
         when (status) {
             EnumStatus.VERIFY -> {
@@ -217,11 +215,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                         /*Unlock for real pin*/
                         SingletonManager.getInstance().setAnimation(false)
                         Utils.onPushEventBus(EnumStatus.UNLOCK)
-                        Utils.onObserveData(100, object : Listener {
-                            override fun onStart() {
-                                finish()
-                            }
-                        })
+                        finish()
                         Utils.Log(TAG, "Action ...................done")
                         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
                     }
@@ -275,17 +269,13 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                 /*UnLock for fake pin*/mPinAction = action
                 when (action) {
                     EnumPinAction.DONE -> {
-                        SingletonManager.Companion.getInstance().setAnimation(false)
-                        Utils.onObserveData(100, object : Listener {
-                            override fun onStart() {
-                                PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                                if (SingletonManager.Companion.getInstance().isVisitFakePin()) {
-                                    finish()
-                                } else {
-                                    Navigator.onMoveFakePinComponent(this@EnterPinAct)
-                                }
-                            }
-                        })
+                        SingletonManager.getInstance().setAnimation(false)
+                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+                        if (SingletonManager.getInstance().isVisitFakePin()) {
+                            finish()
+                        } else {
+                            Navigator.onMoveFakePinComponent(this@EnterPinAct)
+                        }
                     }
                     else -> Utils.Log(TAG,"Nothing")
                 }
@@ -346,7 +336,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         }
         when (mPinAction) {
             EnumPinAction.VERIFY -> {
-                presenter?.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.DONE)
+                changeStatus(EnumStatus.VERIFY, EnumPinAction.DONE)
             }
             else -> Utils.Log(TAG, "Nothing")
         }
@@ -356,12 +346,6 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
     fun initActionBar(isInit: Boolean) {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(isInit)
-    }
-
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun getContext(): Context? {
-        return this
     }
 
     fun onSetVisitFingerprintView(isFingerprint: Boolean) {
@@ -382,7 +366,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
     }
 
     /*Settings preference*/
-    class SettingsFragment : PreferenceFragmentCompat() {
+    inner class SettingsFragment : PreferenceFragmentCompat() {
         private var mChangePin: MyPreference? = null
         private var mFaceDown: MySwitchPreference? = null
         private var mFingerPrint: MySwitchPreference? = null
@@ -399,7 +383,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                     if (preference.key == getString(R.string.key_change_pin)) {
                         Utils.Log(TAG, "Action here!!!")
                         enumPinPreviousAction = EnumPinAction.VERIFY_TO_CHANGE
-                        presenter?.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.VERIFY_TO_CHANGE)
+                        changeStatus(EnumStatus.VERIFY, EnumPinAction.VERIFY_TO_CHANGE)
                     }
                 }
                 true
@@ -436,16 +420,6 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         transaction.replace(R.id.content_frame, fragment)
         transaction.commit()
     }
-
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {}
-    override fun getActivity(): Activity? {
-        return this
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EnumPinAction>?) {}
 
     fun onInitHiddenCamera() {
         val value: Boolean = PrefsController.getBoolean(getString(R.string.key_break_in_alert), false)
@@ -515,7 +489,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         var mPinAction: EnumPinAction? = null
         var enumPinPreviousAction: EnumPinAction? = null
         var mPinActionNext: EnumPinAction? = null
-        var presenter: LockScreenPresenter? = null
+        lateinit var viewModel: LockScreenViewModel
         fun getIntent(context: Context?, action: Int, actionNext: Int): Intent? {
             val intent = Intent(context, EnterPinAct::class.java)
             intent.putExtra(EXTRA_SET_PIN, action)

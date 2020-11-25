@@ -1,9 +1,5 @@
 package co.tpcreative.supersafe.ui.enterpin
 import java.util.*
-
-/**
- * Created by aritraroy on 10/03/17.
- */
 object ShuffleArrayUtils {
     /**
      * Shuffle an array

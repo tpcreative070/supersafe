@@ -1,8 +1,6 @@
 package co.tpcreative.supersafe.ui.theme
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.core.content.ContextCompat
@@ -10,11 +8,8 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
 import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.viewmodel.ThemeSettingsViewModel
 import kotlinx.android.synthetic.main.layout_premium_header.*

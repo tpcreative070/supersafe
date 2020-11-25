@@ -13,14 +13,12 @@ import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_restore.*
 
 class RestoreAct : BaseActivity(), TextView.OnEditorActionListener{
     var dialog: AlertDialog? = null
     var isNext = false
     var count = 0
-    var subscriptions: Disposable? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_restore)
@@ -40,11 +38,7 @@ class RestoreAct : BaseActivity(), TextView.OnEditorActionListener{
                 if (pin == edtPreviousPIN?.text.toString()) {
                     Utils.hideKeyboard(currentFocus)
                     onStartProgressing()
-                    Utils.onObserveData(2000, object :Listener {
-                        override fun onStart() {
-                            onRestore()
-                        }
-                    })
+                    onRestore()
                 } else {
                     edtPreviousPIN?.setText("")
                     tvWrongPin?.visibility = View.VISIBLE
@@ -64,9 +58,6 @@ class RestoreAct : BaseActivity(), TextView.OnEditorActionListener{
 
     override fun onDestroy() {
         super.onDestroy()
-        if (subscriptions != null) {
-            subscriptions?.dispose()
-        }
     }
 
     override fun onStopListenerAWhile() {}

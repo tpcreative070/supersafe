@@ -15,14 +15,6 @@ import co.tpcreative.supersafe.ui.enterpin.IndicatorDots.IndicatorType.Companion
 import co.tpcreative.supersafe.ui.enterpin.IndicatorDots.IndicatorType.Companion.FIXED
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
-
-/**
- * It represents a set of indicator dots which when attached with [PinLockView]
- * can be used to indicate the current length of the input
- *
- *
- * Created by aritraroy on 01/06/16.
- */
 class IndicatorDots @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(FIXED, FILL, FILL_WITH_ANIMATION)

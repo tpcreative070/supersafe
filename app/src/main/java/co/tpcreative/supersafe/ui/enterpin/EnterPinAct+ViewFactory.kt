@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.ui.enterpin
 import android.animation.ObjectAnimator
 import android.view.View
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import co.infinum.goldfinger.Goldfinger
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -8,6 +10,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonScreenLock
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.CalculatorImpl
 import co.tpcreative.supersafe.common.util.Constants
@@ -15,24 +18,24 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.ui.enterpin.EnterPinAct.Companion.viewModel
+import co.tpcreative.supersafe.viewmodel.LockScreenViewModel
 import kotlinx.android.synthetic.main.activity_enterpin.*
 import kotlinx.android.synthetic.main.footer_layout.*
 import kotlinx.android.synthetic.main.include_calculator.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.grantland.widget.AutofitHelper
 
 fun EnterPinAct.initUI(){
     TAG = this::class.java.simpleName
+    setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(false)
-    EnterPinAct.presenter = LockScreenPresenter()
-    EnterPinAct.presenter?.bindView(this)
-    val result: Int = getIntent().getIntExtra(EnterPinAct.EXTRA_SET_PIN, 0)
+    val result: Int = intent.getIntExtra(EnterPinAct.EXTRA_SET_PIN, 0)
     EnterPinAct.mPinAction = EnumPinAction.values()[result]
-    val resultNext: Int = getIntent().getIntExtra(EnterPinAct.EXTRA_ENUM_ACTION, 0)
+    val resultNext: Int = intent.getIntExtra(EnterPinAct.EXTRA_ENUM_ACTION, 0)
     EnterPinAct.mPinActionNext = EnumPinAction.values()[resultNext]
     SingletonScreenLock.getInstance()?.setListener(this)
     EnterPinAct.enumPinPreviousAction = EnterPinAct.mPinAction
@@ -213,7 +216,7 @@ fun EnterPinAct.onRestore() {
             if (mUser != null) {
                 Utils.setUserPreShare(mUser)
                 Navigator.onMoveToMainTab(this@onRestore,true)
-                EnterPinAct.presenter?.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE)
+                changeStatus(EnumStatus.RESTORE, EnumPinAction.DONE)
             }
         }
         override fun onError() {
@@ -228,7 +231,7 @@ fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(D
         EnumPinAction.VERIFY -> {
             if (SingletonManager.getInstance().isVisitFakePin()) {
                 if (pin == mFakePin && isFakePinEnabled) {
-                    EnterPinAct.presenter?.onChangeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE)
+                    changeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE)
                 } else {
                     if (isCompleted) {
                         onTakePicture(pin)
@@ -237,9 +240,9 @@ fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(D
                 }
             } else {
                 if (pin == mRealPin) {
-                    EnterPinAct.presenter?.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.DONE)
+                    changeStatus(EnumStatus.VERIFY, EnumPinAction.DONE)
                 } else if (pin == mFakePin && isFakePinEnabled) {
-                    EnterPinAct.presenter?.onChangeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE)
+                    changeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE)
                 } else {
                     if (isCompleted) {
                         onTakePicture(pin)
@@ -250,7 +253,7 @@ fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(D
         }
         EnumPinAction.VERIFY_TO_CHANGE -> {
             if (pin == mRealPin) {
-                EnterPinAct.presenter?.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.CHANGE)
+                changeStatus(EnumStatus.VERIFY, EnumPinAction.CHANGE)
             } else {
                 if (isCompleted) {
                     onTakePicture(pin)
@@ -260,7 +263,7 @@ fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(D
         }
         EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
             if (pin == mRealPin) {
-                EnterPinAct.presenter?.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.FAKE_PIN)
+                changeStatus(EnumStatus.VERIFY, EnumPinAction.FAKE_PIN)
             } else {
                 if (isCompleted) {
                     onTakePicture(pin)
@@ -298,6 +301,7 @@ fun EnterPinAct.shake() {
                 SingletonScreenLock.getInstance()?.onStartTimer(attemptWaiting)
             }
         }
+        else -> Utils.Log(TAG,"Nothing")
     }
     Utils.Log(TAG, "Visit....$count")
 }
@@ -346,6 +350,7 @@ fun EnterPinAct.onAlertWarning(title: String?) {
             tvTopAttempts?.text = getString(R.string.pinlock_wrongpin)
             pinlockView.resetPinLockView()
         }
+        else -> Utils.Log(TAG,"Nothing")
     }
 }
 
@@ -436,6 +441,7 @@ fun EnterPinAct.onDisplayView() {
             tvAttempt?.text = result
             Utils.Log(TAG, EnterPinAct.mPinAction!!.name)
         }
+        else -> Utils.Log(TAG,"Nothing")
     }
 }
 
@@ -484,6 +490,7 @@ fun EnterPinAct.onDisplayText() {
             tvTopAttempts?.visibility = View.INVISIBLE
             imgLauncher?.visibility = View.INVISIBLE
         }
+        else -> Utils.Log(TAG,"Nothing")
     }
 }
 
@@ -503,7 +510,7 @@ fun EnterPinAct.setPin(pin: String?) {
                         }
                         else -> {
                             Navigator.onMoveToMainTab(this,true)
-                            EnterPinAct.presenter?.onChangeStatus(EnumStatus.SET, EnumPinAction.DONE)
+                            changeStatus(EnumStatus.SET, EnumPinAction.DONE)
                         }
                     }
                 } else {
@@ -522,7 +529,7 @@ fun EnterPinAct.setPin(pin: String?) {
                         onAlertWarning(getString(R.string.pin_lock_replace))
                     } else {
                         Utils.writePinToSharedPreferences(pin)
-                        EnterPinAct.presenter?.onChangeStatus(EnumStatus.CHANGE, EnumPinAction.DONE)
+                        changeStatus(EnumStatus.CHANGE, EnumPinAction.DONE)
                     }
                 } else {
                     onAlertWarning(getString(R.string.pinlock_tryagain))
@@ -540,7 +547,7 @@ fun EnterPinAct.setPin(pin: String?) {
                         onAlertWarning(getString(R.string.pin_lock_replace))
                     } else {
                         Utils.writeFakePinToSharedPreferences(pin)
-                        EnterPinAct.presenter?.onChangeStatus(EnumStatus.CREATE_FAKE_PIN, EnumPinAction.DONE)
+                        changeStatus(EnumStatus.CREATE_FAKE_PIN, EnumPinAction.DONE)
                     }
                 } else {
                     onAlertWarning(getString(R.string.pinlock_tryagain))
@@ -565,7 +572,7 @@ fun EnterPinAct.setPin(pin: String?) {
                             else -> {
                                 Utils.writePinToSharedPreferences(pin)
                                 Navigator.onMoveToMainTab(this,true)
-                                EnterPinAct.presenter?.onChangeStatus(EnumStatus.RESET, EnumPinAction.DONE)
+                                changeStatus(EnumStatus.RESET, EnumPinAction.DONE)
                             }
                         }
                     }
@@ -574,6 +581,7 @@ fun EnterPinAct.setPin(pin: String?) {
                 }
             }
         }
+        else -> Utils.Log(TAG,"Nothing")
     }
 }
 
@@ -603,4 +611,20 @@ fun EnterPinAct.onInitPin() {
     indicator_dots.setIndicatorType(IndicatorDots.IndicatorType.FILL_WITH_ANIMATION)
     onInitHiddenCamera()
 }
+
+private fun EnterPinAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(LockScreenViewModel::class.java)
+}
+
+fun EnterPinAct.changeStatus(status: EnumStatus?, action: EnumPinAction?){
+    viewModel.changeStatus(status,action).observe(this, Observer {
+        CoroutineScope(Dispatchers.Main).launch {
+            onSuccessful(it.status,it.action)
+        }
+    })
+}
+
 

@@ -28,7 +28,7 @@ class BreakInAlertsDetailActivity : BaseActivity() {
         this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_break_in_alerts_detail)
-        val bundle: Bundle? = getIntent().getExtras()
+        val bundle: Bundle? = intent.extras
         val inAlerts: BreakInAlertsModel? = bundle?.get(getString(R.string.key_break_in_alert)) as BreakInAlertsModel
         if (inAlerts != null) {
             Glide.with(this)
@@ -43,6 +43,7 @@ class BreakInAlertsDetailActivity : BaseActivity() {
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

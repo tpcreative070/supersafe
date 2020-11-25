@@ -50,10 +50,6 @@ import com.snatik.storage.helpers.OnStorageListener
 import com.snatik.storage.helpers.SizeUnit
 import com.snatik.storage.security.SecurityUtil
 import com.tapadoo.alerter.Alerter
-import io.reactivex.Completable
-import io.reactivex.CompletableObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import org.apache.commons.io.FilenameUtils
 import org.greenrobot.eventbus.EventBus
 import java.io.*
@@ -576,19 +572,6 @@ object Utils {
         }
     }
 
-    fun onObserveData(second: Long, ls: Listener) {
-        Completable.timer(second, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                .subscribe(object : CompletableObserver {
-                    override fun onSubscribe(d: Disposable) {}
-                    override fun onComplete() {
-                        Log(TAG, "Completed")
-                        ls.onStart()
-                    }
-
-                    override fun onError(e: Throwable) {}
-                })
-    }
-
     fun onHomePressed() {
         PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal)
         Log(TAG, "Pressed home button")
@@ -1000,6 +983,14 @@ object Utils {
             }
         }
         return false
+    }
+
+    fun setBreakAlert(value : Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_break_in_alert), value)
+    }
+
+    fun isBreakAlert() : Boolean{
+       return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_break_in_alert), false)
     }
 
     fun isVerifiedAccount() : Boolean{

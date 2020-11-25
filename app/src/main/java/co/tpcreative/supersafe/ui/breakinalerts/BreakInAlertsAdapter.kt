@@ -3,6 +3,8 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
@@ -34,9 +36,9 @@ class BreakInAlertsAdapter(inflater: LayoutInflater, activity: Activity?, itemSe
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<BreakInAlertsModel>(itemView) {
-        val imgPicture = itemView.imgPicture
-        val tvTime = itemView.tvTime
-        val tvPin = itemView.tvPin
+        val imgPicture: AppCompatImageView = itemView.imgPicture
+        val tvTime: AppCompatTextView = itemView.tvTime
+        val tvPin: AppCompatTextView = itemView.tvPin
         private var mPosition = 0
         override fun bind(data: BreakInAlertsModel, position: Int) {
             super.bind(data, position)
@@ -44,11 +46,11 @@ class BreakInAlertsAdapter(inflater: LayoutInflater, activity: Activity?, itemSe
             val locale = Locale("en")
             Locale.setDefault(locale)
             val messages: TimeAgoMessages = TimeAgoMessages.Builder().withLocale(locale).build()
-            tvTime?.text = TimeAgo.using(data.time, messages)
-            tvPin?.text = data.pin
+            tvTime.text = TimeAgo.using(data.time, messages)
+            tvPin.text = data.pin
             Glide.with(myActivity!!)
                     .load(File(data.fileName))
-                    .apply(options!!).into(imgPicture!!)
+                    .apply(options!!).into(imgPicture)
 
             itemView.llHome.setOnClickListener {
                 itemSelectedListener?.onClickItem(mPosition)

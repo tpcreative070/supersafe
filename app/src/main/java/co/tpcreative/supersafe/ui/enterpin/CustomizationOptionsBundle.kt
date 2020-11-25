@@ -1,12 +1,5 @@
 package co.tpcreative.supersafe.ui.enterpin
 import android.graphics.drawable.Drawable
-
-/**
- * The customization options for the buttons in [PinLockView]
- * passed to the [PinLockAdapter] to decorate the individual views
- *
- * Created by aritraroy on 01/06/16.
- */
 class CustomizationOptionsBundle {
     private var textColor = 0
     private var textColorVerify = 0

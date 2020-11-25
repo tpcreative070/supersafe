@@ -179,7 +179,7 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private fun scale(): Animation? {
         val scaleAnimation = ScaleAnimation(.75f, 1f, .75f, 1f,
                 Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, .5f)
-        scaleAnimation.setDuration(BUTTON_ANIMATION_DURATION.toLong())
+        scaleAnimation.duration = BUTTON_ANIMATION_DURATION.toLong()
         scaleAnimation.fillAfter = true
         return scaleAnimation
     }
