@@ -682,66 +682,6 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    fun onExportingFiles()  = CoroutineScope(Dispatchers.IO).launch{
-//        try {
-//            for (index in mListExport){
-//                val mInput: File = index.input as File
-//                val mOutPut: File = index.output as File
-//                try {
-//                    val storage = Storage(SuperSafeApplication.getInstance())
-//                    storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-//                    val mCipher = storage.getCipher(Cipher.DECRYPT_MODE)
-//                    val formatType = EnumFormatType.values()[index.formatType]
-//                    if (formatType == EnumFormatType.VIDEO || formatType == EnumFormatType.AUDIO) {
-//                        storage.createLargeFile(mOutPut, mInput, mCipher, 0, object : OnStorageListener {
-//                            override fun onSuccessful() {}
-//                            override fun onFailed() {
-//                                Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT)
-//                                Utils.Log(TAG, "Exporting failed")
-//                            }
-//                            override fun onSuccessful(path: String?) {}
-//                            override fun onSuccessful(position: Int) {
-//                                try {
-//                                    Utils.Log(TAG, "Exporting large file...............................Successful $position")
-//                                    mListExport.get(position).isExport = true
-//                                } catch (e: Exception) {
-//                                    e.printStackTrace()
-//                                }
-//                            }
-//                        })
-//                    } else {
-//                        storage.createFile(mOutPut, mInput, Cipher.DECRYPT_MODE, 0, object : OnStorageListener {
-//                            override fun onSuccessful() {}
-//                            override fun onFailed() {
-//                                Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT)
-//                                Utils.Log(TAG, "Exporting failed")
-//                            }
-//                            override fun onSuccessful(path: String?) {}
-//                            override fun onSuccessful(position: Int) {
-//                                try {
-//                                    Utils.Log(TAG, "Exporting file...............................Successful $position")
-//                                } catch (e: Exception) {
-//                                    e.printStackTrace()
-//                                }
-//                            }
-//                        })
-//                    }
-//                } catch (e: Exception) {
-//                    Utils.Log(TAG, "Cannot write to $e")
-//                } finally {
-//                    Utils.Log(TAG, "Finally")
-//                }
-//            }
-//            Utils.onPushEventBus(EnumStatus.STOP_PROGRESS)
-//            setExporting(false)
-//            mListExport.clear()
-//            onPreparingSyncData()
-//        }
-//        catch (e : Exception){
-//            e.printStackTrace()
-//        }
-    }
-
     override fun onError(message: String?, status: EnumStatus) {
         Utils.Log(TAG, "onError response :" + message + " - " + status.name)
         if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
@@ -781,41 +721,6 @@ class ServiceManager : BaseServiceView<Any?> {
                 Utils.Log(TAG, "Disconnect")
             }
             else -> Utils.Log(TAG,"Nothing")
-        }
-    }
-
-    fun onPreparingEnableDownloadData(globalList: MutableList<ItemModel>?){
-        if (isRequestingSyncCor){
-            return
-        }
-        CoroutineScope(Dispatchers.IO).launch {
-            onPreparingEnableDownload(globalList)
-        }
-    }
-
-    suspend fun onPreparingEnableDownload(globalList: MutableList<ItemModel>?) : Resource<Boolean> {
-        return withContext(Dispatchers.IO){
-            try {
-                isRequestingSyncCor = true
-                val mResult = driveViewModel.downLoadData(true,globalList)
-                Utils.Log(TAG,"Start download")
-                when(mResult.status){
-                    Status.SUCCESS -> {
-                        Utils.Log(TAG,"Completed download file")
-                        Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED)
-                        Resource.success(true)
-                    }
-                    else ->{
-                        Utils.Log(TAG,mResult.message)
-                        Resource.error(mResult.code ?: Utils.CODE_EXCEPTION,mResult.message ?:"",null)
-                    }
-                }
-            }catch (e : Exception){
-                Resource.error(Utils.CODE_EXCEPTION,e.message ?:"", null)
-            }
-            finally {
-                isRequestingSyncCor = false
-            }
         }
     }
 
