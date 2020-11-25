@@ -9,18 +9,24 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent
 import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
+import co.tpcreative.supersafe.model.ImportFilesModel
 import co.tpcreative.supersafe.model.MainCategoryModel
 import co.tpcreative.supersafe.model.ThemeApp
-import co.tpcreative.supersafe.ui.albumdetail.initSpeedDial
-import co.tpcreative.supersafe.ui.main_tab.initSpeedDial
+import co.tpcreative.supersafe.viewmodel.FakePinComponentViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.karumi.dexter.Dexter
@@ -34,19 +40,22 @@ import kotlinx.android.synthetic.main.activity_fake_pin_component.*
 import kotlinx.android.synthetic.main.activity_fake_pin_component.speedDial
 import kotlinx.android.synthetic.main.activity_fake_pin_component.toolbar
 import kotlinx.android.synthetic.main.activity_main_tab.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 fun FakePinComponentAct.initUI(){
+    setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(false)
     initSpeedDial()
     initRecycleView(layoutInflater)
-    presenter = FakePinComponentPresenter()
-    presenter?.bindView(this)
+    getData()
 }
 
 fun FakePinComponentAct.initRecycleView(layoutInflater: LayoutInflater) {
     adapter = FakePinComponentAdapter(layoutInflater, this, this)
-    val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(getContext(), 2)
+    val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(this, 2)
     recyclerView?.layoutManager = mLayoutManager
     recyclerView?.addItemDecoration(GridSpacingItemDecoration(2, 10, true))
     recyclerView?.itemAnimator = DefaultItemAnimator()
@@ -139,7 +148,7 @@ fun FakePinComponentAct.onShowDialog() {
                     } else {
                         Toast.makeText(this@onShowDialog, "Album name already existing", Toast.LENGTH_SHORT).show()
                     }
-                    presenter?.getData()
+                    getData()
                 }
             }
     builder.show()
@@ -171,4 +180,35 @@ fun FakePinComponentAct.onAddPermissionCamera() {
                 }
             })
             .withErrorListener { Utils.Log(TAG, "error ask permission") }.onSameThread().check()
+}
+
+fun FakePinComponentAct.getData(){
+    viewModel.getData().observe(this, Observer {
+        CoroutineScope(Dispatchers.Main).launch {
+            adapter?.setDataSource(it)
+        }
+    })
+}
+
+fun FakePinComponentAct.deleteAlbum(position : Int) {
+    viewModel.onDeleteAlbum(position).observe(this, Observer {
+        getData()
+    })
+}
+
+fun FakePinComponentAct.importingData(mData : MutableList<ImportFilesModel>) = CoroutineScope(Dispatchers.Main).launch{
+    val mResult = ServiceManager.getInstance()?.onImportData(mData)
+    when(mResult?.status){
+        Status.SUCCESS -> {
+            SingletonFakePinComponent.getInstance().onUpdateView()
+        }
+        else -> Utils.Log(TAG,mResult?.message)
+    }
+}
+
+private fun FakePinComponentAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(FakePinComponentViewModel::class.java)
 }

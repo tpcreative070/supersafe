@@ -27,6 +27,7 @@ class FakePinAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

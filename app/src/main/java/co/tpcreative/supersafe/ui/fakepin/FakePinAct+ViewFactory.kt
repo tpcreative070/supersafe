@@ -1,7 +1,4 @@
 package co.tpcreative.supersafe.ui.fakepin
-
-import android.view.View
-import androidx.appcompat.widget.Toolbar
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController

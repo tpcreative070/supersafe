@@ -65,6 +65,9 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(PlayerViewModel::class.java)){
             return PlayerViewModel() as T
         }
+        else if (modelClass.isAssignableFrom(FakePinComponentViewModel::class.java)){
+            return FakePinComponentViewModel() as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 }

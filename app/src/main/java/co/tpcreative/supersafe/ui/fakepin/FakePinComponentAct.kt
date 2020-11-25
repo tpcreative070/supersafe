@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.fakepin
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import co.tpcreative.supersafe.R
@@ -10,18 +9,18 @@ import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.FakePinComponentViewModel
 import kotlinx.android.synthetic.main.activity_fake_pin_component.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
-class FakePinComponentAct : BaseActivityNoneSlideFakePin(), BaseView<EmptyModel>, FakePinComponentAdapter.ItemSelectedListener, SingletonFakePinComponent.SingletonPrivateFragmentListener {
+class FakePinComponentAct : BaseActivityNoneSlideFakePin(), FakePinComponentAdapter.ItemSelectedListener, SingletonFakePinComponent.SingletonPrivateFragmentListener {
     var adapter: FakePinComponentAdapter? = null
-    var presenter: FakePinComponentPresenter? = null
+    lateinit var viewModel : FakePinComponentViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fake_pin_component)
@@ -42,38 +41,18 @@ class FakePinComponentAct : BaseActivityNoneSlideFakePin(), BaseView<EmptyModel>
             }
             Navigator.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    val images: ArrayList<ImageModel>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
-                    val mListImport: MutableList<ImportFilesModel> = ArrayList<ImportFilesModel>()
-                    var i = 0
-                    val l = images?.size
-                    while (i < l!!) {
-                        val path = images.get(i).path
-                        val name = images.get(i).name
-                        val id = "" + images.get(i).id
-                        val mimeType: String? = Utils.getMimeType(path)
-                        Utils.Log(TAG, "mimeType $mimeType")
-                        Utils.Log(TAG, "name $name")
-                        Utils.Log(TAG, "path $path")
-                        val fileExtension: String? = Utils.getFileExtension(path)
-                        Utils.Log(TAG, "file extension " + Utils.getFileExtension(path))
-                        try {
-                            val mimeTypeFile: MimeTypeFile = Utils.mediaTypeSupport().get(fileExtension)
-                                    ?: return
-                            mimeTypeFile.name = name
-                            val list: MutableList<MainCategoryModel>? = SQLHelper.getListFakePin()
-                            if (list == null) {
-                                Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE)
-                                return
-                            }
-                            val importFiles = ImportFilesModel(list[0], mimeTypeFile, path, 0, false)
-                            mListImport.add(importFiles)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+                    val mData: ArrayList<ImageModel>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
+                    mData?.let {
+                        val list: MutableList<MainCategoryModel>? = SQLHelper.getListFakePin()
+                        if (list == null) {
+                            Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE)
+                            return
                         }
-                        i++
+                        val mCategory: MainCategoryModel = list[0]
+                        val mResult = mCategory.let { it1 -> Utils.getDataItemsFromImport(it1,it) }
+                        importingData(mResult)
                     }
-                    ServiceManager.getInstance()?.setListImport(mListImport)
-                    ServiceManager.getInstance()?.onPreparingImportData()
+
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery")
                 }
@@ -90,6 +69,7 @@ class FakePinComponentAct : BaseActivityNoneSlideFakePin(), BaseView<EmptyModel>
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -98,7 +78,6 @@ class FakePinComponentAct : BaseActivityNoneSlideFakePin(), BaseView<EmptyModel>
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        presenter?.getData()
         SingletonFakePinComponent.getInstance().setListener(this)
         onRegisterHomeWatcher()
         SingletonManager.getInstance().setVisitFakePin(true)
@@ -110,7 +89,6 @@ class FakePinComponentAct : BaseActivityNoneSlideFakePin(), BaseView<EmptyModel>
         ServiceManager.getInstance()?.onDismissServices()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
         SingletonManager.getInstance().setVisitFakePin(false)
     }
 
@@ -119,45 +97,18 @@ class FakePinComponentAct : BaseActivityNoneSlideFakePin(), BaseView<EmptyModel>
     }
     override fun onOrientationChange(isFaceDown: Boolean) {}
     override fun onUpdateView() {
-        runOnUiThread(Runnable { presenter?.getData() })
-    }
-
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun onError(message: String?) {}
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.RELOAD -> {
-                adapter?.setDataSource(presenter?.mList)
-            }
-        }
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
-    override fun getContext(): Context? {
-        return applicationContext
-    }
-
-    override fun getActivity(): Activity? {
-        return this
+        runOnUiThread(Runnable { getData() })
     }
 
     override fun onClickItem(position: Int) {
         Utils.Log(TAG, "Position :$position")
         try {
             val value: String = Utils.getHexCode(getString(R.string.key_trash))
-            if (value == presenter?.mList?.get(position)?.categories_hex_name) {
-                getActivity()?.let { Navigator.onMoveTrash(it) }
+            if (value == dataSource[position].categories_hex_name) {
+                Navigator.onMoveTrash(this)
             } else {
-                val mainCategories: MainCategoryModel? = presenter?.mList?.get(position)
-                getActivity()?.let {
-                    if (mainCategories != null) {
-                        Navigator.onMoveAlbumDetail(it, mainCategories)
-                    }
-                }
+                val mainCategories: MainCategoryModel = dataSource[position]
+                Navigator.onMoveAlbumDetail(this, mainCategories)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -165,11 +116,11 @@ class FakePinComponentAct : BaseActivityNoneSlideFakePin(), BaseView<EmptyModel>
     }
 
     override fun onSetting(position: Int) {
-        getActivity()?.let { presenter?.mList?.get(position)?.let { it1 -> Navigator.onAlbumSettings(it, it1) } }
+        Navigator.onAlbumSettings(this, dataSource[position])
     }
 
     override fun onDeleteAlbum(position: Int) {
-        presenter?.onDeleteAlbum(position)
+        deleteAlbum(position)
     }
 
     override fun onEmptyTrash(position: Int) {}
@@ -181,6 +132,10 @@ class FakePinComponentAct : BaseActivityNoneSlideFakePin(), BaseView<EmptyModel>
         }
     }
 
+    val dataSource : MutableList<MainCategoryModel>
+        get() {
+            return adapter?.getDataSource() ?: mutableListOf()
+        }
     companion object {
         private val TAG = FakePinComponentAct::class.java.simpleName
     }

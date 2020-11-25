@@ -43,12 +43,8 @@ import javax.crypto.Cipher
 class ServiceManager : BaseServiceView<Any?> {
     private var myService: SuperSafeService? = null
     private var mContext: Context? = null
-    private val mListExport: MutableList<ExportFiles> = ArrayList<ExportFiles>()
 
     /*Improved sync data*/
-    private val listImport: MutableList<ImportFilesModel> = ArrayList<ImportFilesModel>()
-    private var isImportData = false
-    private var isExportData = false
     private var isRequestShareIntent = false
     private var isRequestingSyncCor = false
     private var isRequestingUpdateUserToken = false
@@ -80,12 +76,6 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     private var isWaitingSendMail = false
-    fun setListImport(mListImport: MutableList<ImportFilesModel>) {
-        if (!isImportData) {
-            listImport.clear()
-            listImport.addAll(mListImport)
-        }
-    }
 
     /*Preparing sync data*/
     fun onPreparingSyncData() {
@@ -296,18 +286,6 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    /*Preparing import data*/
-    fun onPreparingImportData() {
-        if (isImportData) {
-            return
-        }
-        /*Preparing upload file to Google drive*/
-        if (listImport.size > 0) {
-//            onImportData()
-        } else {
-            Utils.Log(TAG, "Not found item to import")
-        }
-    }
 
     /*Import data from gallery*/
     suspend fun onImportData(mData : MutableList<ImportFilesModel>) : Resource<Boolean>{
@@ -514,17 +492,6 @@ class ServiceManager : BaseServiceView<Any?> {
         this.isWaitingSendMail = isWaitingSendMail
     }
 
-    fun setListExport(mListExport: MutableList<ExportFiles>) {
-        if (!isExportData) {
-            this.mListExport.clear()
-            this.mListExport.addAll(mListExport)
-        }
-    }
-
-    private fun setExporting(exporting: Boolean) {
-        isExportData = exporting
-    }
-
     fun onPickUpNewEmailNoTitle(context: Activity, account: String?) {
         try {
             val account1 = Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE)
@@ -607,7 +574,7 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     /*User info*/
-    fun onGetUserInfo() = CoroutineScope(Dispatchers.IO).launch {
+    private fun onGetUserInfo() = CoroutineScope(Dispatchers.IO).launch {
         Utils.Log(TAG, "onGetUserInfo")
         val mResult = userViewModel.getUserInfo()
         when(mResult.status){
@@ -772,15 +739,13 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     fun onDefaultValue() {
-        isExportData = false
-        isImportData = false
         isWaitingSendMail = false
         isRequestingUpdateUserToken = false
         isRequestingSyncCor = false
     }
 
     fun onDismissServices() {
-        if (isExportData || isImportData || isWaitingSendMail || isRequestingUpdateUserToken || isRequestingSyncCor) {
+        if (isWaitingSendMail || isRequestingUpdateUserToken || isRequestingSyncCor) {
             Utils.Log(TAG, "Progress....................!!!!:")
         } else {
             onDefaultValue()

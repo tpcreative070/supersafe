@@ -2,13 +2,16 @@ package co.tpcreative.supersafe.ui.fakepin
 import android.app.Activity
 import android.graphics.Color
 import android.view.*
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
+import co.tpcreative.supersafe.common.extension.isFileExist
+import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.common.views.SquaredImageView
 import co.tpcreative.supersafe.model.EnumFormatType
 import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.model.MainCategoryModel
@@ -17,13 +20,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.fake_pin_item.view.*
 
-class FakePinComponentAdapter(inflater: LayoutInflater, context: Activity?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<MainCategoryModel, BaseHolder<MainCategoryModel>>(inflater) {
-    private val context: Activity? = context
-    private val storage: Storage?
-    private val itemSelectedListener: ItemSelectedListener?
+class FakePinComponentAdapter(inflater: LayoutInflater,private val context: Activity?,private val itemSelectedListener: ItemSelectedListener?) : BaseAdapter<MainCategoryModel, BaseHolder<MainCategoryModel>>(inflater) {
     var themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     private val TAG = FakePinComponentAdapter::class.java.simpleName
     var options: RequestOptions? = RequestOptions()
@@ -45,9 +44,9 @@ class FakePinComponentAdapter(inflater: LayoutInflater, context: Activity?, item
 
     inner class ItemHolder(itemView: View) : BaseHolder<MainCategoryModel>(itemView) {
         private var data: MainCategoryModel? = null
-        val imgAlbum = itemView.imgAlbum
-        val tvTitle = itemView.tvTitle
-        val imgIcon = itemView.imgIcon
+        val imgAlbum: SquaredImageView = itemView.imgAlbum
+        val tvTitle: AppCompatTextView = itemView.tvTitle
+        val imgIcon: SquaredImageView = itemView.imgIcon
         var mPosition = 0
         override fun bind(data: MainCategoryModel, position: Int) {
             super.bind(data, position)
@@ -59,28 +58,28 @@ class FakePinComponentAdapter(inflater: LayoutInflater, context: Activity?, item
                         Glide.with(context!!)
                                 .load(R.drawable.bg_button_rounded)
                                 .apply(options!!)
-                                .into(imgAlbum!!)
-                        imgIcon?.visibility = View.INVISIBLE
+                                .into(imgAlbum)
+                        imgIcon.visibility = View.INVISIBLE
                     }
                     EnumFormatType.FILES -> {
                         Glide.with(context!!)
                                 .load(R.drawable.bg_button_rounded)
                                 .apply(options!!)
-                                .into(imgAlbum!!)
-                        imgIcon?.visibility = View.INVISIBLE
+                                .into(imgAlbum)
+                        imgIcon.visibility = View.INVISIBLE
                     }
                     else -> {
                         try {
-                            if (storage?.isFileExist("" + items.getThumbnail())!!) {
+                            if (items.getThumbnail().isFileExist()) {
                                 Glide.with(context!!)
-                                        .load(storage.readFile(items.getThumbnail()))
+                                        .load(items.getThumbnail().readFile())
                                         .apply(options!!)
-                                        .into(imgAlbum!!)
-                                imgIcon?.visibility =View.INVISIBLE
+                                        .into(imgAlbum)
+                                imgIcon.visibility =View.INVISIBLE
                             } else {
-                                imgAlbum?.setImageResource(0)
+                                imgAlbum.setImageResource(0)
                                 val myColor = Color.parseColor(data.image)
-                                imgAlbum?.setBackgroundColor(myColor)
+                                imgAlbum.setBackgroundColor(myColor)
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -88,16 +87,16 @@ class FakePinComponentAdapter(inflater: LayoutInflater, context: Activity?, item
                     }
                 }
             } else {
-                imgAlbum?.setImageResource(0)
-                imgIcon?.setImageDrawable(SQLHelper.getDrawable(context, data.icon))
-                imgIcon?.visibility = View.VISIBLE
+                imgAlbum.setImageResource(0)
+                imgIcon.setImageDrawable(SQLHelper.getDrawable(context, data.icon))
+                imgIcon.visibility = View.VISIBLE
                 try {
                     val myColor = Color.parseColor(data.image)
-                    imgAlbum?.setBackgroundColor(myColor)
+                    imgAlbum.setBackgroundColor(myColor)
                 } catch (e: Exception) {
                 }
             }
-            tvTitle?.text = data.categories_name
+            tvTitle.text = data.categories_name
             mPosition = position
             itemView.rlHome.setOnClickListener {
                 itemSelectedListener?.onClickItem(mPosition)
@@ -150,11 +149,5 @@ class FakePinComponentAdapter(inflater: LayoutInflater, context: Activity?, item
         fun onSetting(position: Int)
         fun onDeleteAlbum(position: Int)
         fun onEmptyTrash(position: Int)
-    }
-
-    init {
-        storage = Storage(context)
-        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-        this.itemSelectedListener = itemSelectedListener
     }
 }

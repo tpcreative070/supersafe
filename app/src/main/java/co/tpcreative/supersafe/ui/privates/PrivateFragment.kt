@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.LiveDataScope
-import androidx.lifecycle.liveData
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.BaseFragment
 import co.tpcreative.supersafe.common.Navigator
@@ -16,9 +14,7 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.MainCategoryModel
 import co.tpcreative.supersafe.viewmodel.PrivateViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import de.mrapp.android.util.ThreadUtil.runOnUiThread
 
 class PrivateFragment : BaseFragment(), PrivateAdapter.ItemSelectedListener, SingletonPrivateFragment.SingletonPrivateFragmentListener {
     var adapter: PrivateAdapter? = null
@@ -98,9 +94,7 @@ class PrivateFragment : BaseFragment(), PrivateAdapter.ItemSelectedListener, Sin
     }
 
     override fun onUpdateView() {
-        CoroutineScope(Dispatchers.Main).launch {
-            getData()
-        }
+        runOnUiThread(Runnable { getData() })
         Utils.Log(TAG,"Updated..............")
     }
 
