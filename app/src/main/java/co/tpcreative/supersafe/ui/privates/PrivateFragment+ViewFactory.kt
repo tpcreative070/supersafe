@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
+import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.MainCategoryModel
 import co.tpcreative.supersafe.viewmodel.PrivateViewModel
@@ -80,7 +80,7 @@ fun PrivateFragment.onShowChangeCategoriesNameDialog(mainCategories: MainCategor
 
 fun PrivateFragment.initRecycleView(layoutInflater: LayoutInflater?) {
     adapter = layoutInflater?.let { PrivateAdapter(it, context, this) }
-    val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
+    val mLayoutManager: RecyclerView.LayoutManager = NpaGridLayoutManager(context, 2)
     recyclerView?.layoutManager = mLayoutManager
     recyclerView?.addItemDecoration(GridSpacingItemDecoration(2, 10, true))
     recyclerView?.itemAnimator = DefaultItemAnimator()

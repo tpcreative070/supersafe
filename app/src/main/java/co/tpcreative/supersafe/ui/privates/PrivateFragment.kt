@@ -1,33 +1,19 @@
 package co.tpcreative.supersafe.ui.privates
-import android.content.Context
-import android.content.res.Resources
 import android.os.Bundle
-import android.text.InputType
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.BaseFragment
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.dialog.DialogListener
 import co.tpcreative.supersafe.common.dialog.DialogManager
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
-import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.model.MainCategoryModel
 import co.tpcreative.supersafe.viewmodel.PrivateViewModel
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.getInputField
-import com.afollestad.materialdialogs.input.input
 
 class PrivateFragment : BaseFragment(), PrivateAdapter.ItemSelectedListener, SingletonPrivateFragment.SingletonPrivateFragmentListener {
     var adapter: PrivateAdapter? = null
@@ -46,8 +32,8 @@ class PrivateFragment : BaseFragment(), PrivateAdapter.ItemSelectedListener, Sin
     }
 
     override fun work() {
-        initUI()
         super.work()
+        initUI()
     }
 
     override fun onClickItem(position: Int) {
