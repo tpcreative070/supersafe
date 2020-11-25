@@ -77,16 +77,16 @@ dependencies {
     implementation 'com.karumi:dexter:6.2.1'
 
     // Dependency for Google Sign-In
-    implementation 'com.google.android.gms:play-services-auth:18.1.0'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
     // Dependencies for the REST API example
     implementation 'com.google.api-client:google-api-client-android:1.26.0'
     /*Google drive*/
     implementation 'com.google.apis:google-api-services-drive:v3-rev126-1.24.1'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
     // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
     // Add the Firebase Crashlytics SDK.
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
 
     /*Call Floating button*/
     implementation "com.leinardi.android:speed-dial:3.1.1"

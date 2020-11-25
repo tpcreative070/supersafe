@@ -11,7 +11,6 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
-
 interface ApiService {
     @POST(TRACKING)
     suspend fun onTrackingCor(@Body request: TrackingRequest): RootResponse?

@@ -49,8 +49,8 @@ class SingletonScreenLock {
     }
 
     interface SingletonScreenLockListener {
-        open fun onAttemptTimer(seconds: String?)
-        open fun onAttemptTimerFinish()
+        fun onAttemptTimer(seconds: String?)
+        fun onAttemptTimerFinish()
     }
 
     companion object {

@@ -75,7 +75,7 @@ subprojects {
     ext.appCardView = "1.0.0"
     ext.appExifinterface = "1.2.0"
     ext.appRecyclerView = "1.1.0"
-    ext.appConstraintlayout = "2.0.3"
+    ext.appConstraintlayout = "2.0.4"
     ext.appMultidex = "2.0.1"
     ext.appPercent = "1.0.0"
     ext.appCompileSdkVersion = 30

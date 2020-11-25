@@ -52,7 +52,7 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
 
     @Throws(FileNotFoundException::class)
     private fun setupInputStream() {
-        val encryptedFile = File(mUri?.getPath())
+        val encryptedFile = File(mUri?.path)
         val fileInputStream = FileInputStream(encryptedFile)
         mInputStream = StreamingCipherInputStream(fileInputStream, mCipher, mSecretKeySpec, mIvParameterSpec)
     }

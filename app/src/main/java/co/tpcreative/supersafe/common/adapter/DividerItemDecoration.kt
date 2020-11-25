@@ -7,7 +7,6 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import co.tpcreative.supersafe.common.adapter.DividerItemDecoration
 
 class DividerItemDecoration(context: Context?, orientation: Int) : RecyclerView.ItemDecoration() {
     private var mDivider: Drawable? = null
@@ -25,12 +24,12 @@ class DividerItemDecoration(context: Context?, orientation: Int) : RecyclerView.
     }
 
     fun setOrientation(orientation: Int) {
-        require(!(orientation != DividerItemDecoration.Companion.HORIZONTAL_LIST && orientation != DividerItemDecoration.Companion.VERTICAL_LIST)) { "invalid orientation" }
+        require(!(orientation != HORIZONTAL_LIST && orientation != VERTICAL_LIST)) { "invalid orientation" }
         mOrientation = orientation
     }
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-        if (mOrientation == DividerItemDecoration.Companion.VERTICAL_LIST) {
+        if (mOrientation == VERTICAL_LIST) {
             drawVertical(c, parent)
         } else {
             drawHorizontal(c, parent)
@@ -72,10 +71,10 @@ class DividerItemDecoration(context: Context?, orientation: Int) : RecyclerView.
     }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        if (mOrientation == DividerItemDecoration.Companion.VERTICAL_LIST) {
-            outRect.set(0, 0, 0, mDivider!!.getIntrinsicHeight())
+        if (mOrientation == VERTICAL_LIST) {
+            outRect.set(0, 0, 0, mDivider!!.intrinsicHeight)
         } else {
-            outRect.set(0, 0, mDivider!!.getIntrinsicWidth(), 0)
+            outRect.set(0, 0, mDivider!!.intrinsicWidth, 0)
         }
     }
 
@@ -112,7 +111,7 @@ class DividerItemDecoration(context: Context?, orientation: Int) : RecyclerView.
     }
 
     companion object {
-        private val ATTRS: IntArray? = intArrayOf(
+        private val ATTRS: IntArray = intArrayOf(
                 R.attr.listDivider
         )
         val TAG = DividerItemDecoration::class.java.simpleName
@@ -121,11 +120,11 @@ class DividerItemDecoration(context: Context?, orientation: Int) : RecyclerView.
     }
 
     init {
-        val a: TypedArray? = DividerItemDecoration.ATTRS?.let { context!!.obtainStyledAttributes(it) }
+        val a: TypedArray = ATTRS.let { context!!.obtainStyledAttributes(it) }
         if (mDivider == null) {
-            mDivider = a?.getDrawable(0)
+            mDivider = a.getDrawable(0)
         }
-        a?.recycle()
+        a.recycle()
         setOrientation(orientation)
     }
 }

@@ -24,8 +24,8 @@ object RetrofitBuilder : BaseDependencies() {
                 .readTimeout(10, TimeUnit.MINUTES).addInterceptor(Interceptor { chain ->
                     val request = chain.request()
                     val builder = request.newBuilder()
-                    val var4: MutableIterator<*>? = HashMap<String,Any>().entries.iterator()
-                    while (var4!!.hasNext()) {
+                    val var4: MutableIterator<*> = HashMap<String,Any>().entries.iterator()
+                    while (var4.hasNext()) {
                         val entry: MutableMap.MutableEntry<*, *>? = var4.next() as MutableMap.MutableEntry<*,*>?
                         if (entry != null) {
                             builder.addHeader(entry.key as String, entry.value as String)
@@ -46,12 +46,12 @@ object RetrofitBuilder : BaseDependencies() {
         val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
         httpClient.addInterceptor Interceptor@{ chain ->
             val original = chain.request()
-            val originalHttpUrl: HttpUrl? = original.url
-            val url: HttpUrl? = originalHttpUrl?.newBuilder()
-                    ?.build()
+            val originalHttpUrl: HttpUrl = original.url
+            val url: HttpUrl = originalHttpUrl.newBuilder()
+                    .build()
             // Request customization: add request headers
             val requestBuilder: Request.Builder = original.newBuilder()
-                    .url(url!!)
+                    .url(url)
             val request = requestBuilder.build()
             chain.proceed(request)
         }
@@ -80,7 +80,7 @@ object RetrofitBuilder : BaseDependencies() {
     }
 
     fun getService(url : String? = null,listener : ProgressResponseBody.ProgressResponseBodyListener? = null,typeService : EnumTypeServices): ApiService? {
-        val retrofit: Retrofit? = getRetrofit(url,listener,typeService)
-        return retrofit?.create(ApiService::class.java)
+        val retrofit: Retrofit = getRetrofit(url,listener,typeService)
+        return retrofit.create(ApiService::class.java)
     }
 }

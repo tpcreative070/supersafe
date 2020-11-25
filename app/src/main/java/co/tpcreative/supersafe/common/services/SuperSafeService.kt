@@ -10,7 +10,7 @@ import co.tpcreative.supersafe.common.presenter.PresenterService
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeReceiver.ConnectivityReceiverListener {
-    private val mBinder: IBinder? = LocalBinder() // Binder given to clients
+    private val mBinder: IBinder = LocalBinder() // Binder given to clients
     private var androidReceiver: SuperSafeReceiver? = null
     override fun onCreate() {
         super.onCreate()
@@ -61,10 +61,9 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         return START_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intent: Intent?): IBinder {
         val extras: Bundle? = intent?.getExtras()
         Utils.Log(TAG, "onBind")
-        // Get messager from the Activity
         if (extras != null) {
             Utils.Log("service", "onBind with extra")
         }
@@ -76,7 +75,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
     inner class LocalBinder : Binder() {
-        fun getService(): SuperSafeService? {
+        fun getService(): SuperSafeService {
             return this@SuperSafeService
         }
     }

@@ -29,7 +29,7 @@ open class BaseDependencies {
                     val request = chain.request()
                     val builder = request.newBuilder()
                     val headers = getHeaders()
-                    headers?.let {
+                    headers.let {
                         for ((key, value) in it) {
                             Timber.d("%s : %s", key, value)
                             builder.addHeader(key, value)
@@ -39,7 +39,7 @@ open class BaseDependencies {
                 }.addInterceptor(mInterceptor).build()
     }
 
-    private fun getHeaders(): HashMap<String, String>? {
+    private fun getHeaders(): HashMap<String, String> {
         val hashMap = HashMap<String, String>()
         hashMap["Content-Type"] = "application/json"
         hashMap["Authorization"] = onAuthorToken()

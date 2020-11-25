@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.controller
-import android.content.Context
 import co.tpcreative.supersafe.model.EnumStatus
 import java.lang.ref.WeakReference
 import java.util.*
