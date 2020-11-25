@@ -1,11 +1,12 @@
-package co.tpcreative.supersafe.ui.move_gallery
+package co.tpcreative.supersafe.ui.move_album
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,33 +15,37 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Configuration
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.common.views.VerticalSpaceItemDecoration
+import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.MainCategoryModel
+import co.tpcreative.supersafe.viewmodel.MoveAlbumViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.layout_gallery.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-fun MoveGalleryFragment.iniUI(){
+fun MoveAlbumFragment.iniUI(){
+    setupViewModel()
     mConfig = mListener?.getConfiguration()
     if (mConfig == null) {
         return
     }
-    mAdapterAlbumGrid = MoveGalleryAdapter(activity!!.layoutInflater, activity, this)
-    presenter = MoveGalleryPresenter()
-    presenter?.bindView(this)
+    mAdapterAlbumGrid = MoveAlbumAdapter(activity!!.layoutInflater, activity, this)
     Utils.Log(TAG, Gson().toJson(mConfig))
-    presenter?.getData(mConfig!!.localCategoriesId, mConfig!!.isFakePIN)
+    getData(mConfig!!.localCategoriesId, mConfig!!.isFakePIN)
     Utils.Log(TAG,"Init data")
 }
 
-fun MoveGalleryFragment.openAlbum() {
+fun MoveAlbumFragment.openAlbum() {
     if (mConfig == null) {
         dialog?.dismiss()
         Utils.Log(TAG,"Null...")
@@ -64,13 +69,13 @@ fun MoveGalleryFragment.openAlbum() {
         mGalleryView?.addItemDecoration(GridSpacingItemDecoration(mAlbumColumnNumber, dp2px(mConfig!!.spaceSize.toFloat()), true))
         mGalleryView?.itemAnimator = DefaultItemAnimator()
         mGalleryView?.adapter = mAdapterAlbumGrid
-        mAdapterAlbumGrid?.setDataSource(presenter?.mList)
+        mAdapterAlbumGrid?.setDataSource(dataSource)
     } else {
         mGalleryView?.layoutManager = LinearLayoutManager(activity)
         mGalleryView?.addItemDecoration(VerticalSpaceItemDecoration(dp2px(mConfig!!.spaceSize.toFloat())))
         mGalleryView?.itemAnimator = DefaultItemAnimator()
         mGalleryView?.adapter = mAdapterAlbumGrid
-        mAdapterAlbumGrid?.setDataSource(presenter?.mList)
+        mAdapterAlbumGrid?.setDataSource(dataSource)
     }
     dialog?.setContentView(view)
     mBehavior = BottomSheetBehavior.from(view.parent as View)
@@ -82,7 +87,7 @@ fun MoveGalleryFragment.openAlbum() {
     dialog?.show()
 }
 
-fun MoveGalleryFragment.onShowDialog() {
+fun MoveAlbumFragment.onShowDialog() {
     val builder: MaterialDialog = MaterialDialog(activity!!)
             .title(text = getString(R.string.create_album))
             .negativeButton(text = getString(R.string.cancel))
@@ -93,26 +98,57 @@ fun MoveGalleryFragment.onShowDialog() {
                 val item: MainCategoryModel? = SQLHelper.getTrashItem()
                 val result: String? = item?.categories_hex_name
                 if (base64Code == result) {
-                    Toast.makeText(activity, "This name already existing", Toast.LENGTH_SHORT).show()
+                    activity?.let {
+                        Utils.onBasicAlertNotify(it,"Alert","This name already existing")
+                    }
                 } else {
                     val response: Boolean = SQLHelper.onAddCategories(base64Code, value, mConfig?.isFakePIN!!)
                     if (response) {
-                        Toast.makeText(activity, "Created album successful", Toast.LENGTH_SHORT).show()
-                        presenter?.getData(mConfig?.localCategoriesId, mConfig?.isFakePIN!!)
+                        activity?.let {
+                            Utils.onBasicAlertNotify(it,"Alert","Created album successful")
+                        }
+                        getData(mConfig?.localCategoriesId, mConfig?.isFakePIN!!)
                         SingletonPrivateFragment.getInstance()?.onUpdateView()
                         ServiceManager.getInstance()?.onPreparingSyncCategoryData()
                     } else {
-                        Toast.makeText(activity, "Album name already existing", Toast.LENGTH_SHORT).show()
+                        activity?.let {
+                            Utils.onBasicAlertNotify(it,"Alert","Album name already existing")
+                        }
                     }
                 }
             }
     builder.show()
 }
 
-fun MoveGalleryFragment.dp2px(dp: Float): Int {
+fun MoveAlbumFragment.dp2px(dp: Float): Int {
     return (dp * activity?.resources?.displayMetrics?.density!! + 0.5f).toInt()
 }
 
-fun MoveGalleryFragment.getGallerWidth(container: ViewGroup?): Int {
+fun MoveAlbumFragment.getGallerWidth(container: ViewGroup?): Int {
     return Utils.getScreenWidth(activity!!) - (container?.paddingLeft!! - container?.paddingRight)
+}
+
+fun MoveAlbumFragment.moveAlbum(position : Int){
+    viewModel.onMoveItemsToAlbum(position,itemDataList).observe(this, Observer {
+        ServiceManager.getInstance()?.onPreparingSyncData()
+        SingletonPrivateFragment.getInstance()?.onUpdateView()
+        dialog?.dismiss()
+        Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
+        if (mListener != null) {
+            mListener?.onMoveAlbumSuccessful()
+        }
+    })
+}
+
+fun MoveAlbumFragment.getData(categories_local_id: String?, isFakePIN: Boolean){
+    viewModel.getData(categories_local_id,isFakePIN).observe(this, Observer {
+        dataSource.addAll(it)
+    })
+}
+
+private fun MoveAlbumFragment.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(MoveAlbumViewModel::class.java)
 }

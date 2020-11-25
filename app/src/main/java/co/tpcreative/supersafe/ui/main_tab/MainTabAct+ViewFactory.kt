@@ -249,7 +249,7 @@ fun MainTabAct.onAskingRateApp() {
             }
             .negativeButton {
                 val categories = Categories(1, getString(R.string.contact_support))
-                val support = HelpAndSupport(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null)
+                val support = HelpAndSupportModel(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null)
                 Navigator.onMoveReportProblem(this, support)
                 PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
             }

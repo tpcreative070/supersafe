@@ -11,6 +11,8 @@ import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
+import co.tpcreative.supersafe.common.extension.isFileExist
+import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.views.SquaredImageView
 import co.tpcreative.supersafe.common.views.SquaredView
@@ -22,13 +24,11 @@ import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.album_detail_item.view.*
 import tpcreative.co.qrscanner.common.extension.setColorFilter
 
-class TrashAdapter(inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
+class TrashAdapter(inflater: LayoutInflater, private val context: Context?,private val itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
     var options: RequestOptions = RequestOptions()
             .centerCrop()
             .override(200, 200)
             .priority(Priority.HIGH)
-    private val itemSelectedListener: ItemSelectedListener?
-    private val storage: Storage?
     private val TAG = TrashAdapter::class.java.simpleName
     var themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     var note1: Drawable? = ContextCompat.getDrawable(SuperSafeApplication.getInstance(),themeApp?.getAccentColor()!!)
@@ -64,7 +64,7 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
                 imgSelect.visibility = View.INVISIBLE
             }
             try {
-                val path: String? = data.getThumbnail()
+                val path: String = data.getThumbnail()
                 when (EnumFormatType.values()[data.formatType]) {
                     EnumFormatType.AUDIO -> {
                         imgVideoCam.visibility = View.VISIBLE
@@ -88,20 +88,20 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
                         imgVideoCam.visibility = View.VISIBLE
                         imgVideoCam.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_videocam_white_36))
                         tvTitle.visibility = View.INVISIBLE
-                        if (storage?.isFileExist(path)!!) {
+                        if (path.isFileExist()) {
                             imgAlbum.rotation = data.degrees.toFloat()
                             Glide.with(context)
-                                    .load(storage.readFile(path))
+                                    .load(path.readFile())
                                     .apply(options).into(imgAlbum)
                         }
                     }
                     EnumFormatType.IMAGE -> {
                         tvTitle.visibility = View.INVISIBLE
                         imgVideoCam.visibility = View.INVISIBLE
-                        if (storage?.isFileExist(path)!!) {
+                        if (path.isFileExist()) {
                             imgAlbum.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
-                                    .load(storage.readFile(path))
+                                    .load(path.readFile())
                                     .apply(options).into(imgAlbum)
                         }
                     }
@@ -129,11 +129,5 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
                 itemSelectedListener?.onClickItem(mPosition)
             }
         }
-    }
-
-    init {
-        storage = Storage(context)
-        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-        this.itemSelectedListener = itemSelectedListener
     }
 }

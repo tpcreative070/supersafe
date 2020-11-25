@@ -1,7 +1,7 @@
 package co.tpcreative.supersafe.model
 import java.io.Serializable
 
-class HelpAndSupport : Serializable {
+class HelpAndSupportModel : Serializable {
     var categories: Categories?
     var title: String?
     var content: String?

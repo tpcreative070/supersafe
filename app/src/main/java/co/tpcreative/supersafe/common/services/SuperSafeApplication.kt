@@ -500,6 +500,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isDebugPremium(): Boolean {
-        return false
+        return true
     }
 }

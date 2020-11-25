@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.move_gallery
+package co.tpcreative.supersafe.ui.move_album
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,21 +10,24 @@ import co.tpcreative.supersafe.common.BaseFragment
 import co.tpcreative.supersafe.common.util.Configuration
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.GalleryAlbum
 import co.tpcreative.supersafe.model.ItemModel
+import co.tpcreative.supersafe.viewmodel.MoveAlbumViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import de.mrapp.android.util.ThreadUtil
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListener, MoveGalleryView {
+class MoveAlbumFragment : BaseFragment(), MoveAlbumAdapter.ItemSelectedListener {
     var mAlbumColumnNumber = 0
-    var mAdapterAlbumGrid: MoveGalleryAdapter? = null
+    var mAdapterAlbumGrid: MoveAlbumAdapter? = null
     var mConfig: Configuration? = null
     var dialog: BottomSheetDialog? = null
     var mBehavior: BottomSheetBehavior<*>? = null
     var mListener: OnGalleryAttachedListener? = null
-    var presenter: MoveGalleryPresenter? = null
+    lateinit var viewModel : MoveAlbumViewModel
 
     interface OnGalleryAttachedListener {
         fun getConfiguration(): Configuration?
@@ -54,10 +57,11 @@ class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListe
         when (event) {
             EnumStatus.UPDATE_MOVE_NEW_ALBUM -> {
                 if (mConfig != null) {
-                    presenter?.getData(mConfig?.localCategoriesId, mConfig?.isFakePIN!!)
+                    ThreadUtil.runOnUiThread(Runnable { getData(mConfig?.localCategoriesId, mConfig?.isFakePIN ?: false) })
                     Utils.Log(TAG, "Updated UI => Warning categories id is null")
                 }
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -90,44 +94,22 @@ class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListe
     }
 
     override fun onClickGalleryItem(position: Int) {
-        presenter?.onMoveItemsToAlbum(position)
+        moveAlbum(position)
         Utils.Log(TAG, "Position :$position")
     }
 
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun onError(message: String?) {}
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.RELOAD -> {
-                if (mAdapterAlbumGrid != null) {
-                    mAdapterAlbumGrid?.setDataSource(presenter?.mList)
-                }
-            }
-            EnumStatus.MOVE -> {
-                dialog?.dismiss()
-                Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
-                if (mListener != null) {
-                    mListener?.onMoveAlbumSuccessful()
-                }
-            }
-            else -> Utils.Log(TAG,"Nothing")
-        }
+    val itemDataList : MutableList<ItemModel>
+    get() {
+        return if (mListener != null) {
+            mListener?.getListItems() ?: mutableListOf()
+        } else mutableListOf()
     }
 
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: ItemModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<ItemModel>?) {}
-    override fun getListItems(): MutableList<ItemModel>? {
-        return if (mListener != null) {
-            mListener?.getListItems()
-        } else null
-    }
+    val dataSource : MutableList<GalleryAlbum> = mutableListOf()
 
     companion object {
-        fun newInstance(): Fragment? {
-            return MoveGalleryFragment()
+        fun newInstance(): Fragment {
+            return MoveAlbumFragment()
         }
     }
 }

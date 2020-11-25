@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.extension.toSpanned
@@ -73,8 +72,8 @@ fun VerifyAccountAct.initUI(){
 
     tvPrivateCloud.setOnClickListener {
         val categories = Categories(0, getString(R.string.faq))
-        val mList: MutableList<HelpAndSupport> = ArrayList<HelpAndSupport>()
-        mList.add(HelpAndSupport(categories, getString(R.string.what_about_google_drive), getString(R.string.what_about_google_drive_content), null))
+        val mList: MutableList<HelpAndSupportModel> = ArrayList<HelpAndSupportModel>()
+        mList.add(HelpAndSupportModel(categories, getString(R.string.what_about_google_drive), getString(R.string.what_about_google_drive_content), null))
         Navigator.onMoveHelpAndSupportContent(this, mList[0])
     }
 

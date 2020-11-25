@@ -308,19 +308,19 @@ object Navigator {
         context.startActivity(intent)
     }
 
-    fun onMoveHelpAndSupportContent(context: Context, helpAndSupport: HelpAndSupport) {
+    fun onMoveHelpAndSupportContent(context: Context, helpAndSupport: HelpAndSupportModel) {
         val intent = Intent(context, HelpAndSupportContentAct::class.java)
         val bundle = Bundle()
-        bundle.putSerializable(HelpAndSupport::class.java.getSimpleName(), helpAndSupport)
+        bundle.putSerializable(HelpAndSupportModel::class.java.getSimpleName(), helpAndSupport)
         intent.putExtras(bundle)
         context.startActivity(intent)
     }
 
-    fun onMoveReportProblem(context: Context, helpAndSupport: HelpAndSupport) {
+    fun onMoveReportProblem(context: Context, helpAndSupport: HelpAndSupportModel) {
         val intent = Intent(context, HelpAndSupportContentAct::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val bundle = Bundle()
-        bundle.putSerializable(HelpAndSupport::class.java.getSimpleName(), helpAndSupport)
+        bundle.putSerializable(HelpAndSupportModel::class.java.getSimpleName(), helpAndSupport)
         intent.putExtras(bundle)
         context.startActivity(intent)
     }

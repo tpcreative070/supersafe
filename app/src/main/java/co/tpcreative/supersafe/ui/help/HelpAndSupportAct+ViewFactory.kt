@@ -3,7 +3,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.model.HelpAndSupport
+import co.tpcreative.supersafe.model.HelpAndSupportModel
 import com.jaychang.srv.decoration.SectionHeaderProvider
 import com.jaychang.srv.decoration.SimpleSectionHeaderProvider
 import kotlinx.android.synthetic.main.activity_help_and_support_content.toolbar
@@ -22,15 +22,15 @@ fun HelpAndSupportAct.initUI(){
 }
 
 fun HelpAndSupportAct.addRecyclerHeaders() {
-    val sh: SectionHeaderProvider<HelpAndSupport> = object : SimpleSectionHeaderProvider<HelpAndSupport>() {
-        override fun getSectionHeaderView(history: HelpAndSupport, i: Int): View {
+    val sh: SectionHeaderProvider<HelpAndSupportModel> = object : SimpleSectionHeaderProvider<HelpAndSupportModel>() {
+        override fun getSectionHeaderView(history: HelpAndSupportModel, i: Int): View {
             val view: View = LayoutInflater.from(getContext()).inflate(R.layout.help_support_item_header, null, false)
             val textView: AppCompatTextView? = view.tvHeader
             textView?.text = (history.getCategoryName())
             return view
         }
 
-        override fun isSameSection(history: HelpAndSupport, nextHistory: HelpAndSupport): Boolean {
+        override fun isSameSection(history: HelpAndSupportModel, nextHistory: HelpAndSupportModel): Boolean {
             return history.getCategoryId() == nextHistory.getCategoryId()
         }
 
@@ -42,7 +42,7 @@ fun HelpAndSupportAct.addRecyclerHeaders() {
 }
 
 fun HelpAndSupportAct.bindData() {
-    val mData: MutableList<HelpAndSupport>? = presenter?.mList
+    val mData: MutableList<HelpAndSupportModel>? = presenter?.mList
     //LOOP THROUGH GALAXIES INSTANTIATING THEIR CELLS AND ADDING TO CELLS COLLECTION
     val cells: MutableList<HelpAndSupportCell>? = ArrayList()
     //LOOP THROUGH GALAXIES INSTANTIATING THEIR CELLS AND ADDING TO CELLS COLLECTION

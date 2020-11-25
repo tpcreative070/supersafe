@@ -3,12 +3,12 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.model.HelpAndSupport
+import co.tpcreative.supersafe.model.HelpAndSupportModel
 import com.jaychang.srv.SimpleCell
 import com.jaychang.srv.SimpleViewHolder
 import kotlinx.android.synthetic.main.help_support_items.view.*
 
-class HelpAndSupportCell(item: HelpAndSupport) : SimpleCell<HelpAndSupport, HelpAndSupportCell.ViewHolder>(item) {
+class HelpAndSupportCell(item: HelpAndSupportModel) : SimpleCell<HelpAndSupportModel, HelpAndSupportCell.ViewHolder>(item) {
     private var listener: ItemSelectedListener? = null
     fun setListener(listener: ItemSelectedListener?) {
         this.listener = listener
@@ -29,7 +29,7 @@ class HelpAndSupportCell(item: HelpAndSupport) : SimpleCell<HelpAndSupport, Help
     - Bind data to widgets in our viewholder.
      */
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int, context: Context, o: Any?) {
-        val data: HelpAndSupport = item
+        val data: HelpAndSupportModel = item
         viewHolder.tvTitle?.text = data.title
         if (data.nummberName != null) {
             viewHolder.tvPosition?.setText(data.nummberName)

@@ -17,22 +17,22 @@ import co.tpcreative.supersafe.common.HomeWatcher
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.ThemeApp
-import co.tpcreative.supersafe.ui.move_gallery.MoveGalleryFragment
-import co.tpcreative.supersafe.ui.move_gallery.openAlbum
+import co.tpcreative.supersafe.ui.move_album.MoveAlbumFragment
+import co.tpcreative.supersafe.ui.move_album.openAlbum
 import com.snatik.storage.Storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 
 
-abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener {
+abstract class BaseGalleryActivity : AppCompatActivity(), MoveAlbumFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener {
     private var mHomeWatcher: HomeWatcher? = null
     var storage: Storage? = null
-    private var fragment: MoveGalleryFragment? = null
+    private var fragment: MoveAlbumFragment? = null
     var TAG : String = this::class.java.simpleName
     val mainScope = CoroutineScope(Dispatchers.Main)
     fun attachFragment(layoutId: Int) {
-        fragment = MoveGalleryFragment.newInstance() as MoveGalleryFragment
+        fragment = MoveAlbumFragment.newInstance() as MoveAlbumFragment
         val fragmentManager: FragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(layoutId, fragment!!).commit()
     }

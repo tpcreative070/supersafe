@@ -60,13 +60,17 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
             EnumStatus.REFRESH -> {
-                getData()
+                runOnUiThread {
+                    getData()
+                }
             }
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
             EnumStatus.UPDATED_VIEW_DETAIL_ALBUM -> {
-               getData()
+                runOnUiThread {
+                    getData()
+                }
             }
             else -> Utils.Log(TAG, "Nothing ==> Event bus")
         }
@@ -322,7 +326,7 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
     }
 
     override fun onMoveAlbumSuccessful() {
-
+        actionMode?.finish()
     }
     override fun getListItems(): MutableList<ItemModel> {
         return dataSource
