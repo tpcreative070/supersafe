@@ -30,9 +30,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
-class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
+class MainTabAct : BaseGoogleApi(){
     var adapter: MainViewPagerAdapter? = null
-    var presenter: MainTabPresenter? = null
     var animation: AnimationsContainer.FramesSequenceAnimation? = null
     var mMenuItem: MenuItem? = null
     var previousStatus: EnumStatus? = null
@@ -135,7 +134,6 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
         }
         onCallLockScreen()
         onRegisterHomeWatcher()
-        presenter?.onGetUserInfo()
         ServiceManager.getInstance()?.setRequestShareIntent(false)
         Utils.Log(TAG, "onResume")
     }
@@ -161,12 +159,10 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
         when (item.itemId) {
             android.R.id.home -> {
                 Utils.Log(TAG, "Home action")
-                if (presenter != null) {
-                    if (presenter?.mUser?.verified!!) {
-                        Navigator.onManagerAccount(getActivity()!!)
-                    } else {
-                        Navigator.onVerifyAccount(getActivity()!!)
-                    }
+                if (Utils.isVerifiedAccount()) {
+                    Navigator.onManagerAccount(this)
+                } else {
+                    Navigator.onVerifyAccount(this)
                 }
                 return true
             }
@@ -276,7 +272,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
                 }
                 override fun onCancel() {}
             })
-            SuperSafeApplication.getInstance().writeUserSecret(presenter?.mUser)
+            SuperSafeApplication.getInstance().writeUserSecret(Utils.getUserInfo())
             val isPressed: Boolean = PrefsController.getBoolean(getString(R.string.we_are_a_team), false)
             if (isPressed) {
                 super.onBackPressed()
@@ -298,12 +294,6 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     }
 
     /*MainTab View*/
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun getContext(): Context? {
-        return applicationContext
-    }
-
     override fun onDriveClientReady() {}
     override fun isSignIn(): Boolean {
         return false
@@ -316,17 +306,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     override fun onDriveError() {}
     override fun onDriveSignOut() {}
     override fun onDriveRevokeAccess() {}
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {}
-    override fun getActivity(): Activity? {
-        return this
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
     override fun startServiceNow() {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
     fun onSuggestionAddFiles() {
         TapTargetView.showFor(this,  // `this` is an Activity
                 TapTarget.forView(viewFloatingButton, getString(R.string.tap_here_to_add_items), getString(R.string.tap_here_to_add_items_description))

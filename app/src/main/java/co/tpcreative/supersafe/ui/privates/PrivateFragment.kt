@@ -65,7 +65,6 @@ class PrivateFragment : BaseFragment(), PrivateAdapter.ItemSelectedListener, Sin
     }
 
     override fun onDeleteAlbum(position: Int) {
-        Utils.Log(TAG, "Delete album")
         DialogManager.getInstance()?.onStartDialog(context!!, R.string.confirm, R.string.are_you_sure_you_want_to_move_this_album_to_trash, object : DialogListener {
             override fun onClickButton() {
                 deletedAlbum(position)

@@ -55,27 +55,21 @@ fun MainTabAct.initUI(){
     setupViewPager(viewpager)
     tabs.setupWithViewPager(viewpager)
     PrefsController.putBoolean(getString(R.string.key_running), true)
-    presenter = MainTabPresenter()
-    presenter?.bindView(this)
-    presenter?.onGetUserInfo()
     onShowSuggestion()
     if (Utils.isCheckSyncSuggestion()) {
         onSuggestionSyncData()
     }
-    if (presenter!!.mUser != null) {
-        if (presenter!!.mUser?.driveConnected!!) {
-            if (NetworkUtil.pingIpAddress(this)) {
-                return
-            }
-            Utils.onObserveData(2000, object : Listener {
-                override fun onStart() {
-                    onAnimationIcon(EnumStatus.DONE)
-                }
-            })
+    if (Utils.isConnectedToGoogleDrive()) {
+        if (NetworkUtil.pingIpAddress(this)) {
+            return
         }
+        Utils.onObserveData(2000, object : Listener {
+            override fun onStart() {
+                onAnimationIcon(EnumStatus.DONE)
+            }
+        })
     }
 }
-
 
 fun MainTabAct.setupViewPager(viewPager: ViewPager?) {
     viewPager?.offscreenPageLimit = 3
@@ -102,7 +96,7 @@ fun MainTabAct.initSpeedDial() {
                     theme))
             .setLabel(R.string.photo)
             .setFabImageTintColor(ContextCompat.getColor(this, R.color.white))
-            .setLabelColor(ContextCompat.getColor(getActivity()!!, R.color.white))
+            .setLabelColor(ContextCompat.getColor(this, R.color.white))
             .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                     theme))
             .create())
@@ -231,7 +225,7 @@ fun MainTabAct.onShowSuggestion() {
     } else {
         val isFirstEnableSyncData: Boolean = PrefsController.getBoolean(getString(R.string.key_is_first_enable_sync_data), false)
         if (!isFirstEnableSyncData) {
-            if (presenter?.mUser?.driveConnected!!) {
+            if (Utils.isConnectedToGoogleDrive()) {
                 PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
             }
             onSuggestionSyncData()
@@ -256,7 +250,7 @@ fun MainTabAct.onAskingRateApp() {
             .negativeButton {
                 val categories = Categories(1, getString(R.string.contact_support))
                 val support = HelpAndSupport(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null)
-                Navigator.onMoveReportProblem(getContext()!!, support)
+                Navigator.onMoveReportProblem(this, support)
                 PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
             }
             .positiveButton {
