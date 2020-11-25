@@ -26,7 +26,7 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
     var isReload = false
 
     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-    val mOnClickListener: View.OnClickListener? = View.OnClickListener { v ->
+    val mOnClickListener: View.OnClickListener = View.OnClickListener { v ->
         when (v.id) {
             R.id.take_picture -> if (camera != null) {
                 if (GalleryCameraMediaManager.getInstance()?.isProgressing()!!) {
@@ -37,8 +37,8 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
                 GalleryCameraMediaManager.getInstance()?.setProgressing(true)
             }
             R.id.btnFlash -> if (camera != null) {
-                mCurrentFlash = (mCurrentFlash + 1) % FLASH_OPTIONS?.size!!
-                FLASH_ICONS?.get(mCurrentFlash)?.let { btnFlash?.setImageResource(it) }
+                mCurrentFlash = (mCurrentFlash + 1) % FLASH_OPTIONS.size
+                FLASH_ICONS.get(mCurrentFlash).let { btnFlash?.setImageResource(it) }
                 camera?.flash = FLASH_OPTIONS[mCurrentFlash]
             }
             R.id.btnSwitch -> if (camera != null) {
@@ -115,7 +115,7 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
         super.onBackPressed()
     }
 
-    val mCallback: CameraListener? = object : CameraListener() {
+    val mCallback: CameraListener = object : CameraListener() {
         override fun onPictureTaken(result: com.otaliastudios.cameraview.PictureResult) {
             super.onPictureTaken(result)
             val mData: ByteArray = result.data
@@ -135,11 +135,11 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
         }
     }
     companion object {
-        private val FLASH_OPTIONS: Array<Flash>? = arrayOf(
+        private val FLASH_OPTIONS: Array<Flash> = arrayOf(
                 Flash.AUTO,
                 Flash.OFF,
                 Flash.ON)
-        private val FLASH_ICONS: IntArray? = intArrayOf(
+        private val FLASH_ICONS: IntArray = intArrayOf(
                 R.drawable.ic_flash_auto,
                 R.drawable.ic_flash_off,
                 R.drawable.ic_flash_on)
