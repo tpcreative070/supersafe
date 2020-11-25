@@ -2,6 +2,9 @@ package co.tpcreative.supersafe.ui.help
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.model.HelpAndSupportModel
 import com.jaychang.srv.SimpleCell
@@ -30,12 +33,12 @@ class HelpAndSupportCell(item: HelpAndSupportModel) : SimpleCell<HelpAndSupportM
      */
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int, context: Context, o: Any?) {
         val data: HelpAndSupportModel = item
-        viewHolder.tvTitle?.text = data.title
+        viewHolder.tvTitle.text = data.title
         if (data.nummberName != null) {
-            viewHolder.tvPosition?.setText(data.nummberName)
-            viewHolder.imgIcon?.visibility = View.GONE
+            viewHolder.tvPosition.setText(data.nummberName)
+            viewHolder.imgIcon.visibility = View.GONE
         }
-        viewHolder.llHome?.setOnClickListener {
+        viewHolder.llHome.setOnClickListener {
             if (listener != null) {
                 listener?.onClickItem(i)
             }
@@ -48,10 +51,10 @@ class HelpAndSupportCell(item: HelpAndSupportModel) : SimpleCell<HelpAndSupportM
      * Define your view holder, which must extend SimpleViewHolder.
      */
     class ViewHolder(itemView: View) : SimpleViewHolder(itemView) {
-        val tvTitle = itemView.tvTitle
-        val imgIcon = itemView.imgIcon
-        val llHome = itemView.llHome
-        var tvPosition = itemView.tvPosition
+        val tvTitle: AppCompatTextView = itemView.tvTitle
+        val imgIcon: AppCompatImageView = itemView.imgIcon
+        val llHome: LinearLayout = itemView.llHome
+        var tvPosition: AppCompatTextView = itemView.tvPosition
     }
 
     interface ItemSelectedListener {

@@ -9,13 +9,16 @@ import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.HelpAndSupportModel
+import co.tpcreative.supersafe.model.ItemModel
+import co.tpcreative.supersafe.viewmodel.HelpAndSupportViewModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
-class HelpAndSupportAct : BaseActivity(), BaseView<EmptyModel>, HelpAndSupportCell.ItemSelectedListener {
-    var presenter: HelpAndSupportPresenter? = null
+class HelpAndSupportAct : BaseActivity(), HelpAndSupportCell.ItemSelectedListener {
+    lateinit var viewModel : HelpAndSupportViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_help_support)
@@ -28,6 +31,7 @@ class HelpAndSupportAct : BaseActivity(), BaseView<EmptyModel>, HelpAndSupportCe
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -53,27 +57,12 @@ class HelpAndSupportAct : BaseActivity(), BaseView<EmptyModel>, HelpAndSupportCe
         onFaceDown(isFaceDown)
     }
 
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun onError(message: String?) {}
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
-    override fun getContext(): Context? {
-        return this
-    }
-
-    override fun getActivity(): Activity? {
-        return this
-    }
-
     override fun onClickItem(position: Int) {
         Utils.Log(TAG, "position :$position")
-        presenter?.mList?.get(position)?.let { Navigator.onMoveHelpAndSupportContent(this, it) }
+        Navigator.onMoveHelpAndSupportContent(this, dataSource[position])
     }
 
+    val dataSource : MutableList<HelpAndSupportModel> = mutableListOf()
     companion object {
         private val TAG = HelpAndSupportAct::class.java.simpleName
     }

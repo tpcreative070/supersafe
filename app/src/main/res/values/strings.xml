@@ -263,6 +263,7 @@
     <string name="upgrade_to_recover">UPGRADE TO RECOVER</string>
     <string name="empty_trash">EMPTY TRASH</string>
     <string name="select_all">Select All</string>
+    <string name="send">Send</string>
     <string name="refresh">Refresh</string>
     <string name="key_restore">Restore</string>
     <string name="key_delete">Delete</string>

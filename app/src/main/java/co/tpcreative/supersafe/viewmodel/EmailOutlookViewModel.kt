@@ -14,10 +14,10 @@ import kotlinx.coroutines.withContext
 import java.util.HashMap
 
 class EmailOutlookViewModel(private val micService: MicService) : BaseViewModel<ItemModel>(){
-    suspend fun sendEmail(enumStatus : EnumStatus) : Resource<String>{
+    suspend fun sendEmail(enumStatus : EnumStatus, content: String? = null) : Resource<String>{
         return withContext(Dispatchers.IO){
             try {
-                val mMicRequest = getEmailContent(enumStatus)
+                val mMicRequest = getEmailContent(enumStatus,content)
                 val mResultSentEmail = micService.sendMail(mMicRequest)
                 when(mResultSentEmail.status){
                     Status.SUCCESS -> {
@@ -33,7 +33,7 @@ class EmailOutlookViewModel(private val micService: MicService) : BaseViewModel<
                                     val mResultAddedMailToken = micService.addEmailToken(getAddedEmailToken())
                                     when(mResultAddedMailToken.status){
                                         Status.SUCCESS ->{
-                                            val mSentEmail = micService.sendMail(getEmailContent(enumStatus))
+                                            val mSentEmail = micService.sendMail(getEmailContent(enumStatus,content))
                                             when(mSentEmail.status){
                                                 Status.SUCCESS ->{
                                                     mSentEmail
@@ -58,10 +58,14 @@ class EmailOutlookViewModel(private val micService: MicService) : BaseViewModel<
         }
     }
 
-    private fun getEmailContent(enumStatus: EnumStatus) : MicRequest {
+    private fun getEmailContent(enumStatus: EnumStatus,content : String?) : MicRequest {
         val mUser: User? = Utils.getUserInfo()
-        val mEmailToken =  mUser?.let { EmailToken.getInstance()?.convertObject(it, enumStatus) }
-        return MicRequest(Utils.getMicAccessToken()!!,mEmailToken!!)
+        content?.let {mContent ->
+            val mEmailToken =  mUser?.let { EmailToken.getInstance()?.convertTextObject(it, mContent) }
+            return MicRequest(Utils.getMicAccessToken()!!,mEmailToken!!)
+        }
+        val mEmailToken =  mUser?.let { EmailToken.getInstance()?.convertObject(it, enumStatus)}
+        return MicRequest(Utils.getMicAccessToken() ?: "",mEmailToken!!)
     }
 
     private fun getRefreshContent(request: EmailToken?) : MutableMap<String?,Any?>{

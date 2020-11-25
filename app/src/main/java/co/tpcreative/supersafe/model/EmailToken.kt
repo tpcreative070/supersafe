@@ -68,11 +68,11 @@ class EmailToken : java.io.Serializable {
         token.saveToSentItems = false
         val messages = co.tpcreative.supersafe.model.EmailToken.Message()
         val subject = String.format(SuperSafeApplication.Companion.getInstance().getString(R.string.support_help_title))
-        val result_content: String = kotlin.String.format(SuperSafeApplication.Companion.getInstance().getString(R.string.support_help_email), mUser.email, content)
+        val resultContent: String = kotlin.String.format(SuperSafeApplication.Companion.getInstance().getString(R.string.support_help_email), mUser.email, content)
         messages.subject = subject
         val body = co.tpcreative.supersafe.model.EmailToken.Body()
         body.contentType = "TEXT"
-        body.content = result_content
+        body.content = resultContent
         messages.body = body
         val emailAddress = EmailAddress()
         emailAddress.address = SuperSafeApplication.Companion.getInstance().getString(R.string.care_email)

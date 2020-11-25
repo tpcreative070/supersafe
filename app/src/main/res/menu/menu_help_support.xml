@@ -5,7 +5,7 @@
         android:id="@+id/menu_item_send"
         android:icon="@drawable/baseline_send_white_48"
         app:showAsAction="always"
-        android:title="@string/select_all"
+        android:title="@string/send"
         android:orderInCategory="100"/>
 
 </menu>

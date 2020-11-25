@@ -68,9 +68,11 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(FakePinComponentViewModel::class.java)){
             return FakePinComponentViewModel() as T
         }
-
         else if (modelClass.isAssignableFrom(MoveAlbumViewModel::class.java)){
             return MoveAlbumViewModel() as T
+        }
+        else if (modelClass.isAssignableFrom(HelpAndSupportViewModel::class.java)){
+            return HelpAndSupportViewModel(EmailOutlookViewModel(MicService())) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }
