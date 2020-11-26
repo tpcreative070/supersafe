@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.splashscreen
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -30,6 +31,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
     private var grant_access = false
     private var isRunning = false
     private val DELAY = 2000
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
@@ -61,7 +63,15 @@ class SplashScreenAct : BaseActivityNoneSlide() {
  versionRelease $versionRelease"""
         )
         SQLHelper.getList()
-        Utils.onWriteLog(Utils.deviceInfo(), EnumStatus.DEVICE_ABOUT)
+        var mCount = 0
+        SuperSafeApplication.getInstance().responseMigration = {
+            it?.let {
+                runOnUiThread {
+                    mCount +=1
+                    tvTotal.text  = "$it/$mCount"
+                }
+            }
+        }
         if(SuperSafeApplication.getInstance().isRequestMigration() && SuperSafeApplication.getInstance().isLiveMigration()){
             SingletonManagerProcessing.getInstance()?.onStartProgressing(this@SplashScreenAct,R.string.improving_storage_fies)
             CoroutineScope(Dispatchers.Main).launch {
@@ -69,7 +79,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                     SuperSafeApplication.getInstance().onPreparingMigration()
                 }
                 mPreparing.await()
-                SuperSafeApplication.getInstance().getSuperSafeOldPath()?.deleteDirectory()
+                SuperSafeApplication.getInstance().getSuperSafeOldPath().deleteDirectory()
                 onMessageEvent(EnumStatus.MIGRATION_DONE)
             }
         }else {
@@ -104,7 +114,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                 SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
                 PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
                 Navigator.onMoveToMainTab(this,false)
-                SuperSafeApplication.getInstance().getSuperSafeOldPath()?.deleteDirectory()
+                SuperSafeApplication.getInstance().getSuperSafeOldPath().deleteDirectory()
                 finish()
             }
             else -> Utils.Log(TAG,"Nothing")

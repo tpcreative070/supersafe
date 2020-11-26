@@ -345,10 +345,13 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             for (index in mMapMigrationItem){
                 val mValue = index.value
                 moveTo(mValue.mInput,mValue.mOutput)
+                responseMigration.invoke(mMapMigrationItem.size)
                 Utils.Log(TAG,"loop of index ${mValue.Id}")
             }
         }
     }
+
+    lateinit var responseMigration : (value : Int?) -> Unit
 
     private suspend fun moveTo(source: File, dest: File) = withContext(Dispatchers.IO){
         try {
