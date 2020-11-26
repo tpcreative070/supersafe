@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.splashscreen
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import androidx.core.content.ContextCompat
@@ -28,9 +27,8 @@ import org.greenrobot.eventbus.ThreadMode
 
 class SplashScreenAct : BaseActivityNoneSlide() {
     private var value: String? = ""
-    private var grant_access = false
+    private var grantAccess = false
     private var isRunning = false
-    private val DELAY = 2000
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,22 +46,13 @@ class SplashScreenAct : BaseActivityNoneSlide() {
             PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),0)
         }
         value = SuperSafeApplication.getInstance().readKey()
-        grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access), false)
+        grantAccess = PrefsController.getBoolean(getString(R.string.key_grant_access), false)
         isRunning = PrefsController.getBoolean(getString(R.string.key_running), false)
-        grant_access = SuperSafeApplication.getInstance().isGrantAccess()
+        grantAccess = SuperSafeApplication.getInstance().isGrantAccess()
         SuperSafeApplication.getInstance().initFolder()
         Utils.Log(TAG, "Key $value")
-        val manufacturer: String = Build.MANUFACTURER
-        val model: String = Build.MODEL
-        val version: Int = Build.VERSION.SDK_INT
-        val versionRelease: String = Build.VERSION.RELEASE
-        Utils.Log(TAG, """manufacturer $manufacturer 
- model $model 
- version $version 
- versionRelease $versionRelease"""
-        )
-        SQLHelper.getList()
         var mCount = 0
+        SQLHelper.getList()
         SuperSafeApplication.getInstance().responseMigration = {
             it?.let {
                 runOnUiThread {
@@ -83,7 +72,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                 onMessageEvent(EnumStatus.MIGRATION_DONE)
             }
         }else {
-            if (grant_access) {
+            if (grantAccess) {
                 if (isRunning) {
                     if ("" != value) {
                         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
