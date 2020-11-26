@@ -48,7 +48,7 @@ class PrivateFragment : BaseFragment(), PrivateAdapter.ItemSelectedListener, Sin
                 Navigator.onMoveTrash(activity!!)
             } else {
                 val mainCategories: MainCategoryModel = dataSource[position]
-                val pin: String? = mainCategories?.pin
+                val pin: String? = mainCategories.pin
                 isClicked = true
                 if (pin == "") {
                     Navigator.onMoveAlbumDetail(activity!!, mainCategories)

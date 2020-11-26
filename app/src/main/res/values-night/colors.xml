@@ -34,6 +34,7 @@
     <color name="dialogMaterialTitle">#FFF</color>
     <color name="dialogMaterialContent">#9E9E9E</color>
     <color name="dialogMaterialButton">#80000000</color>
+    <color name="background_player">@color/material_gray_theme</color>
 
     <color name="colorPrimary">#271261</color>
     <color name="colorPrimaryDark">#160542</color>

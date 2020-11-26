@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.google.android.exoplayer2.ui.PlayerView
-            app:shutter_background_color="@color/yellow_700"
+            app:shutter_background_color="@color/background_player"
             app:show_buffering="true"
             android:layout_alignParentBottom="true"
             android:id="@+id/playerView"

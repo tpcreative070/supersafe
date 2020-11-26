@@ -25,10 +25,11 @@ import kotlinx.android.synthetic.main.footer_layout.*
 import kotlinx.android.synthetic.main.include_calculator.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import me.grantland.widget.AutofitHelper
 
-fun EnterPinAct.initUI(){
+fun EnterPinAct.initUI() = CoroutineScope(Dispatchers.Main).launch{
     TAG = this::class.java.simpleName
     setupViewModel()
     setSupportActionBar(toolbar)
@@ -37,7 +38,7 @@ fun EnterPinAct.initUI(){
     EnterPinAct.mPinAction = EnumPinAction.values()[result]
     val resultNext: Int = intent.getIntExtra(EnterPinAct.EXTRA_ENUM_ACTION, 0)
     EnterPinAct.mPinActionNext = EnumPinAction.values()[resultNext]
-    SingletonScreenLock.getInstance()?.setListener(this)
+    SingletonScreenLock.getInstance()?.setListener(this@initUI)
     EnterPinAct.enumPinPreviousAction = EnterPinAct.mPinAction
     when (EnterPinAct.mPinAction) {
         EnumPinAction.SET -> {
@@ -104,16 +105,16 @@ fun EnterPinAct.initUI(){
     }
     onInitPin()
     /*Calculator init*/
-    EnterPinAct.mCalc = CalculatorImpl(this)
+    EnterPinAct.mCalc = CalculatorImpl(this@initUI)
     AutofitHelper.create(tvResult)
     AutofitHelper.create(tvFormula)
     Utils.Log(TAG, "onCreated->EnterPinActivity")
     llForgotPin.setOnClickListener {
-        Navigator.onMoveToForgotPin(this, false)
+        Navigator.onMoveToForgotPin(this@initUI, false)
     }
 
     btnDone.setOnClickListener {
-       Navigator.onMoveToFaceDown(this)
+       Navigator.onMoveToFaceDown(this@initUI)
     }
 
     btn_decimal.setOnClickListener {

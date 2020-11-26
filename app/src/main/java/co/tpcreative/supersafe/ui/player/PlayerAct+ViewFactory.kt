@@ -196,7 +196,7 @@ fun PlayerAct.getData(){
                         EnumFormatType.AUDIO -> {
                             animationPlayer?.startNotesFall()
                             animationPlayer?.visibility = View.VISIBLE
-                            playerView?.setBackgroundResource(R.color.yellow_700)
+                            playerView?.setBackgroundColor(ContextCompat.getColor(this@getData,R.color.background_player))
                             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                         }
                         EnumFormatType.VIDEO -> {

@@ -771,6 +771,7 @@
     <color name="grey_900">#212121</color>
     <color name="light_green_a700">#64dd17</color>
     <color name="yellow_700">#fbc02d</color>
+    <color name="background_player">#fbc02d</color>
     <color name="red_200">#f69988</color>
     <color name="black38">#60000000</color>
     <color name="teal_a700">#00bfa5</color>
