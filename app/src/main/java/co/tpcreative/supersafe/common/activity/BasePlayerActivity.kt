@@ -11,19 +11,16 @@ import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
-import com.snatik.storage.Storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 
 abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mHomeWatcher: HomeWatcher? = null
-    protected var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
     val mainScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        storage = Storage(this)
     }
 
     protected fun onFaceDown(isFaceDown: Boolean) {

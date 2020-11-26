@@ -35,20 +35,17 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
-import co.tpcreative.supersafe.common.extension.isFileExist
+import co.tpcreative.supersafe.common.encypt.SecurityUtil
+import co.tpcreative.supersafe.common.extension.*
+import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.helper.ThemeHelper
-import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.api.client.util.Base64
 import com.google.common.base.Charsets
 import com.google.gson.Gson
-import com.snatik.storage.Storage
-import com.snatik.storage.helpers.OnStorageListener
-import com.snatik.storage.helpers.SizeUnit
-import com.snatik.storage.security.SecurityUtil
 import com.tapadoo.alerter.Alerter
 import org.apache.commons.io.FilenameUtils
 import org.greenrobot.eventbus.EventBus
@@ -68,7 +65,6 @@ object Utils {
     var FORMAT_TIME_FILE_NAME: String? = "yyyyMMdd_HHmmss"
     const val COUNT_RATE = 9
     const val CODE_EXCEPTION = 1111
-    private val storage: Storage = Storage(SuperSafeApplication.getInstance())
     private val TAG = Utils::class.java.simpleName
     fun isValidEmail(target: CharSequence?): Boolean {
         return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target ?: "").matches()
@@ -102,9 +98,9 @@ object Utils {
         val newLine = System.getProperty("line.separator")
         return try {
             val root = File("$path_folder_name/$fileName")
-            val saved = storage.getSize(root, SizeUnit.MB)
+            val saved = root.getSize(SizeUnit.MB)
             if (saved >= 1) {
-                storage.deleteFile(root.absolutePath)
+                root.absolutePath.deleteFile()
             }
             if (!root.exists()) {
                 val parentFolder = File(path_folder_name ?: "")
@@ -225,26 +221,26 @@ object Utils {
     }
 
     fun onExportAndImportFile(input: String, output: String, ls: ServiceManager.ServiceManagerSyncDataListener) {
-        val storage = Storage(SuperSafeApplication.getInstance())
-        val mFile = storage.getFiles(input)
-        try {
-            for (index in mFile) {
-                if (storage.isFileExist(index.absolutePath)) {
-                    storage.createFile(File(output + index.name), File(index.absolutePath), object : OnStorageListener {
-                        override fun onSuccessful() {}
-                        override fun onFailed() {
-                            ls.onError()
-                        }
-                        override fun onSuccessful(path: String?) {}
-                        override fun onSuccessful(position: Int) {}
-                    })
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            ls.onCompleted()
-        }
+//        val storage = Storage(SuperSafeApplication.getInstance())
+//        val mFile = storage.getFiles(input)
+//        try {
+//            for (index in mFile) {
+//                if (storage.isFileExist(index.absolutePath)) {
+//                    storage.createFile(File(output + index.name), File(index.absolutePath), object : OnStorageListener {
+//                        override fun onSuccessful() {}
+//                        override fun onFailed() {
+//                            ls.onError()
+//                        }
+//                        override fun onSuccessful(path: String?) {}
+//                        override fun onSuccessful(position: Int) {}
+//                    })
+//                }
+//            }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        } finally {
+//            ls.onCompleted()
+//        }
     }
 
     // To animate view slide out from top to bottom
@@ -412,9 +408,9 @@ object Utils {
     private fun onCheck() {
         val file = File(SuperSafeApplication.getInstance().getFileLogs())
         if (file.exists()) {
-            val mSize = SuperSafeApplication.getInstance().getStorage()?.getSize(file, SizeUnit.MB)!!.toLong()
+            val mSize = file.getSize(SizeUnit.MB).toLong()
             if (mSize > 2) {
-                SuperSafeApplication.getInstance().getStorage()?.deleteFile(file.absolutePath)
+                file.absolutePath.deleteFile()
             }
         }
     }
@@ -486,7 +482,7 @@ object Utils {
             list.let {
                 if (it != null) {
                     for (i in it.indices) {
-                        SuperSafeApplication.getInstance().getStorage()?.deleteFile(it[i].absolutePath)
+                        it[i].absolutePath.deleteFile()
                     }
                 }
             }
@@ -793,21 +789,21 @@ object Utils {
     fun onDeleteItemFolder(item_id: String?) {
         val path: String = SuperSafeApplication.getInstance().getSuperSafePrivate() + item_id
         Log(TAG, "Delete folder $path")
-        SuperSafeApplication.getInstance().getStorage()!!.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + item_id)
+        (SuperSafeApplication.getInstance().getSuperSafePrivate() + item_id).deleteDirectory()
     }
 
     fun onDeleteFile(file_path: String?) {
-        SuperSafeApplication.getInstance().getStorage()!!.deleteFile(file_path)
+        file_path?.deleteFile()
     }
 
     /*Create folder*/
-    fun createDestinationDownloadItem(items_id: String?): String? {
-        val path: String? = SuperSafeApplication.getInstance().getSuperSafePrivate()
+    fun createDestinationDownloadItem(items_id: String?): String {
+        val path: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
         return "$path$items_id/"
     }
 
-    fun getOriginalPath(currentTime: String?, items_id: String?): String? {
-        val rootPath: String? = SuperSafeApplication.getInstance().getSuperSafePrivate()
+    fun getOriginalPath(currentTime: String?, items_id: String?): String {
+        val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
         val pathContent = "$rootPath$items_id/"
         createDirectory(pathContent)
         return pathContent + currentTime
@@ -839,7 +835,7 @@ object Utils {
 
     fun checkSaverToDelete(originalPath: String?, isOriginalGlobalId: Boolean) {
         if (getSaverSpace()) {
-            if (SuperSafeApplication.getInstance().getStorage()!!.isFileExist(originalPath)) {
+            if (originalPath?.isFileExist() == true) {
                 if (isOriginalGlobalId) {
                     onDeleteFile(originalPath)
                 }
@@ -881,17 +877,11 @@ object Utils {
     fun onScanFile(activity: Context, nameLogs: String?) {
         if (PermissionChecker.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED) {
             Log(TAG, "Granted permission....")
-            val storage: Storage? = SuperSafeApplication.getInstance().getStorage()
             val path = SuperSafeApplication.getInstance().getSuperSafe()
-            if (storage != null) {
-                val file = File(storage.externalStorageDirectory + "/" + nameLogs)
-                MediaScannerConnection.scanFile(activity, arrayOf(file.absolutePath), null, null)
-                MediaScannerConnection.scanFile(activity, arrayOf(storage.externalStorageDirectory), null, null)
-                storage.createFile(path + "/" + nameLogs, "")
-//                    val bm: Bitmap = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources, R.drawable.ic_drive_cloud)
-//                    saveImage(bm)
-//                    saveScanLog()
-            }
+            val file = File("".getExternalStorageDirectory() + "/" + nameLogs)
+            MediaScannerConnection.scanFile(activity, arrayOf(file.absolutePath), null, null)
+            MediaScannerConnection.scanFile(activity, arrayOf("".getExternalStorageDirectory()), null, null)
+            EncryptDecryptPinHelper.getInstance()?.createFile(path + "/" + nameLogs, "")
         } else {
             Log(TAG, "No permission")
         }
@@ -1087,7 +1077,7 @@ object Utils {
     }
 
     fun deleteFolderOfItemId(items_id: String) {
-        SuperSafeApplication.getInstance().getStorage()?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + items_id)
+        (SuperSafeApplication.getInstance().getSuperSafePrivate() + items_id).deleteDirectory()
     }
 
     fun isCameraAvailable(context: Context): Boolean {

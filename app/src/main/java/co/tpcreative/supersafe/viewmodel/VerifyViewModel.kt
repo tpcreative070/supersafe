@@ -131,7 +131,6 @@ open class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewM
             if (mData.premium != null) {
                 mUser.premium = mData.premium
             }
-            SuperSafeApplication.getInstance().writeUserSecret(mUser)
             Utils.setUserPreShare(mUser)
         }
     }

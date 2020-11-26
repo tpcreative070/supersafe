@@ -8,8 +8,8 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.extension.deleteDirectory
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
@@ -63,13 +63,13 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         SQLHelper.getList()
         Utils.onWriteLog(Utils.deviceInfo(), EnumStatus.DEVICE_ABOUT)
         if(SuperSafeApplication.getInstance().isRequestMigration() && SuperSafeApplication.getInstance().isLiveMigration()){
-            SingletonManagerProcessing.getInstance()?.onStartProgressing(this@SplashScreenAct,R.string.progressing)
+            SingletonManagerProcessing.getInstance()?.onStartProgressing(this@SplashScreenAct,R.string.improving_storage_fies)
             CoroutineScope(Dispatchers.Main).launch {
                 val mPreparing = async {
                     SuperSafeApplication.getInstance().onPreparingMigration()
                 }
                 mPreparing.await()
-                storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeOldPath())
+                SuperSafeApplication.getInstance().getSuperSafeOldPath()?.deleteDirectory()
                 onMessageEvent(EnumStatus.MIGRATION_DONE)
             }
         }else {
@@ -104,7 +104,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                 SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
                 PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
                 Navigator.onMoveToMainTab(this,false)
-                storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeOldPath())
+                SuperSafeApplication.getInstance().getSuperSafeOldPath()?.deleteDirectory()
                 finish()
             }
             else -> Utils.Log(TAG,"Nothing")

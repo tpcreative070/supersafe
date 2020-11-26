@@ -14,6 +14,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
@@ -28,7 +29,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
-import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.activity_album_detail.*
 import kotlinx.android.synthetic.main.activity_album_detail.backdrop
 import kotlinx.android.synthetic.main.activity_album_detail.collapsing_toolbar
@@ -47,8 +47,6 @@ fun AlbumDetailAct.initUI(){
     TAG = this::class.java.simpleName
     window.statusBarColor = Color.TRANSPARENT
     setupViewModel()
-    storage = Storage(this)
-    storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
     initSpeedDial(true)
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -465,7 +463,7 @@ suspend fun AlbumDetailAct.onBannerLoading() = withContext(Dispatchers.Main) {
                     }
                 }
                 else -> {
-                    if (storage?.isFileExist(items.getThumbnail())!!) {
+                    if (items.getThumbnail().isFileExist()) {
                         backdrop?.rotation = items.degrees.toFloat()
                         Glide.with(this@onBannerLoading.applicationContext)
                                 .load(items.getThumbnail().readFile())

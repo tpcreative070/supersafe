@@ -2,7 +2,6 @@ package co.tpcreative.supersafe.common.encypt
 import android.os.Build
 import android.util.Log
 import co.tpcreative.supersafe.common.util.Utils
-import com.snatik.storage.security.SecurityUtil
 import java.io.UnsupportedEncodingException
 import java.security.NoSuchAlgorithmException
 import java.security.spec.InvalidKeySpecException

@@ -1,9 +1,9 @@
 package co.tpcreative.supersafe.viewmodel
-import androidx.lifecycle.ViewModel
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
 import co.tpcreative.supersafe.common.api.requester.DriveService
 import co.tpcreative.supersafe.common.api.requester.ItemService
+import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
@@ -367,12 +367,12 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
     }
 
     private fun onGetFilePath(item : ItemModel) : File?{
-        val file: File? = if (item.isOriginalGlobalId) {
+        val file: File = if (item.isOriginalGlobalId) {
             File(item.getOriginal())
         } else {
             File(item.getThumbnail())
         }
-        if (!SuperSafeApplication.getInstance().getStorage()!!.isFileExist(file?.absolutePath)) {
+        if (!file.absolutePath.isFileExist()) {
             SQLHelper.deleteItem(item)
             return null
         }

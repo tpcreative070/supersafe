@@ -13,9 +13,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.model.AppLists
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
-import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.app_items.view.*
-import java.security.NoSuchAlgorithmException
 
 class AccountManagerAdapter(inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<AppLists, BaseHolder<AppLists>>(inflater) {
     var options: RequestOptions? = RequestOptions()
@@ -25,7 +23,6 @@ class AccountManagerAdapter(inflater: LayoutInflater, private val context: Conte
             .error(R.drawable.baseline_music_note_white_48)
             .priority(Priority.HIGH)
     private val itemSelectedListener: ItemSelectedListener?
-    private val storage: Storage?
     private val TAG = AccountManagerAdapter::class.java.simpleName
     override fun getItemCount(): Int {
         return mDataSource.size
@@ -71,7 +68,6 @@ class AccountManagerAdapter(inflater: LayoutInflater, private val context: Conte
     }
 
     init {
-        storage = Storage(context)
         this.itemSelectedListener = itemSelectedListener
     }
 }

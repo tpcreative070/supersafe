@@ -1,10 +1,10 @@
 package co.tpcreative.supersafe.common.network
 import co.tpcreative.supersafe.BuildConfig
+import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
-import com.snatik.storage.security.SecurityUtil
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
@@ -47,21 +47,15 @@ open class BaseDependencies {
     }
 
     private fun onAuthorToken(): String {
-        var authorization : String
+        var authorization = ""
         try {
-            var user: User? = Utils.getUserInfo()
+            val user: User? = Utils.getUserInfo()
             if (user != null) {
                 authorization = ""
                 user.author?.session_token?.let {
                     authorization = it
                 }
                 Utils.onWriteLog(authorization, EnumStatus.REQUEST_ACCESS_TOKEN)
-            } else {
-                user = SuperSafeApplication.getInstance().readUseSecret()
-                authorization = ""
-                user?.author?.session_token?.let {
-                    authorization = it
-                }
             }
             return authorization
         } catch (e: Exception) {

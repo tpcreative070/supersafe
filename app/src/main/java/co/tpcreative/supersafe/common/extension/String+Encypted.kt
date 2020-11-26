@@ -1,6 +1,6 @@
 package co.tpcreative.supersafe.common.extension
+import android.os.Environment
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import java.io.File
 
 fun String.readFile() : ByteArray?{
@@ -22,4 +22,16 @@ fun String.deleteFile(){
 
 fun String.deleteDirectory() : Boolean? {
     return EncryptDecryptFilesHelper.getInstance()?.deleteDirectory(this)
+}
+
+fun String.getExternalStorageDirectory(): String? {
+    return Environment.getExternalStorageDirectory().absolutePath
+}
+
+fun String.getExternalStorageDirectory(publicDirectory: String?): String? {
+    return Environment.getExternalStoragePublicDirectory(publicDirectory).absolutePath
+}
+
+fun String.isDirectoryExists(): Boolean {
+    return File(this).exists()
 }

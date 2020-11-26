@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonResetPin
+import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
@@ -18,7 +19,6 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.ResetPinViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
-import com.snatik.storage.security.SecurityUtil
 import kotlinx.android.synthetic.main.activity_reset_pin.*
 import kotlinx.android.synthetic.main.activity_reset_pin.btnSendRequest
 import kotlinx.android.synthetic.main.activity_reset_pin.edtCode

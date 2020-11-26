@@ -260,16 +260,6 @@ class MainTabAct : BaseGoogleApi(){
         } else {
             PremiumManager.getInstance().onStop()
             Utils.onDeleteTemporaryFile()
-            Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSuperSafeDataBaseFolder(), SuperSafeApplication.getInstance().getSuperSafeBackup(), object : ServiceManager.ServiceManagerSyncDataListener {
-                override fun onCompleted() {
-                    Utils.Log(TAG, "Exporting successful")
-                }
-                override fun onError() {
-                    Utils.Log(TAG, "Exporting error")
-                }
-                override fun onCancel() {}
-            })
-            SuperSafeApplication.getInstance().writeUserSecret(Utils.getUserInfo())
             val isPressed: Boolean = PrefsController.getBoolean(getString(R.string.we_are_a_team), false)
             if (isPressed) {
                 super.onBackPressed()

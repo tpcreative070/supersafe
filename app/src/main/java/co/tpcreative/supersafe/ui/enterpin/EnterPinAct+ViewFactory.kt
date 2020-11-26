@@ -207,25 +207,6 @@ fun EnterPinAct.initUI(){
     }
 }
 
-
-fun EnterPinAct.onRestore() {
-    Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSuperSafeBackup(), SuperSafeApplication.getInstance().getSuperSafeDataBaseFolder(), object : ServiceManager.ServiceManagerSyncDataListener {
-        override fun onCompleted() {
-            Utils.Log(TAG, "Exporting successful")
-            val mUser: User? = SuperSafeApplication.getInstance().readUseSecret()
-            if (mUser != null) {
-                Utils.setUserPreShare(mUser)
-                Navigator.onMoveToMainTab(this@onRestore,true)
-                changeStatus(EnumStatus.RESTORE, EnumPinAction.DONE)
-            }
-        }
-        override fun onError() {
-            Utils.Log(TAG, "Exporting error")
-        }
-        override fun onCancel() {}
-    })
-}
-
 fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(Dispatchers.Main).launch{
     when (EnterPinAct.mPinAction) {
         EnumPinAction.VERIFY -> {
@@ -564,17 +545,9 @@ fun EnterPinAct.setPin(pin: String?) {
                     if (Utils.isExistingFakePin(pin, mFakePin)) {
                         onAlertWarning(getString(R.string.pin_lock_replace))
                     } else {
-                        when (EnterPinAct.mPinActionNext) {
-                            EnumPinAction.RESTORE -> {
-                                Utils.writePinToSharedPreferences(pin)
-                                onRestore()
-                            }
-                            else -> {
-                                Utils.writePinToSharedPreferences(pin)
-                                Navigator.onMoveToMainTab(this,true)
-                                changeStatus(EnumStatus.RESET, EnumPinAction.DONE)
-                            }
-                        }
+                        Utils.writePinToSharedPreferences(pin)
+                        Navigator.onMoveToMainTab(this,true)
+                        changeStatus(EnumStatus.RESET, EnumPinAction.DONE)
                     }
                 } else {
                     onAlertWarning(getString(R.string.pinlock_tryagain))

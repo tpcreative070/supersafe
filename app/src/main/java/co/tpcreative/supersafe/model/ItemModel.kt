@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.model
+import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
@@ -341,7 +342,7 @@ class ItemModel : Serializable {
 
     /*Get dynamic path of thumbnail*/
     fun getThumbnail() : String{
-        if ((SuperSafeApplication.getInstance().getStorage()?.isFileExist(thumbnailPath)!!)){
+        if ((thumbnailPath?.isFileExist() == true)){
             return this.thumbnailPath!!
         }
         return SuperSafeApplication.getInstance().getSuperSafePrivate()+ "/"+ items_id +"/"+thumbnailName
@@ -353,7 +354,7 @@ class ItemModel : Serializable {
 
     /*Get dynamic path of original*/
     fun getOriginal() : String{
-        if ((SuperSafeApplication.getInstance().getStorage()?.isFileExist(originalPath)!!)){
+        if ((originalPath?.isFileExist() ==true)){
             return this.originalPath!!
         }
         return SuperSafeApplication.getInstance().getSuperSafePrivate()+ "/"+ items_id +"/"+originalName

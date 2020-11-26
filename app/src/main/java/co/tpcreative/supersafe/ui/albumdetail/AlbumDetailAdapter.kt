@@ -20,7 +20,6 @@ import co.tpcreative.supersafe.model.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
-import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.album_detail_item.view.*
 import kotlinx.android.synthetic.main.album_detail_item.view.imgAlbum
 import kotlinx.android.synthetic.main.album_detail_item.view.rlHome

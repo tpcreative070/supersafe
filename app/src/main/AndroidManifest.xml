@@ -17,6 +17,7 @@
         android:name=".common.services.SuperSafeApplication"
         android:largeHeap="true"
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -155,7 +156,6 @@
         <activity
             android:name=".ui.premium.PremiumAct"
             android:label="@string/premium" />
-        <activity android:name=".ui.restore.RestoreAct"/>
         <activity android:name=".ui.albumcover.AlbumCoverAct"/>
         <activity android:name=".ui.switchbasic.SwitchBasicAct"/>
         <!--Portrait model for special mode-->

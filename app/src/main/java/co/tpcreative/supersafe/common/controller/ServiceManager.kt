@@ -23,13 +23,13 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeService
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.util.SizeUnit
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.*
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.common.net.MediaType
 import com.google.gson.Gson
-import com.snatik.storage.helpers.SizeUnit
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.format
 import id.zelory.compressor.constraint.quality
@@ -581,11 +581,6 @@ class ServiceManager : BaseServiceView<Any?> {
             Status.SUCCESS -> Utils.Log(TAG,"Get User info completed")
             else -> Utils.Log(TAG,mResult.message)
         }
-    }
-
-    /*Update user token*/
-    fun onUpdatedUserToken() {
-        updatedUserToken()
     }
 
     /*--------------Camera action-----------------*/

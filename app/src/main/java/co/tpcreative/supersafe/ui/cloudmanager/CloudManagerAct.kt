@@ -6,12 +6,10 @@ import android.widget.CompoundButton
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
-import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.CloudManagerViewModel
-import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.activity_cloud_manager.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -22,7 +20,6 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
     var isPauseCloudSync = true
     var isDownload = false
     var isSpaceSaver = false
-    var storage: Storage? = null
     var isRefresh = false
     lateinit var viewModel : CloudManagerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -8,18 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
-import com.snatik.storage.Storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 
 abstract class BaseActivityNone : AppCompatActivity() {
-    protected open var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
     val mainScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }

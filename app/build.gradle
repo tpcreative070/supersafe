@@ -136,7 +136,6 @@ dependencies {
     implementation project(':library-progress')
 
     /*Android Storage*/
-    implementation project(':storage')
 
     /*PhotoView*/
     implementation project(':photoview')

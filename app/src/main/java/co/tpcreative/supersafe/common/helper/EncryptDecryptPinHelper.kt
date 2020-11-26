@@ -6,7 +6,6 @@ import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.util.ImmutablePair
 import co.tpcreative.supersafe.common.util.SizeUnit
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.User
 import java.io.*
 import java.util.*
 import javax.crypto.Cipher
@@ -14,31 +13,22 @@ import javax.crypto.CipherOutputStream
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-class EncryptDecryptFilesHelper {
-    private fun getSecretKey(): String? {
-        val user: User? = Utils.getUserInfo()
-        if (user != null) {
-            if (user._id != null) {
-                Utils.Log(TAG, "Get secret key " + user._id)
-               return user._id
-            }
-            Utils.Log(TAG, "secret id is null")
-        } else {
-            Utils.Log(TAG, "Get secret key null")
-        }
-        return SecurityUtil.SECRET_KEY
+class EncryptDecryptPinHelper {
+
+    fun createFile(path: String?, content: String?): Boolean {
+        return createFile(path, content?.toByteArray())
+    }
+    fun readTextFile(path: String?): String? {
+        val bytes = readFile(path)
+        return String(bytes!!)
     }
 
+
     private fun getConfigurationFile(): EncryptConfiguration? {
-        getSecretKey()?.let {
-            configurationFile = EncryptConfiguration.Builder()
-                    .setChuckSize(1024 * 2)
-                    .setEncryptContent(SecurityUtil.IVX, it, SecurityUtil.SALT)
-                    .build()
-            Utils.Log(TAG, "config files")
-            return configurationFile
-        }
-        Utils.Log(TAG, "config files")
+        configurationFile = EncryptConfiguration.Builder()
+                .setChuckSize(1024 * 2)
+                .setEncryptContent(SecurityUtil.IVX, SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
+                .build()
         return configurationFile
     }
 
@@ -108,7 +98,7 @@ class EncryptDecryptFilesHelper {
         return true
     }
 
-    fun createFileByteDataNoEncrypt(context: Context, data: ByteArray?)  : File{
+    fun createFileByteDataNoEncrypt(context: Context, data: ByteArray?)  : File {
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                 "picture.jpg")
         var os: OutputStream? = null
@@ -292,13 +282,13 @@ class EncryptDecryptFilesHelper {
     }
 
     companion object {
-        private var instance: EncryptDecryptFilesHelper? = null
-        private val TAG = EncryptDecryptFilesHelper::class.java.simpleName
+        private var instance: EncryptDecryptPinHelper? = null
+        private val TAG = EncryptDecryptPinHelper::class.java.simpleName
         private var mCipher: Cipher? = null
         var configurationFile : EncryptConfiguration? = null
-        fun getInstance(): EncryptDecryptFilesHelper? {
+        fun getInstance(): EncryptDecryptPinHelper? {
             if (instance == null) {
-                instance = EncryptDecryptFilesHelper()
+                instance = EncryptDecryptPinHelper()
             }
             return instance
         }

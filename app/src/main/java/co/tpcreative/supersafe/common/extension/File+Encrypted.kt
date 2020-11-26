@@ -1,6 +1,6 @@
 package co.tpcreative.supersafe.common.extension
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
-import com.snatik.storage.helpers.SizeUnit
+import co.tpcreative.supersafe.common.util.SizeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File

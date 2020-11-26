@@ -30,7 +30,6 @@ import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowAct
 import co.tpcreative.supersafe.ui.player.PlayerAct
 import co.tpcreative.supersafe.ui.premium.PremiumAct
 import co.tpcreative.supersafe.ui.resetpin.ResetPinAct
-import co.tpcreative.supersafe.ui.restore.RestoreAct
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorAct
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpAct
 import co.tpcreative.supersafe.ui.settings.SettingsAct
@@ -331,10 +330,6 @@ object Navigator {
         context.startActivity(intent)
     }
 
-    fun onMoveRestore(context: Context) {
-        val intent = Intent(context, RestoreAct::class.java)
-        context.startActivity(intent)
-    }
 
     fun onMoveAlbumCover(context: Activity, categories: MainCategoryModel) {
         val intent = Intent(context, AlbumCoverAct::class.java)

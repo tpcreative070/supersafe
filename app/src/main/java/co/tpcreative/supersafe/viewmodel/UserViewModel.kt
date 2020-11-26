@@ -5,6 +5,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.requester.MicService
 import co.tpcreative.supersafe.common.api.requester.UserService
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.getString
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
@@ -15,7 +16,6 @@ import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import com.snatik.storage.security.SecurityUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
