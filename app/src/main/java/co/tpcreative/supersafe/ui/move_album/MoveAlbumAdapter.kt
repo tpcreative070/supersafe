@@ -101,7 +101,7 @@ class MoveAlbumAdapter(inflater: LayoutInflater, private val mContext: Context?,
             val photos = String.format(mContext!!.getString(R.string.photos_default), "" + this.data?.photos)
             val videos = String.format(mContext.getString(R.string.videos_default), "" + this.data?.videos)
             val audios = String.format(mContext.getString(R.string.audios_default), "" + this.data?.audios)
-            val others = String.format(mContext.getString(R.string.others_default), "" + this.data?.audios)
+            val others = String.format(mContext.getString(R.string.others_default), "" + this.data?.others)
             tvPhotos.text = photos
             tvVideos.text = videos
             tvAudios.text = audios
