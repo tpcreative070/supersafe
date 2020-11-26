@@ -35,6 +35,7 @@ open class ResponseHandler {
                         val mDriveObject = mMessage?.toObjectMayBeNull(DriveAbout::class.java)
                         mDriveObject?.let {
                             Utils.setDriveConnect(false)
+                            ServiceManager.getInstance()?.updatedDriveAccessToken()
                         }
                         Resource.error(mCode!!,mMessage ?: "Unknown", null)
                     }

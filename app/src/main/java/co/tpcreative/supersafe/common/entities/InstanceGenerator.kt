@@ -4,16 +4,13 @@ import androidx.room.Database
 import androidx.room.Ignore
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.entities.ItemsDao
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.BreakInAlertsEntityModel
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ItemEntityModel
 import co.tpcreative.supersafe.model.MainCategoryEntityModel
-import com.google.gson.Gson
 import java.util.*
 
 @Database(entities = [ItemEntity::class, MainCategoryEntity::class, BreakInAlertsEntity::class], version = 6, exportSchema = false)
@@ -807,7 +804,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             if (instance == null) {
                 instance = Room.databaseBuilder(SuperSafeApplication.getInstance(),
                         InstanceGenerator::class.java, SuperSafeApplication.getInstance().getString(R.string.key_database))
-                        .addMigrations(SuperSafeApplication.getInstance().MIGRATION_4_5,SuperSafeApplication.getInstance().MIGRATION_5_6)
+                        .addMigrations(SuperSafeApplication.getInstance().oldVersion,SuperSafeApplication.getInstance().migrationTo)
                         .allowMainThreadQueries()
                         .build()
             }

@@ -248,6 +248,10 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
 
+    fun updatedDriveAccessToken() = CoroutineScope(Dispatchers.IO).launch {
+        RefreshTokenSingleton.getInstance().onStart(ServiceManager::class.java)
+    }
+
     fun updatedUserToken() = CoroutineScope(Dispatchers.IO).launch{
         isRequestingUpdateUserToken = true
         val mResult = userViewModel.updatedUserToken()

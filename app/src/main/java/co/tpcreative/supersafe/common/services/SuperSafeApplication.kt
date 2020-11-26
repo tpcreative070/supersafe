@@ -8,7 +8,7 @@ import android.content.ContextWrapper
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.Settings
+import android.provider.Settings.Secure.ANDROID_ID
 import androidx.core.content.PermissionChecker
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
@@ -45,7 +45,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     private lateinit var superSafeShare: String
     private lateinit var superSafePicture: String
     private var key: String? = null
-    private var fake_key: String? = null
+    private var fakeKey: String? = null
     private lateinit var options: GoogleSignInOptions.Builder
     private lateinit var requiredScopesString: MutableList<String>
     private var isLive = false
@@ -80,7 +80,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         }
 
         key = ".encrypt_key"
-        fake_key = ".encrypt_fake_key"
+        fakeKey = ".encrypt_fake_key"
         superSafePrivate = superSafe + "private/"
         superSafeLog = superSafe + "log/"
         superSafeBreakInAlerts = superSafe + "break_in_alerts/"
@@ -150,11 +150,11 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
 
     override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
     override fun onActivityDestroyed(activity: Activity) {}
-    fun getSuperSafe(): String? {
+    fun getSuperSafe(): String {
         return superSafe
     }
 
-    fun getSuperSafeOldPath(): String? {
+    fun getSuperSafeOldPath(): String {
         return superSafeOldPath
     }
 
@@ -234,7 +234,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             Utils.Log(TAG, "Please grant access permission")
             return
         }
-        EncryptDecryptPinHelper.getInstance()?.createFile(getSuperSafe() + fake_key, value)
+        EncryptDecryptPinHelper.getInstance()?.createFile(getSuperSafe() + fakeKey, value)
         Utils.Log(TAG, "Created key :$value")
     }
 
@@ -243,9 +243,9 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             Utils.Log(TAG, "Please grant access permission")
             return ""
         }
-        val isFile = (getSuperSafe() + fake_key).isFileExist()
+        val isFile = (getSuperSafe() + fakeKey).isFileExist()
         if (isFile) {
-            val value = EncryptDecryptPinHelper.getInstance()?.readTextFile(getSuperSafe() + fake_key)
+            val value = EncryptDecryptPinHelper.getInstance()?.readTextFile(getSuperSafe() + fakeKey)
             Utils.Log(TAG, "Key value is : $value")
             return value
         }
@@ -275,8 +275,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         return url
     }
 
-    fun getDeviceId(): String? {
-        return Settings.Secure.getString(applicationContext.contentResolver, Settings.Secure.ANDROID_ID)
+    fun getDeviceId(): String {
+        return ANDROID_ID
     }
 
     fun getManufacturer(): String? {
@@ -299,10 +299,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         return BuildConfig.APPLICATION_ID
     }
 
-    fun getAppVersionRelease(): String {
-        return BuildConfig.VERSION_NAME
-    }
-
     companion object {
         private val TAG = SuperSafeApplication::class.java.simpleName
         private var resumed = 0
@@ -320,13 +316,13 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         }
     }
 
-    val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+    val oldVersion: Migration = object : Migration(4, 5) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isUpdate' INTEGER NOT NULL DEFAULT 0")
         }
     }
 
-    val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+    val migrationTo: Migration = object : Migration(5, 6) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isRequestChecking' INTEGER NOT NULL DEFAULT 0")
         }
@@ -334,7 +330,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
 
     suspend fun onPreparingMigration() = withContext(Dispatchers.IO) {
         mMapMigrationItem.clear()
-        File(getSuperSafeOldPath()!!).walkTopDown().forEach {
+        File(getSuperSafeOldPath()).walkTopDown().forEach {
             val mResult = it.absolutePath.replace(superSafeOldPath, superSafe)
             if (it.isFile) {
                 val mUniqueId = UUID.randomUUID().toString()
@@ -384,7 +380,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isRequestMigration(): Boolean {
-        File(getSuperSafeOldPath()!!).walkTopDown().forEach {
+        File(getSuperSafeOldPath()).walkTopDown().forEach {
             if (it.isFile) {
                 return true
             }
@@ -393,7 +389,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isLiveMigration(): Boolean {
-        return true
+        return false
     }
 
     fun isDebugPremium(): Boolean {
