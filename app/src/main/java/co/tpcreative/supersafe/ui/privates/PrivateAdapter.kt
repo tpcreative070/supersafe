@@ -133,7 +133,6 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?,pri
                 }
             }
             tvTitle.text = data.categories_name
-            Utils.Log(TAG,"Category name "+ data.categories_name)
             mPosition = position
             itemView.rlHome.setOnClickListener {
                 Utils.Log(TAG, "Position $mPosition")
