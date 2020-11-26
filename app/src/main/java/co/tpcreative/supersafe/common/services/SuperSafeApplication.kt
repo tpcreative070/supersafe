@@ -8,6 +8,7 @@ import android.content.ContextWrapper
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.provider.Settings.Secure.ANDROID_ID
 import androidx.core.content.PermissionChecker
 import androidx.multidex.MultiDex
@@ -276,7 +277,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun getDeviceId(): String {
-        return ANDROID_ID
+        val id: String? = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        return id ?: "${System.currentTimeMillis()}"
     }
 
     fun getManufacturer(): String? {
@@ -389,7 +391,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isLiveMigration(): Boolean {
-        return false
+        return true
     }
 
     fun isDebugPremium(): Boolean {
