@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.provider.Settings.Secure.ANDROID_ID
 import androidx.core.content.PermissionChecker
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
