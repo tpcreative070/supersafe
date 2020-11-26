@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:fitsSystemWindows="true">
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
+            android:background="?attr/colorPrimary"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -83,7 +84,7 @@
             android:layout_height="wrap_content">
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgView"
-                android:tint="?attr/colorPrimaryDark"
+                android:tint="?attr/colorAccent"
                 android:src="@drawable/baseline_remove_red_eye_white_48"
                 android:layout_width="@dimen/image_size_custom_40"
                 android:layout_height="@dimen/image_size_custom_40"/>

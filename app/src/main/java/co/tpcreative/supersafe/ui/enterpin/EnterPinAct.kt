@@ -319,6 +319,12 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
             EnumPinAction.VERIFY_TO_CHANGE -> {
                 super.onBackPressed()
             }
+            EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
+                super.onBackPressed()
+            }
+            EnumPinAction.FAKE_PIN ->{
+                super.onBackPressed()
+            }
             else -> {
                 Utils.Log(TAG,"Waiting...")
                 Utils.Log(TAG, "Nothing ${mPinAction?.name}")

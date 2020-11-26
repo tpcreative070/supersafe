@@ -20,6 +20,7 @@ import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
+import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.instantiate
 import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.util.Utils
@@ -85,6 +86,8 @@ class SettingsAct : BaseActivity() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
+        /*Checking change style mode*/
+        ServiceManager.getInstance()?.onStartService()
     }
 
     override fun onStopListenerAWhile() {

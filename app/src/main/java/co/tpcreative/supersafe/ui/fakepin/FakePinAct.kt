@@ -57,7 +57,7 @@ class FakePinAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
         val mThemeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         PrefsController.putBoolean(getString(R.string.key_fake_pin), b)
         if (b) {
-            tvCreatePin?.setTextColor(ContextCompat.getColor(this,mThemeApp?.getPrimaryColor()!!))
+            tvCreatePin?.setTextColor(ContextCompat.getColor(this,mThemeApp?.getAccentColor()!!))
             tvCreatePin?.isEnabled = b
         } else {
             tvCreatePin?.setTextColor(ContextCompat.getColor(this,R.color.material_gray_500))

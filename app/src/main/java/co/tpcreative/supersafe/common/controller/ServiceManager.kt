@@ -558,6 +558,8 @@ class ServiceManager : BaseServiceView<Any?> {
         if (myService == null) {
             doBindService()
             Utils.Log(TAG, "start services now")
+        }else{
+            Utils.Log(TAG,"Service already started")
         }
     }
 
