@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import co.tpcreative.supersafe.R
@@ -12,9 +14,7 @@ import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
 import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.extension.readFile
-import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import com.bumptech.glide.Glide
@@ -63,7 +63,7 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder<ItemModel> {
         if (viewType==VIEW_TYPE_SMALL){
-            return ItemHolderVerical(inflater!!.inflate(R.layout.custom_item_verical, parent, false))
+            return ItemHolderVertical(inflater!!.inflate(R.layout.custom_item_verical, parent, false))
         }
         return ItemHolder(inflater!!.inflate(R.layout.album_detail_item, parent, false))
     }
@@ -180,10 +180,11 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
         }
     }
 
-    inner class ItemHolderVerical(itemView: View) : BaseHolder<ItemModel>(itemView) {
-        val imgAlbum = itemView.imgAlbumV
-        val tvTitle = itemView.tvTitleV
-        val tvSizeCreatedDate = itemView.tvSizeCreatedDateV
+    inner class ItemHolderVertical(itemView: View) : BaseHolder<ItemModel>(itemView) {
+        val imgAlbum: AppCompatImageView = itemView.imgAlbumV
+        val tvTitle: AppCompatTextView = itemView.tvTitleV
+        val tvSizeCreatedDate: AppCompatTextView = itemView.tvSizeCreatedDateV
+        val imgIcon : AppCompatImageView = itemView.imgIcon
         var alpha = itemView.view_alphaV
         var mPosition = 0
         @SuppressLint("SetTextI18n")
@@ -197,36 +198,42 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
                 alpha?.alpha = 0.0f
             }
             try {
-                val path: String? = data.getThumbnail()
+                val path: String = data.getThumbnail()
                 val formatTypeFile = EnumFormatType.values()[data.formatType]
-                tvTitle?.text = data.titleView
-                tvSizeCreatedDate?.text = data.createdDateTimeView
+                tvTitle.text = data.titleView
+                tvSizeCreatedDate.text = data.createdDateTimeView
                 when (formatTypeFile) {
                     EnumFormatType.AUDIO -> {
                         Glide.with(context!!)
                                 .load(note1)
-                                .apply(options!!).into(imgAlbum!!)
+                                .apply(options!!).into(imgAlbum)
+                        imgIcon.background = ContextCompat.getDrawable(context,R.drawable.baseline_music_note_white_48)
+                        imgIcon.visibility = View.VISIBLE
                     }
                     EnumFormatType.VIDEO -> {
-                        if (path?.isFileExist()!!) {
-                            imgAlbum?.rotation = data.degrees.toFloat()
+                        if (path.isFileExist()) {
+                            imgAlbum.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
                                     .load(path.readFile())
-                                    .apply(options!!).into(imgAlbum!!)
+                                    .apply(options!!).into(imgAlbum)
                         }
+                        imgIcon.visibility = View.INVISIBLE
                     }
                     EnumFormatType.IMAGE -> {
-                        if (path?.isFileExist()!!) {
-                            imgAlbum?.rotation = data.degrees.toFloat()
+                        if (path.isFileExist()) {
+                            imgAlbum.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
                                     .load(path.readFile())
-                                    .apply(options!!).into(imgAlbum!!)
+                                    .apply(options!!).into(imgAlbum)
                         }
+                        imgIcon.visibility = View.INVISIBLE
                     }
                     EnumFormatType.FILES -> {
                         Glide.with(context!!)
                                 .load(note1)
-                                .apply(options!!).into(imgAlbum!!)
+                                .apply(options!!).into(imgAlbum)
+                        imgIcon.background = ContextCompat.getDrawable(context,R.drawable.baseline_insert_drive_file_white_48)
+                        imgIcon.visibility = View.VISIBLE
                     }
                 }
             } catch (e: Exception) {

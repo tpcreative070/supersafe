@@ -10,10 +10,20 @@
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imgAlbumV"
-            android:layout_width="@dimen/icon_size_50"
-            android:layout_height="@dimen/icon_size_50"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgAlbumV"
+                android:layout_width="@dimen/icon_size_50"
+                android:layout_height="@dimen/icon_size_50"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_centerInParent="true"
+                android:id="@+id/imgIcon"
+                android:layout_width="@dimen/icon_size_20"
+                android:layout_height="@dimen/icon_size_20"/>
+        </RelativeLayout>
+
         <LinearLayout
             android:paddingStart="10dp"
             android:paddingEnd="10dp"

@@ -49,6 +49,7 @@
     <dimen name="log_size">90dp</dimen>
     <dimen name="icon_size">20dp</dimen>
     <dimen name="icon_size_15">15dp</dimen>
+    <dimen name="icon_size_20">20dp</dimen>
     <dimen name="icon_size_30">30dp</dimen>
     <dimen name="icon_size_40">40dp</dimen>
     <dimen name="icon_size_50">50dp</dimen>
