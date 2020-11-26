@@ -45,16 +45,16 @@ fun TrashAct.initUI(){
     })
 
     viewModel.photos.observe(this, Observer {
-        tv_Photos.text = kotlin.String.format(getString(R.string.photos_default), "$it")
+        tv_Photos.text = String.format(getString(R.string.photos_default), "$it")
     })
     viewModel.videos.observe(this, Observer {
-        tv_Videos.text = kotlin.String.format(getString(R.string.videos_default), "$it")
+        tv_Videos.text = String.format(getString(R.string.videos_default), "$it")
     })
     viewModel.audios.observe(this, Observer {
-        tv_Audios.text = kotlin.String.format(getString(R.string.audios_default), "$it")
+        tv_Audios.text = String.format(getString(R.string.audios_default), "$it")
     })
     viewModel.others.observe(this, Observer {
-        tv_Others.text = kotlin.String.format(getString(R.string.others_default), "$it")
+        tv_Others.text = String.format(getString(R.string.others_default), "$it")
     })
 
     viewModel.count.observe(this, Observer {

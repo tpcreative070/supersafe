@@ -66,7 +66,7 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener{
     }
 
     /*Detecting textWatch*/
-    val mTextWatcher: TextWatcher? = object : TextWatcher {
+    val mTextWatcher: TextWatcher = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             viewModel.email = s.toString()
         }

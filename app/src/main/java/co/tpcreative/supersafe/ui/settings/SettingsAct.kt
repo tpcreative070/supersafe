@@ -169,9 +169,9 @@ class SettingsAct : BaseActivity() {
                 if (preference is Preference) {
                     if (preference.key == getString(R.string.key_account)) {
                         Utils.Log(TAG, "value : ")
-                        Navigator.onManagerAccount(getContext()!!)
+                        Navigator.onManagerAccount(context!!)
                     } else if (preference.key == getString(R.string.key_lock_screen)) {
-                        Navigator.onMoveToChangePin(getContext()!!, EnumPinAction.NONE)
+                        Navigator.onMoveToChangePin(context!!, EnumPinAction.NONE)
                         Utils.Log(TAG, "Action here")
                     } else if (preference.key == getString(R.string.key_theme)) {
                         if (!Utils.isPremium()) {

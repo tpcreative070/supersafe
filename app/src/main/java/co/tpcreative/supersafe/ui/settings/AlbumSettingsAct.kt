@@ -156,7 +156,7 @@ class AlbumSettingsAct : BaseActivity(){
                                 }
                                 else -> {
                                     try {
-                                        if (items.getThumbnail().isFileExist()!!) {
+                                        if (items.getThumbnail().isFileExist()) {
                                             mAlbumCover?.imageViewCover?.rotation = items.degrees.toFloat()
                                             Glide.with(context!!)
                                                     .load(items.getThumbnail().readFile())

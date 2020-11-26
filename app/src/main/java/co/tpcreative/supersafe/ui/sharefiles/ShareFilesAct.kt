@@ -13,7 +13,6 @@ import co.tpcreative.supersafe.viewmodel.ShareFilesViewModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
 
 class ShareFilesAct : BaseActivityNone() {
     var dialog: AlertDialog? = null

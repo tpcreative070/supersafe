@@ -39,13 +39,13 @@ fun UnlockAllAlbumAct.initUI(){
     btnUnlock.setOnClickListener {
         Utils.Log(TAG, "Action")
         if (isNext) {
-            btnUnlock?.setText("")
+            btnUnlock?.text = ""
             verifyCode()
         }
     }
     btnSendRequest.setOnClickListener {
         btnSendRequest?.isEnabled = false
-        btnSendRequest?.setText("")
+        btnSendRequest?.text = ""
         if (Utils.getUserId() != null) {
             resendCode()
         } else {
@@ -103,7 +103,7 @@ fun UnlockAllAlbumAct.initUI(){
 
     viewModel.errorResponseMessage.observe(this,{mResult ->
         mResult?.let {
-            edtCode.error = it.get(EnumValidationKey.EDIT_TEXT_CODE.name)
+            edtCode.error = it[EnumValidationKey.EDIT_TEXT_CODE.name]
             if (it.values.isEmpty()){
                 btnUnlock?.setBackgroundResource(R.drawable.bg_button_rounded)
                 btnUnlock?.setTextColor(ContextCompat.getColor(this,R.color.white))

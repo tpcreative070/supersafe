@@ -32,6 +32,7 @@ class UnlockAllAlbumAct : BaseActivity(), TextView.OnEditorActionListener {
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -57,7 +58,7 @@ class UnlockAllAlbumAct : BaseActivity(), TextView.OnEditorActionListener {
         onFaceDown(isFaceDown)
     }
 
-    val mTextWatcher: TextWatcher? = object : TextWatcher {
+    val mTextWatcher: TextWatcher = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             viewModel.code = s.toString()
         }

@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.activity_player.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -24,7 +23,6 @@ class PlayerAct : BasePlayerActivity(), PlayerAdapter.ItemSelectedListener {
     var mCipher: Cipher? = null
     var mSecretKeySpec: SecretKeySpec? = null
     var mIvParameterSpec: IvParameterSpec? = null
-    var mEncryptedFile: File? = null
     var player: SimpleExoPlayer? = null
     var adapter: PlayerAdapter? = null
     var lastWindowIndex = 0

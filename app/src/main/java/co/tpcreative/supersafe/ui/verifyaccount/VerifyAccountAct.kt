@@ -89,7 +89,7 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener {
     }
 
     /*Detecting textWatch*/
-    val mTextWatcher: TextWatcher? = object : TextWatcher {
+    val mTextWatcher: TextWatcher = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val value = s.toString().trim { it <= ' ' }
             if (currentFocus === edtEmail) {

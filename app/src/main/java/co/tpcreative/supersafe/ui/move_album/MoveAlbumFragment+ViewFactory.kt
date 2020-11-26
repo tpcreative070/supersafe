@@ -125,7 +125,7 @@ fun MoveAlbumFragment.dp2px(dp: Float): Int {
 }
 
 fun MoveAlbumFragment.getGallerWidth(container: ViewGroup?): Int {
-    return Utils.getScreenWidth(activity!!) - (container?.paddingLeft!! - container?.paddingRight)
+    return Utils.getScreenWidth(activity!!) - (container?.paddingLeft!! - container.paddingRight)
 }
 
 fun MoveAlbumFragment.moveAlbum(position : Int){

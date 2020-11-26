@@ -49,7 +49,7 @@ fun SignUpAct.initUI(){
 
     viewModel.errorResponseMessage.observe(this,{mResult ->
         mResult?.let {
-            edtEmail.error = it.get(EnumValidationKey.EDIT_TEXT_EMAIL.name)
+            edtEmail.error = it[EnumValidationKey.EDIT_TEXT_EMAIL.name]
             if (it.values.isEmpty()){
                 btnFinish?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
                 btnFinish?.setTextColor(ContextCompat.getColor(this,R.color.white))

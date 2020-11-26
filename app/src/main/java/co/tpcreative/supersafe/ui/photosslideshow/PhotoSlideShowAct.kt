@@ -146,17 +146,14 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
     override fun getListItems(): MutableList<ItemModel>? {
         try {
             val list: MutableList<ItemModel> = ArrayList<ItemModel>()
-            val item: ItemModel? = dataSource[position]
-            if (item != null) {
-                item.isChecked = true
-                list.add(item)
-                return list
-            }
-            onBackPressed()
-            return null
+            val item: ItemModel = dataSource[position]
+            item.isChecked = true
+            list.add(item)
+            return list
         } catch (e: Exception) {
             onBackPressed()
         }
+        onBackPressed()
         return null
     }
 
@@ -180,8 +177,8 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
             val myView: View = inflater.inflate(R.layout.content_view, null)
             photoView = myView.findViewById(R.id.imgPhoto)
             val imgPlayer = myView.findViewById<ImageView?>(R.id.imgPlayer)
-            val mItems: ItemModel? = dataSource[position]
-            val enumTypeFile = EnumFormatType.values()[mItems!!.formatType]
+            val mItems: ItemModel = dataSource[position]
+            val enumTypeFile = EnumFormatType.values()[mItems.formatType]
             photoView?.setOnPhotoTapListener { view, x, y ->
                 Utils.Log(TAG, "on Clicked")
                 onStopSlider()
@@ -195,23 +192,23 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
                 }
             })
             try {
-                val path: String? = mItems.getThumbnail()
+                val path: String = mItems.getThumbnail()
                 val file = File("" + path)
                 if (file.exists() || file.isFile) {
                     photoView?.rotation = mItems.degrees.toFloat()
                     if (mItems.mimeType == getString(R.string.key_gif)) {
-                        val mOriginal: String? = mItems.getOriginal()
+                        val mOriginal: String = mItems.getOriginal()
                         val mFileOriginal = File("" + mOriginal)
                         if (mFileOriginal.exists() || mFileOriginal.isFile) {
                             Glide.with(context!!)
                                     .asGif()
-                                    .load(mOriginal?.readFile())
+                                    .load(mOriginal.readFile())
                                     .apply(options)
                                     .into(photoView!!)
                         }
                     } else {
                         Glide.with(context!!)
-                                .load(path?.readFile())
+                                .load(path.readFile())
                                 .apply(options)
                                 .into(photoView!!)
                     }
@@ -292,7 +289,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
             }
             R.id.imgRotate -> {
                 if (!isHide) {
-                    val items: ItemModel? = SQLHelper.getItemId(dataSource[view_pager?.currentItem!!].items_id, dataSource[view_pager?.currentItem!!].isFakePin)
+                    val items: ItemModel? = SQLHelper.getItemId(dataSource[view_pager?.currentItem ?: 0].items_id, dataSource[view_pager?.currentItem ?: 0].isFakePin)
                     val formatTypeFile = EnumFormatType.values()[items?.formatType!!]
                     if (formatTypeFile != EnumFormatType.AUDIO && formatTypeFile != EnumFormatType.FILES) {
                        if (!isProgressing){

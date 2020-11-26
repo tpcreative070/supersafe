@@ -281,7 +281,7 @@ fun ShareFilesAct.onShowUI(res: Int,count : Int? = null) {
             imgChecked?.visibility = res
             btnGotIt?.visibility = res
             rlProgress?.visibility = res
-            tvTitle?.text = kotlin.String.format(getString(R.string.imported_file_successful), "" + count)
+            tvTitle?.text = String.format(getString(R.string.imported_file_successful), "" + count)
         } catch (e: Exception) {
             finish()
         }

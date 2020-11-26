@@ -149,8 +149,8 @@ fun PhotoSlideShowAct.getData(){
         when (it.status) {
             Status.SUCCESS -> {
                 CoroutineScope(Dispatchers.Main).launch {
-                    dataSource = it.data!!
-                    Utils.Log(TAG,"data size ${it.data.size}")
+                    dataSource = it.data ?: mutableListOf()
+                    Utils.Log(TAG,"data size ${it.data?.size}")
                     val mSetUp  = async {
                         adapter = SamplePagerAdapter(this@getData)
                         view_pager?.adapter = adapter
