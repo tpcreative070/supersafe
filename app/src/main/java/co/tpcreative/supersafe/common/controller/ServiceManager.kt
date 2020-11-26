@@ -17,6 +17,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.requester.*
 import co.tpcreative.supersafe.common.extension.*
+import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -60,6 +61,7 @@ class ServiceManager : BaseServiceView<Any?> {
             Utils.Log(TAG, "connected")
             myService = (binder as SuperSafeService.LocalBinder?)?.getService()
             myService?.bindView(this@ServiceManager)
+            EncryptDecryptFilesHelper.getInstance()?.checkConfig()
             initService()
             Utils.onScanFile(SuperSafeApplication.getInstance(), "scan.log")
         }
@@ -179,6 +181,7 @@ class ServiceManager : BaseServiceView<Any?> {
 
     private fun onPreparingSyncDataCor() = CoroutineScope(Dispatchers.IO).launch {
         isRequestingSyncCor = true
+        EncryptDecryptFilesHelper.getInstance()?.checkConfig()
         val mResultItemList = itemViewModel.getItemList()
         when(mResultItemList.status){
             Status.SUCCESS -> {
@@ -293,6 +296,7 @@ class ServiceManager : BaseServiceView<Any?> {
 
     /*Import data from gallery*/
     suspend fun onImportData(mData : MutableList<ImportFilesModel>) : Resource<Boolean>{
+        EncryptDecryptFilesHelper.getInstance()?.checkConfig()
        return withContext(Dispatchers.IO){
            try {
                for (index in mData) {
@@ -589,6 +593,7 @@ class ServiceManager : BaseServiceView<Any?> {
 
     /*--------------Camera action-----------------*/
     fun onSaveDataOnCamera(mData: ByteArray?, mainCategories: MainCategoryModel?) = CoroutineScope(Dispatchers.IO).launch {
+        EncryptDecryptFilesHelper.getInstance()?.checkConfig()
         try {
             val mCategoriesId: String = mainCategories?.categories_id as String
             val mCategoriesLocalId: String = mainCategories.categories_local_id as String
@@ -691,6 +696,7 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     suspend fun downloadFilesToExporting(globalList: MutableList<ItemModel>?) : Resource<Boolean> {
+        EncryptDecryptFilesHelper.getInstance()?.checkConfig()
         return withContext(Dispatchers.IO){
             try {
                 val mResult = driveViewModel.downLoadData(true,globalList)
@@ -712,6 +718,7 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     suspend fun exportingItems(mData : MutableList<ItemModel>,isSharingFiles : Boolean) : Resource<MutableList<File>>{
+        EncryptDecryptFilesHelper.getInstance()?.checkConfig()
         return withContext(Dispatchers.IO){
             try {
                 val mResponseList = mutableListOf<File>()

@@ -13,6 +13,7 @@ import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.controller.PremiumManager
 import co.tpcreative.supersafe.common.dialog.DialogListener
 import co.tpcreative.supersafe.common.dialog.DialogManager
+import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
@@ -37,6 +38,7 @@ class MainTabAct : BaseGoogleApi(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_tab)
         initUI()
+        EncryptDecryptFilesHelper.getInstance()?.checkConfig()
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken())
     }
     override fun onOrientationChange(isFaceDown: Boolean) {

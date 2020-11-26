@@ -391,7 +391,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isLiveMigration(): Boolean {
-        return true
+        return false
     }
 
     fun isDebugPremium(): Boolean {

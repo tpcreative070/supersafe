@@ -26,7 +26,7 @@ class EncryptDecryptFilesHelper {
         } else {
             Utils.Log(TAG, "Get secret key null")
         }
-        return SecurityUtil.SECRET_KEY
+        return null
     }
 
     private fun getConfigurationFile(): EncryptConfiguration? {
@@ -42,6 +42,17 @@ class EncryptDecryptFilesHelper {
         return configurationFile
     }
 
+    fun checkConfig(){
+        getSecretKey()?.let {
+            if (configurationFile==null){
+                configurationFile = EncryptConfiguration.Builder()
+                        .setChuckSize(1024 * 2)
+                        .setEncryptContent(SecurityUtil.IVX, it, SecurityUtil.SALT)
+                        .build()
+            }
+        }
+    }
+
     fun createFile(output: File?, input: File?, mode: Int): Boolean {
         var inputStream: FileInputStream? = null
         try {
@@ -52,7 +63,7 @@ class EncryptDecryptFilesHelper {
             //note the following line
             var buffer: ByteArray? = ByteArray(1024 * 1024)
             while (inputStream.read(buffer).also { length = it } > 0) {
-                if (configurationFile != null && configurationFile?.isEncrypted!!) {
+                if (configurationFile != null && configurationFile?.isEncrypted == true) {
                     buffer = encrypt(buffer!!, mode)
                 }
                 fOutputStream.write(buffer, 0, length)
@@ -75,7 +86,7 @@ class EncryptDecryptFilesHelper {
     }
 
     fun createLargeFile(output: File?, input: File?, cipher: Cipher): Boolean {
-        if (configurationFile == null || !(configurationFile?.isEncrypted)!!) {
+        if (configurationFile == null || configurationFile?.isEncrypted != true) {
             return false
         }
         var inputStream: FileInputStream? = null
@@ -130,7 +141,7 @@ class EncryptDecryptFilesHelper {
     }
 
     fun getCipher(mode: Int): Cipher? {
-        if (configurationFile != null && configurationFile?.isEncrypted!!) {
+        if (configurationFile != null && configurationFile?.isEncrypted==true) {
             try {
                 val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
                 val mIvParameterSpec = IvParameterSpec(configurationFile?.ivParameter)
@@ -165,7 +176,7 @@ class EncryptDecryptFilesHelper {
         var stream: OutputStream? = null
         try {
             stream = FileOutputStream(File(path))
-            if (configurationFile != null && configurationFile!!.isEncrypted) {
+            if (configurationFile != null && configurationFile?.isEncrypted==true) {
                 mContent = encrypt(mContent!!, Cipher.ENCRYPT_MODE)
             }
             stream.write(mContent)
@@ -233,7 +244,7 @@ class EncryptDecryptFilesHelper {
             Utils.Log(TAG, "Failed on reading file from storage while the locking Thread ${e.message}")
             return null
         }
-        return if (configurationFile != null && configurationFile?.isEncrypted!!) {
+        return if (configurationFile != null && configurationFile?.isEncrypted==true) {
             encrypt(reader.array!!, Cipher.DECRYPT_MODE)
         } else {
             reader.array
