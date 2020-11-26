@@ -11,6 +11,7 @@ import co.tpcreative.supersafe.viewmodel.HelpAndSupportViewModel
 import kotlinx.android.synthetic.main.activity_help_and_support_content.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 fun HelpAndSupportContentAct.iniUI(){
@@ -64,18 +65,21 @@ fun HelpAndSupportContentAct.sendEmail(){
 fun HelpAndSupportContentAct.getData(){
     viewModel.getData(this).observe(this, Observer {
         CoroutineScope(Dispatchers.Main).launch {
-            contentHelpAndSupport = it
-            if (contentHelpAndSupport?.content == getString(R.string.contact_support_content)) {
-                llEmail?.visibility = View.VISIBLE
-                edtSupport?.visibility = View.VISIBLE
-                webview?.visibility = View.GONE
-            } else {
-                tvTitle?.text = contentHelpAndSupport?.title
-                llEmail?.visibility = View.GONE
-                edtSupport?.visibility = View.GONE
-                webview?.visibility = View.VISIBLE
-                webview?.loadUrl(contentHelpAndSupport?.content ?: "")
+            val mResult = async {
+                contentHelpAndSupport = it
+                if (contentHelpAndSupport?.content == getString(R.string.contact_support_content)) {
+                    llEmail?.visibility = View.VISIBLE
+                    edtSupport?.visibility = View.VISIBLE
+                    webview?.visibility = View.GONE
+                } else {
+                    tvTitle?.text = contentHelpAndSupport?.title
+                    llEmail?.visibility = View.GONE
+                    edtSupport?.visibility = View.GONE
+                    webview?.visibility = View.VISIBLE
+                    webview?.loadUrl(contentHelpAndSupport?.content ?: "")
+                }
             }
+            mResult.await()
         }
     })
 }
