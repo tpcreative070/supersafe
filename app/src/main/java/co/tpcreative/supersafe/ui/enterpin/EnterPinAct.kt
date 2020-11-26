@@ -8,7 +8,6 @@ import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Observer
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import co.infinum.goldfinger.Goldfinger
@@ -321,8 +320,8 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                 super.onBackPressed()
             }
             else -> {
-                finish()
-                Utils.Log(TAG, "Nothing")
+                Utils.Log(TAG,"Waiting...")
+                Utils.Log(TAG, "Nothing ${mPinAction?.name}")
             }
         }
     }

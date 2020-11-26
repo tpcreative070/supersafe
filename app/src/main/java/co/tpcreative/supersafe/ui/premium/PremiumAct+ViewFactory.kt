@@ -43,6 +43,9 @@ fun PremiumAct.initUI(){
     scrollView?.smoothScrollTo(0, 0)
 
     llMonths.setOnClickListener {
+        if (Utils.isPremium()){
+            return@setOnClickListener
+        }
         if (BillingProcessor.isIabServiceAvailable(this)) {
             Utils.Log(TAG, "purchase new")
             if (bp?.isSubscribed(getString(R.string.six_months))!!) {
@@ -55,6 +58,9 @@ fun PremiumAct.initUI(){
     }
 
     llYears.setOnClickListener {
+        if (Utils.isPremium()){
+            return@setOnClickListener
+        }
         Utils.Log(TAG, "Years")
         if (BillingProcessor.isIabServiceAvailable(this)) {
             Utils.Log(TAG, "purchase new")
@@ -68,6 +74,9 @@ fun PremiumAct.initUI(){
     }
 
     llLifeTime.setOnClickListener {
+        if (Utils.isPremium()){
+            return@setOnClickListener
+        }
         if (BillingProcessor.isIabServiceAvailable(this)) {
             Utils.Log(TAG, "purchase new")
             if (bp?.isPurchased(getString(R.string.life_time))!!) {
