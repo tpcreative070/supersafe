@@ -105,6 +105,7 @@ class ItemViewModel(private val itemService: ItemService) : BaseViewModel<ItemMo
         return withContext(Dispatchers.IO){
             try {
                 val mResult: MutableList<ItemModel>? = SQLHelper.getRequestUpdateItemList()
+                Utils.Log(TAG,"Total request update items ${mResult?.size}")
                 for (index in mResult!!){
                     val mResultUpdated =  itemService.syncData(SyncItemsRequest(Utils.getUserId(), Utils.getUserCloudId(), Utils.getDeviceId(),index))
                     when(mResultUpdated.status){

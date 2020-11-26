@@ -269,6 +269,7 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                 if (!isDownloadToExport) {
                     checkSaverSpace(items, items.isOriginalGlobalId)
                 }
+                items.isRequestChecking = true
                 SQLHelper.insertedItem(items)
             }
         }

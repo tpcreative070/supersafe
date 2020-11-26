@@ -71,14 +71,17 @@ fun CloudManagerAct.initUI(){
 
     viewModel.superSafeSpace.observe(this, Observer {
         tvValueSupersafeSpace.text = it
+        tvSupersafeSpace.visibility = View.VISIBLE
     })
 
     viewModel.otherSpace.observe(this, Observer {
         tvValueOtherSpace.text = it
+        tvOtherSpace.visibility = View.VISIBLE
     })
 
     viewModel.freeSpace.observe(this, Observer {
         tvValueFreeSpace.text = it
+        tvFreeSpace.visibility = View.VISIBLE
     })
 
     viewModel.leftItems.observe(this, Observer {
