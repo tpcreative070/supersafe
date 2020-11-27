@@ -12,12 +12,12 @@ import android.view.*
 import android.widget.Toast
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.extension.sizeInKb
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ImageModel
 import co.tpcreative.supersafe.model.MimeTypeFile
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomImageSelectAdapter
 import kotlinx.android.synthetic.main.activity_image_select.*
-import org.apache.commons.io.FileUtils
 import java.io.File
 import java.util.*
 
@@ -301,9 +301,9 @@ class ImageSelectActivity : HelperActivity() {
                     if (Thread.interrupted()) {
                         return
                     }
-                    val id = cursor.getLong(cursor.getColumnIndex(projection.get(0)))
-                    val name = cursor.getString(cursor.getColumnIndex(projection.get(1)))
-                    val path = cursor.getString(cursor.getColumnIndex(projection.get(2)))
+                    val id = cursor.getLong(cursor.getColumnIndex(projection[0]))
+                    val name = cursor.getString(cursor.getColumnIndex(projection[1]))
+                    val path = cursor.getString(cursor.getColumnIndex(projection[2]))
                     val isSelected = selectedImages.contains(id)
                     if (isSelected) {
                         tempCountSelected++
@@ -312,12 +312,10 @@ class ImageSelectActivity : HelperActivity() {
                         file = File(path)
                         if (file.exists()) {
                             val extensionFile: String? = Utils.getFileExtension(file.absolutePath)
-                            val mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport().get(extensionFile)
+                            val mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport()[extensionFile]
                             if (mimeTypeFile != null) {
-                                val mCount = FileUtils.readFileToByteArray(file)
-                                if (mCount.isNotEmpty()){
+                                if (file.sizeInKb>0){
                                     temp.add(ImageModel(id, name, path, isSelected))
-                                    //EnumFormatType formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType.ordinal()];
                                 }
                             }
                         } else {
