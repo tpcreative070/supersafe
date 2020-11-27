@@ -332,7 +332,7 @@ fun MainTabAct.onEnableSyncData() {
 fun MainTabAct.onAnimationIcon(status: EnumStatus?) {
     Utils.Log(TAG, "value : " + status?.name)
     if (mMenuItem == null) {
-        Utils.Log(TAG, "Menu is nulll")
+        Utils.Log(TAG, "Menu is null")
         return
     }
     if (previousStatus == status && status == EnumStatus.DOWNLOAD) {

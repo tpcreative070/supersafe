@@ -49,6 +49,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private var isRequestShareIntent = false
     private var isRequestingSyncCor = false
     private var isRequestingUpdateUserToken = false
+    private var actionProgressing : EnumStatus = EnumStatus.DONE
 
     /*Using item_id as key for hash map*/
     private val userViewModel = UserViewModel(UserService(), MicService())
@@ -99,6 +100,7 @@ class ServiceManager : BaseServiceView<Any?> {
             return
         }
         if (isRequestingSyncCor){
+            Utils.onPushEventBus(actionProgressing)
             Utils.Log(TAG,"==========================================Sync data is loading===============================================")
             return
         }
@@ -204,6 +206,7 @@ class ServiceManager : BaseServiceView<Any?> {
         val mResultItemList = itemViewModel.getItemList()
         when(mResultItemList.status){
             Status.SUCCESS -> {
+                SingletonPrivateFragment.getInstance()?.onUpdateView()
                 val mResultSyncCategory = categoryViewModel.syncCategoryData()
                 when(mResultSyncCategory.status){
                     Status.SUCCESS -> {
@@ -214,6 +217,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                 when(mResultDeletedCategory.status){
                                     Status.SUCCESS -> {
                                         Utils.onPushEventBus(EnumStatus.DOWNLOAD)
+                                        actionProgressing = EnumStatus.DOWNLOAD
                                         val mResultDownloadedFiles = driveViewModel.downLoadData(false,mResultItemList.data)
                                         when(mResultDownloadedFiles.status){
                                             Status.SUCCESS -> {
@@ -223,6 +227,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                                     Utils.onPushEventBus(EnumStatus.REFRESH);
                                                 }else{
                                                     Utils.onPushEventBus(EnumStatus.UPLOAD)
+                                                    actionProgressing = EnumStatus.UPLOAD
                                                     val mResultUploadedFiles = driveViewModel.uploadData()
                                                     when(mResultUploadedFiles.status){
                                                         Status.SUCCESS -> {
@@ -267,6 +272,7 @@ class ServiceManager : BaseServiceView<Any?> {
         Utils.Log(TAG,"Sync completely done")
         isRequestingSyncCor = false
         Utils.setRequestSyncData(false)
+        actionProgressing = EnumStatus.DONE
         SingletonPrivateFragment.getInstance()?.onUpdateView()
     }
 
