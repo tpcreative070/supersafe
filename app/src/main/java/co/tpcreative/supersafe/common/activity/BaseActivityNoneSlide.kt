@@ -50,6 +50,11 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        Utils.onScanFile(this,"scan.log")
+    }
+
     override fun onStop() {
         super.onStop()
         Utils.Log(TAG, "onStop....")

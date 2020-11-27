@@ -113,6 +113,7 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
 
     override fun onStart() {
         super.onStart()
+        Utils.onScanFile(this,"scan.log")
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
         when (val action = EnumPinAction.values()[value]) {
             EnumPinAction.SCREEN_LOCK -> {

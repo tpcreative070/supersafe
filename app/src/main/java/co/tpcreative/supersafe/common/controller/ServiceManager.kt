@@ -273,6 +273,7 @@ class ServiceManager : BaseServiceView<Any?> {
         isRequestingSyncCor = false
         Utils.setRequestSyncData(false)
         actionProgressing = EnumStatus.DONE
+        Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
         SingletonPrivateFragment.getInstance()?.onUpdateView()
     }
 
@@ -635,21 +636,19 @@ class ServiceManager : BaseServiceView<Any?> {
             val originalPath = pathContent + currentTime
             val isSaver: Boolean = PrefsController.getBoolean(getString(R.string.key_saving_space), false)
             val items = ItemModel(getString(R.string.key_jpg), originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype(), uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, currentTime + getString(R.string.key_jpg), "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, isSaver, false, false, 0, false, false, false, EnumStatus.UPLOAD)
-            val mFile = mData?.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance())
-            val file = getThumbnail(mFile?.absolutePath!!)
-            val createdThumbnail = file.createFile(File(thumbnailPath), file, Cipher.ENCRYPT_MODE)!!
-            val createdOriginal = file.createFile(File(originalPath), file, Cipher.ENCRYPT_MODE)!!
+            val mFileOriginal = mData?.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance())
+            val mFileThumbnail = getThumbnail(mFileOriginal?.absolutePath!!)
+            val createdThumbnail = mFileThumbnail.createFile(File(thumbnailPath), mFileThumbnail, Cipher.ENCRYPT_MODE)!!
+            val createdOriginal = mFileOriginal.createFile(File(originalPath), mFileOriginal, Cipher.ENCRYPT_MODE)!!
             if (createdThumbnail && createdOriginal) {
                 Utils.Log(TAG, "CreatedFile successful")
             } else {
                 Utils.Log(TAG, "CreatedFile failed")
             }
             var mb: Long
-            if (file.isFileExist(items.getOriginal()) && file.isFileExist(items.getThumbnail())) {
+            if (items.getOriginal().isFileExist() && items.getThumbnail().isFileExist()) {
                 mb = +File(items.getOriginal()).getSize(SizeUnit.B).toLong()
-                if (file.isFileExist(items.getThumbnail())) {
-                    mb += +File(items.getThumbnail()).getSize( SizeUnit.B).toLong()
-                }
+                mb += +File(items.getThumbnail()).getSize( SizeUnit.B).toLong()
                 items.size = "" + mb
                 SQLHelper.insertedItem(items)
                 Utils.Log(TAG,"Saved file to local db")
@@ -756,6 +755,7 @@ class ServiceManager : BaseServiceView<Any?> {
                     try {
                         mOutPut.createFile(mOutPut,mInput,Cipher.DECRYPT_MODE)
                         mResponseList.add(mOutPut)
+                        //Utils.insertValue(index)
                         Utils.Log(TAG,"Exported completely")
                     } catch (e: Exception) {
                         Utils.Log(TAG, "Cannot write to $e")

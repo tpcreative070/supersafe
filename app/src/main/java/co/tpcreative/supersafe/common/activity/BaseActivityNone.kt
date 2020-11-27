@@ -69,6 +69,7 @@ abstract class BaseActivityNone : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        Utils.onScanFile(this,"scan.log")
     }
 
     companion object {

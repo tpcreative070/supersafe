@@ -85,7 +85,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         superSafeLog = superSafe + "log/"
         superSafeBreakInAlerts = superSafe + "break_in_alerts/"
         superSafeShare = superSafe + "share/"
-        superSafePicture = "".getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/"
+        superSafePicture = "".getExternalStorageDirectory(Environment.DIRECTORY_DOWNLOADS) + "/SuperSafeExport/"
         registerActivityLifecycleCallbacks(this)
         Utils.Log(TAG, superSafe)
         options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

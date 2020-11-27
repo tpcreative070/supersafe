@@ -67,6 +67,11 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
         super.onBackPressed()
     }
 
+    override fun onStart() {
+        super.onStart()
+        Utils.onScanFile(this,"scan.log")
+    }
+
     override fun onLowMemory() {
         super.onLowMemory()
         System.gc()

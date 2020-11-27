@@ -60,6 +60,9 @@ class MainTabAct : BaseGoogleApi(){
                 Navigator.onMoveToFaceDown(this)
             }
             EnumStatus.PRIVATE_DONE -> {
+                if (Utils.isRequestSyncData()){
+                    ServiceManager.getInstance()?.onPreparingSyncData()
+                }
                 if (speedDial != null) {
                     speedDial?.show()
                 }
@@ -244,17 +247,15 @@ class MainTabAct : BaseGoogleApi(){
         }
         toolbar?.inflateMenu(R.menu.main_tab)
         mMenuItem = toolbar?.menu?.getItem(0)
+        Utils.Log(TAG,"Created menu")
         return true
     }
 
     override fun onPause() {
         super.onPause()
-        val user: User? = Utils.getUserInfo()
-        if (user != null) {
-            if (!user.driveConnected) {
-                Utils.Log(TAG,"drive connect ${user.driveConnected}")
-                onAnimationIcon(EnumStatus.SYNC_ERROR)
-            }
+        if (!Utils.isConnectedToGoogleDrive()){
+            onAnimationIcon(EnumStatus.SYNC_ERROR)
+            Utils.Log(TAG," onAnimationIcon(EnumStatus.SYNC_ERROR)")
         }
     }
 

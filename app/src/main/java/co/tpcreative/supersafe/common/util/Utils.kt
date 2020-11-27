@@ -878,10 +878,11 @@ object Utils {
         if (PermissionChecker.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED) {
             Log(TAG, "Granted permission....")
             val path = SuperSafeApplication.getInstance().getSuperSafe()
-            val file = File("".getExternalStorageDirectory() + "/" + nameLogs)
-            MediaScannerConnection.scanFile(activity, arrayOf(file.absolutePath), null, null)
-            MediaScannerConnection.scanFile(activity, arrayOf("".getExternalStorageDirectory()), null, null)
-            EncryptDecryptPinHelper.getInstance()?.createFile(path + "/" + nameLogs, "")
+            /*Scan internal card*/
+            MediaScannerConnection.scanFile(activity, arrayOf("file".getExternalStorageDirectory()), null, null)
+            /*Scan internal app*/
+            MediaScannerConnection.scanFile(activity, arrayOf(path), null, null)
+            EncryptDecryptPinHelper.getInstance()?.createFile("$path/$nameLogs", "")
         } else {
             Log(TAG, "No permission")
         }
@@ -910,9 +911,26 @@ object Utils {
         }
     }
 
+    fun insertValue(item : ItemModel){
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val resolver = SuperSafeApplication.getInstance().contentResolver
+                val mFile = geOutputExportFiles(item,false)
+                val contentValues = ContentValues()
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, mFile?.name)
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, item.mimeType)
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/SuperSafeExport")
+                resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+            }
+        }
+        catch (e : Exception){
+            e.printStackTrace()
+        }
+    }
+
     fun saveImage() {
         val bm: Bitmap = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources, R.drawable.ic_drive_cloud)
-        val root: String = SuperSafeApplication.getInstance().getSuperSafe()!!
+        val root: String = SuperSafeApplication.getInstance().getSuperSafe()
         val myDir = File(root)
         myDir.mkdirs()
         val file = File(myDir, "text.jpg")
@@ -1226,7 +1244,7 @@ object Utils {
     }
 
     fun isRequestSyncData() : Boolean {
-        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data),false)
+        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data),true)
     }
 }
 
