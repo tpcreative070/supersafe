@@ -22,7 +22,8 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTotal"
-            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textSize="30sp"
             android:textColor="@color/white"
             android:layout_marginBottom="70dp"
             android:layout_alignParentBottom="true"
