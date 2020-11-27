@@ -29,181 +29,187 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import me.grantland.widget.AutofitHelper
 
-fun EnterPinAct.initUI() = CoroutineScope(Dispatchers.Main).launch{
+fun EnterPinAct.initUI() {
     TAG = this::class.java.simpleName
-    setupViewModel()
-    setSupportActionBar(toolbar)
-    supportActionBar?.setDisplayHomeAsUpEnabled(false)
-    val result: Int = intent.getIntExtra(EnterPinAct.EXTRA_SET_PIN, 0)
-    EnterPinAct.mPinAction = EnumPinAction.values()[result]
-    val resultNext: Int = intent.getIntExtra(EnterPinAct.EXTRA_ENUM_ACTION, 0)
-    EnterPinAct.mPinActionNext = EnumPinAction.values()[resultNext]
-    SingletonScreenLock.getInstance()?.setListener(this@initUI)
-    EnterPinAct.enumPinPreviousAction = EnterPinAct.mPinAction
-    when (EnterPinAct.mPinAction) {
-        EnumPinAction.SET -> {
-            onDisplayView()
-            onDisplayText()
-        }
-        EnumPinAction.VERIFY -> {
-            if (mRealPin == "") {
-                EnterPinAct.mPinAction = EnumPinAction.SET
-                onDisplayView()
-                onDisplayText()
-            } else {
-                if (Utils.isSensorAvailable()) {
-                    val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
-                    if (isFingerPrintUnLock) {
-                        imgSwitchTypeUnClock?.visibility = View.VISIBLE
-                        isFingerprint = isFingerPrintUnLock
-                        onSetVisitFingerprintView(isFingerprint)
-                        Utils.Log(TAG, "Action find fingerPrint")
-                    }
-                }
-                val value: Boolean = PrefsController.getBoolean(getString(R.string.key_secret_door), false)
-                if (value) {
-                    imgSwitchTypeUnClock?.visibility = View.INVISIBLE
-                    changeLayoutSecretDoor(true)
-                } else {
-                    calculator_holder?.visibility = View.INVISIBLE
+    CoroutineScope(Dispatchers.Main).launch {
+        val mResult = async {
+            setupViewModel()
+            setSupportActionBar(toolbar)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            val result: Int = intent.getIntExtra(EnterPinAct.EXTRA_SET_PIN, 0)
+            EnterPinAct.mPinAction = EnumPinAction.values()[result]
+            val resultNext: Int = intent.getIntExtra(EnterPinAct.EXTRA_ENUM_ACTION, 0)
+            EnterPinAct.mPinActionNext = EnumPinAction.values()[resultNext]
+            SingletonScreenLock.getInstance()?.setListener(this@initUI)
+            EnterPinAct.enumPinPreviousAction = EnterPinAct.mPinAction
+            when (EnterPinAct.mPinAction) {
+                EnumPinAction.SET -> {
                     onDisplayView()
                     onDisplayText()
                 }
+                EnumPinAction.VERIFY -> {
+                    if (mRealPin == "") {
+                        EnterPinAct.mPinAction = EnumPinAction.SET
+                        onDisplayView()
+                        onDisplayText()
+                    } else {
+                        if (Utils.isSensorAvailable()) {
+                            val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+                            if (isFingerPrintUnLock) {
+                                imgSwitchTypeUnClock?.visibility = View.VISIBLE
+                                isFingerprint = isFingerPrintUnLock
+                                onSetVisitFingerprintView(isFingerprint)
+                                Utils.Log(TAG, "Action find fingerPrint")
+                            }
+                        }
+                        val value: Boolean = PrefsController.getBoolean(getString(R.string.key_secret_door), false)
+                        if (value) {
+                            imgSwitchTypeUnClock?.visibility = View.INVISIBLE
+                            changeLayoutSecretDoor(true)
+                        } else {
+                            calculator_holder?.visibility = View.INVISIBLE
+                            onDisplayView()
+                            onDisplayText()
+                        }
+                    }
+                }
+                EnumPinAction.INIT_PREFERENCE -> {
+                    initActionBar(true)
+                    onDisplayText()
+                    onDisplayView()
+                    onLauncherPreferences()
+                }
+                EnumPinAction.RESET -> {
+                    onDisplayView()
+                    onDisplayText()
+                }
+                EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
+                    onDisplayText()
+                    onDisplayView()
+                }
+                else -> {
+                    Utils.Log(TAG, "Noting to do")
+                }
             }
+            imgLauncher?.setOnLongClickListener {
+                changeLayoutSecretDoor(false)
+                false
+            }
+            ic_SuperSafe?.setOnLongClickListener {
+                changeLayoutSecretDoor(false)
+                false
+            }
+            if (Utils.isSensorAvailable()) {
+                val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+                if (isFingerPrintUnLock) {
+                    initBiometric()
+                }
+            }
+            onInitPin()
+            /*Calculator init*/
+            EnterPinAct.mCalc = CalculatorImpl(this@initUI)
+            AutofitHelper.create(tvResult)
+            AutofitHelper.create(tvFormula)
+            Utils.Log(TAG, "onCreated->EnterPinActivity")
+            llForgotPin.setOnClickListener {
+                Navigator.onMoveToForgotPin(this@initUI, false)
+            }
+
         }
-        EnumPinAction.INIT_PREFERENCE -> {
-            initActionBar(true)
-            onDisplayText()
-            onDisplayView()
-            onLauncherPreferences()
+        mResult.await()
+
+        btnDone.setOnClickListener {
+            Navigator.onMoveToFaceDown(this@initUI)
         }
-        EnumPinAction.RESET -> {
-            onDisplayView()
-            onDisplayText()
+
+        btn_decimal.setOnClickListener {
+            numpadClicked(it.id)
         }
-        EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
-            onDisplayText()
-            onDisplayView()
+        btn_0.setOnClickListener {
+            numpadClicked(it.id)
         }
-        else -> {
-            Utils.Log(TAG, "Noting to do")
+        btn_1.setOnClickListener {
+            numpadClicked(it.id)
         }
-    }
-    imgLauncher?.setOnLongClickListener {
-        changeLayoutSecretDoor(false)
-        false
-    }
-    ic_SuperSafe?.setOnLongClickListener {
-        changeLayoutSecretDoor(false)
-        false
-    }
-    if (Utils.isSensorAvailable()) {
-        val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
-        if (isFingerPrintUnLock) {
-            initBiometric()
+
+        btn_2.setOnClickListener {
+            numpadClicked(it.id)
         }
-    }
-    onInitPin()
-    /*Calculator init*/
-    EnterPinAct.mCalc = CalculatorImpl(this@initUI)
-    AutofitHelper.create(tvResult)
-    AutofitHelper.create(tvFormula)
-    Utils.Log(TAG, "onCreated->EnterPinActivity")
-    llForgotPin.setOnClickListener {
-        Navigator.onMoveToForgotPin(this@initUI, false)
-    }
 
-    btnDone.setOnClickListener {
-       Navigator.onMoveToFaceDown(this@initUI)
-    }
+        btn_3.setOnClickListener {
+            numpadClicked(it.id)
+        }
+        btn_4.setOnClickListener {
+            numpadClicked(it.id)
+        }
+        btn_5.setOnClickListener {
+            numpadClicked(it.id)
+        }
 
-    btn_decimal.setOnClickListener {
-        numpadClicked(it.id)
-    }
-    btn_0.setOnClickListener {
-        numpadClicked(it.id)
-    }
-    btn_1.setOnClickListener {
-        numpadClicked(it.id)
-    }
+        btn_6.setOnClickListener {
+            numpadClicked(it.id)
+        }
+        btn_7.setOnClickListener {
+            numpadClicked(it.id)
+        }
+        btn_8.setOnClickListener {
+            numpadClicked(it.id)
+        }
 
-    btn_2.setOnClickListener {
-        numpadClicked(it.id)
-    }
+        btn_9.setOnClickListener {
+            numpadClicked(it.id)
+        }
 
-    btn_3.setOnClickListener {
-        numpadClicked(it.id)
-    }
-    btn_4.setOnClickListener {
-        numpadClicked(it.id)
-    }
-    btn_5.setOnClickListener {
-        numpadClicked(it.id)
-    }
+        btn_plus.setOnClickListener {
+            EnterPinAct.mCalc?.handleOperation(Constants.PLUS)
+        }
 
-    btn_6.setOnClickListener {
-        numpadClicked(it.id)
-    }
-    btn_7.setOnClickListener {
-        numpadClicked(it.id)
-    }
-    btn_8.setOnClickListener {
-        numpadClicked(it.id)
-    }
+        btn_minus.setOnClickListener {
+            EnterPinAct.mCalc?.handleOperation(Constants.MINUS)
+        }
 
-    btn_9.setOnClickListener {
-        numpadClicked(it.id)
-    }
+        btn_multiply.setOnClickListener {
+            EnterPinAct.mCalc?.handleOperation(Constants.MULTIPLY)
+        }
 
-    btn_plus.setOnClickListener {
-        EnterPinAct.mCalc?.handleOperation(Constants.PLUS)
-    }
+        btn_divide.setOnClickListener {
+            EnterPinAct.mCalc?.handleOperation(Constants.DIVIDE)
+        }
 
-    btn_minus.setOnClickListener {
-        EnterPinAct.mCalc?.handleOperation(Constants.MINUS)
-    }
+        btn_modulo.setOnClickListener {
+            EnterPinAct.mCalc?.handleOperation(Constants.MODULO)
+        }
 
-    btn_multiply.setOnClickListener {
-        EnterPinAct.mCalc?.handleOperation(Constants.MULTIPLY)
-    }
+        btn_power.setOnClickListener {
+            EnterPinAct.mCalc?.handleOperation(Constants.POWER)
+        }
 
-    btn_divide.setOnClickListener {
-        EnterPinAct.mCalc?.handleOperation(Constants.DIVIDE)
-    }
+        btn_root.setOnClickListener {
+            EnterPinAct.mCalc?.handleOperation(Constants.ROOT)
+        }
 
-    btn_modulo.setOnClickListener {
-        EnterPinAct.mCalc?.handleOperation(Constants.MODULO)
-    }
+        btn_clear.setOnClickListener {
+            EnterPinAct.mCalc?.handleClear()
+        }
 
-    btn_power.setOnClickListener {
-        EnterPinAct.mCalc?.handleOperation(Constants.POWER)
-    }
+        btn_clear.setOnLongClickListener {
+            EnterPinAct.mCalc?.handleReset()
+            true
+        }
 
-    btn_root.setOnClickListener {
-        EnterPinAct.mCalc?.handleOperation(Constants.ROOT)
-    }
+        btn_equals.setOnClickListener {
+            EnterPinAct.mCalc?.handleEquals()
+        }
 
-    btn_clear.setOnClickListener {
-        EnterPinAct.mCalc?.handleClear()
-    }
-
-    btn_clear.setOnLongClickListener {
-        EnterPinAct.mCalc?.handleReset()
-        true
-    }
-
-    btn_equals.setOnClickListener {
-        EnterPinAct.mCalc?.handleEquals()
-    }
-
-    imgSwitchTypeUnClock.setOnClickListener {
-        isFingerprint = !isFingerprint
-        onSetVisitFingerprintView(isFingerprint)
-    }
-    imgFingerprint.setOnClickListener {
-        val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
-        if (isFingerPrintUnLock) {
-            startBiometricPrompt()
+        imgSwitchTypeUnClock.setOnClickListener {
+            isFingerprint = !isFingerprint
+            onSetVisitFingerprintView(isFingerprint)
+        }
+        imgFingerprint.setOnClickListener {
+            val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+            if (isFingerPrintUnLock) {
+                startBiometricPrompt()
+            }
         }
     }
 }

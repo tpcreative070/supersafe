@@ -14,6 +14,8 @@ import retrofit2.http.*
 interface ApiService {
     @POST(TRACKING)
     suspend fun onTrackingCor(@Body request: TrackingRequest): RootResponse?
+    @POST(TRACKING_SYNC)
+    suspend fun onTrackingSyncCor(@Body request: TrackingSyncRequest): RootResponse?
 
     @POST(SIGN_UP)
     suspend fun onSignUPCor(@Body request: SignUpRequest): RootResponse?
@@ -147,6 +149,7 @@ interface ApiService {
         const val DOWNLOAD_FILE_FROM_GOOGLE_DRIVE: String = "/drive/v3/files/{id}?alt=media"
         const val CHECKOUT: String = "/api/supersafe/checkout/transaction"
         const val TRACKING: String = "/api/supersafe/track/tracking"
+        const val TRACKING_SYNC: String = "/api/supersafe/items/trackingSync"
         const val CHECK_VERSION: String = "/api/track/version"
     }
 }

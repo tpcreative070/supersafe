@@ -18,6 +18,10 @@ class DataResponse : Serializable {
 
     /*RequestCode*/
     var requestCode: RequestCodeResponse? = null
+
+    /*Tracking sync*/
+    var trackingSync : TrackingSyncResponse? = null
+
     var author: Authorization? = null
     var premium: Premium? = null
     var email_token: EmailToken? = null

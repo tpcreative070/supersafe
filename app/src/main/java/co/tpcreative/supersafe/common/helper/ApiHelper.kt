@@ -30,6 +30,7 @@ class ApiHelper() {
     suspend fun onListFilesSyncCor(data : SyncItemsRequest) =   getApiCor()?.onListFilesSyncCor(data)
     suspend fun onSyncDataCor(data : SyncItemsRequest) =   getApiCor()?.onSyncDataCor(data)
     suspend fun onDeleteOwnItemsCor(data : SyncItemsRequest) =   getApiCor()?.onDeleteOwnItemsCor(data)
+    suspend fun trackingSyncCor(request: TrackingSyncRequest) = getApiCor()?.onTrackingSyncCor(request)
 
 
     /*This is area for user*/

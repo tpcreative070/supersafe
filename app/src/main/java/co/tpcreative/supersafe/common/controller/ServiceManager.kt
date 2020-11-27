@@ -99,11 +99,11 @@ class ServiceManager : BaseServiceView<Any?> {
             return
         }
         if (isRequestingSyncCor){
-            Utils.Log(TAG,"Sync data is loading...")
+            Utils.Log(TAG,"==========================================Sync data is loading===============================================")
             return
         }
         Utils.Log(TAG,"Preparing sync data")
-        onPreparingSyncDataCor()
+        onTrackingSync()
     }
 
     fun isRequestingUpdatedUserToken() : Boolean{
@@ -179,8 +179,27 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    private fun onPreparingSyncDataCor() = CoroutineScope(Dispatchers.IO).launch {
+    private fun onTrackingSync() = CoroutineScope(Dispatchers.IO).launch {
         isRequestingSyncCor = true
+        val mResult = itemViewModel.trackingSync()
+        when(mResult.status){
+            Status.SUCCESS -> {
+                if (Utils.isRequestSyncData()) {
+                    onPreparingSyncDataCor()
+                }else{
+                    Utils.onPushEventBus(EnumStatus.DONE)
+                    isRequestingSyncCor = false
+                }
+                Utils.Log(TAG, mResult.data?.data?.trackingSync?.toJson())
+            }
+            else ->{
+                Utils.Log(TAG,mResult.message)
+                isRequestingSyncCor = false
+            }
+        }
+    }
+
+    private fun onPreparingSyncDataCor() = CoroutineScope(Dispatchers.IO).launch {
         EncryptDecryptFilesHelper.getInstance()?.checkConfig()
         val mResultItemList = itemViewModel.getItemList()
         when(mResultItemList.status){
@@ -247,6 +266,7 @@ class ServiceManager : BaseServiceView<Any?> {
         }
         Utils.Log(TAG,"Sync completely done")
         isRequestingSyncCor = false
+        Utils.setRequestSyncData(false)
         SingletonPrivateFragment.getInstance()?.onUpdateView()
     }
 

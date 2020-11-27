@@ -15,7 +15,6 @@ import co.tpcreative.supersafe.common.dialog.DialogListener
 import co.tpcreative.supersafe.common.dialog.DialogManager
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
@@ -134,6 +133,9 @@ class MainTabAct : BaseGoogleApi(){
         onCallLockScreen()
         onRegisterHomeWatcher()
         ServiceManager.getInstance()?.setRequestShareIntent(false)
+        if (Utils.isRequestSyncData()){
+            ServiceManager.getInstance()?.onPreparingSyncData()
+        }
         Utils.Log(TAG, "onResume")
     }
 

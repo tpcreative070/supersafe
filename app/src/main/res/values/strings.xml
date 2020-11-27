@@ -412,6 +412,8 @@
 
 
     /*Preference keys*/
+    <string name="key_request_sync_data">request_sync_data</string>
+    <string name="key_last_time_sync_data">last_time_sync_data</string>
     <string name="key_grant_access">grant_access</string>
     <string name="key_data">data</string>
     <string name="key_pin">pin</string>

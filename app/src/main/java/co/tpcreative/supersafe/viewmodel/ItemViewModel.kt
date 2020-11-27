@@ -7,8 +7,10 @@ import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
+import co.tpcreative.supersafe.common.request.TrackingSyncRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.RootResponse
+import co.tpcreative.supersafe.common.response.TrackingSyncResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeService
 import co.tpcreative.supersafe.common.util.Utils
@@ -65,6 +67,29 @@ class ItemViewModel(private val itemService: ItemService) : BaseViewModel<ItemMo
                 when(mResult.status){
                     Status.SUCCESS ->{
                         mResult
+                    }
+                    else ->{
+                        Resource.error(mResult.code?:Utils.CODE_EXCEPTION, mResult.message ?:"",null)
+                    }
+                }
+            }catch (e: Exception){
+                Resource.error(Utils.CODE_EXCEPTION, e.message ?:"",null)
+            }
+        }
+    }
+
+    suspend fun trackingSync() : Resource<RootResponse> {
+        return withContext(Dispatchers.IO){
+            try {
+                val mResult = itemService.trackingSync(TrackingSyncRequest())
+                when(mResult.status){
+                    Status.SUCCESS ->{
+                        if (!(mResult.data?.error)!!){
+                            checkingAndSaveLastTimeSyncData(mResult.data.data?.trackingSync)
+                            mResult
+                        }else{
+                            Resource.error(mResult.code?:Utils.CODE_EXCEPTION, mResult.message ?:"",null)
+                        }
                     }
                     else ->{
                         Resource.error(mResult.code?:Utils.CODE_EXCEPTION, mResult.message ?:"",null)
@@ -208,5 +233,17 @@ class ItemViewModel(private val itemService: ItemService) : BaseViewModel<ItemMo
             entityModel.statusProgress = EnumStatusProgress.DONE.ordinal
         }
         return entityModel
+    }
+
+    private fun checkingAndSaveLastTimeSyncData(data : TrackingSyncResponse?){
+        data?.let {
+            if (it.lastAccessTime != Utils.getLastTimeSyncData()){
+                Utils.setLastTimeSyncData(it.updated_date ?: "")
+                Utils.setRequestSyncData(true)
+            }else{
+                Utils.Log(TAG,"Already synced from server")
+                Utils.setLastTimeSyncData(it.updated_date ?: "")
+            }
+        }
     }
 }

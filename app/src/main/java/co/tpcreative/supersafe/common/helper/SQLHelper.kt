@@ -59,11 +59,13 @@ object SQLHelper {
 
     /*Delete category*/
     fun deleteCategory(itemModel: MainCategoryModel) {
+        Utils.setRequestSyncData(true)
         getInstance()?.onDelete(MainCategoryEntity(MainCategoryEntityModel(itemModel)))
     }
 
     /*Delete item*/
     fun deleteItem(itemModel: ItemModel) {
+        Utils.setRequestSyncData(true)
         getInstance()?.onDelete(ItemEntity(ItemEntityModel(itemModel)))
     }
 
@@ -102,11 +104,13 @@ object SQLHelper {
 
     /*Added item*/
     fun insertedItem(itemModel: ItemModel) {
+        Utils.setRequestSyncData(true)
         getInstance()?.onInsert(ItemEntity(ItemEntityModel(itemModel)))
     }
 
     /*Updated item*/
     fun updatedItem(itemModel: ItemModel) {
+        Utils.setRequestSyncData(true)
         getInstance()?.onUpdate(ItemEntity(ItemEntityModel(itemModel)))
     }
 
@@ -215,6 +219,7 @@ object SQLHelper {
 
     /*Update Category*/
     fun updateCategory(model: MainCategoryModel) {
+        Utils.setRequestSyncData(true)
         getInstance()?.onUpdate(MainCategoryEntityModel(model))
     }
 
@@ -412,6 +417,7 @@ object SQLHelper {
             val main: MainCategoryModel? = getCategoriesItemId(categories_hex_name, isFakePin)
             if (main == null) {
                 val count: Int? = getInstance()?.getLatestItem()
+                Utils.setRequestSyncData(true)
                 insertCategory(MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(name!!), name, ListColor?.get(0), ListIcon?.get(0), count!!.toLong(), false, false, false, isFakePin, "", null, null, false))
                 return true
             }

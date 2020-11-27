@@ -441,6 +441,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                 == PackageManager.PERMISSION_GRANTED) {
             hiddenCam?.start()
         }
+        Utils.Log(TAG,"Init camera....")
     }
 
     fun onTakePicture(pin: String?) {

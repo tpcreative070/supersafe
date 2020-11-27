@@ -9,7 +9,6 @@ import android.net.Uri
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -21,7 +20,6 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.utilimport.NetworkUtil
@@ -153,14 +151,14 @@ fun MainTabAct.onShowDialog() {
                 val item: MainCategoryModel? = SQLHelper.getTrashItem()
                 val result: String? = item?.categories_hex_name
                 if (base64Code == result) {
-                    Toast.makeText(this@onShowDialog, "This name already existing", Toast.LENGTH_SHORT).show()
+                    Utils.onBasicAlertNotify(this,"Alert","This name already existing")
                 } else {
                     val response: Boolean = SQLHelper.onAddCategories(base64Code, value, false)
                     if (response) {
-                        Toast.makeText(this@onShowDialog, "Created album successful", Toast.LENGTH_SHORT).show()
+                        Utils.onBasicAlertNotify(this,"Alert","Created album successful")
                         ServiceManager.getInstance()?.onPreparingSyncCategoryData()
                     } else {
-                        Toast.makeText(this@onShowDialog, "Album name already existing", Toast.LENGTH_SHORT).show()
+                        Utils.onBasicAlertNotify(this,"Alert","Album name already existing")
                     }
                     SingletonPrivateFragment.getInstance()?.onUpdateView()
                 }

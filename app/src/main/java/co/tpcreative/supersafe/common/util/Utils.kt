@@ -1212,6 +1212,22 @@ object Utils {
         val mData = getUserInfo()
         return mData?._id
     }
+
+    fun setLastTimeSyncData(value : String){
+        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_last_time_sync_data),value)
+    }
+
+    fun getLastTimeSyncData() : String {
+        return PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_last_time_sync_data),"") ?: ""
+    }
+
+    fun setRequestSyncData(value : Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data),value)
+    }
+
+    fun isRequestSyncData() : Boolean {
+        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data),false)
+    }
 }
 
 interface UtilsListener {
