@@ -30,7 +30,7 @@ class AlbumSelectActivity : HelperActivity() {
     private var handler: Handler? = null
     private var thread: Thread? = null
 
-    private val projection: Array<String?>? = arrayOf(
+    private val projection: Array<String?> = arrayOf(
             MediaStore.Images.Media.BUCKET_ID,
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Images.Media.DATA)
@@ -208,9 +208,9 @@ class AlbumSelectActivity : HelperActivity() {
                     if (Thread.interrupted()) {
                         return
                     }
-                    val albumId = cursor.getLong(cursor.getColumnIndex(projection?.get(0)))
-                    val album = cursor.getString(cursor.getColumnIndex(projection?.get(1)))
-                    val image = cursor.getString(cursor.getColumnIndex(projection?.get(2)))
+                    val albumId = cursor.getLong(cursor.getColumnIndex(projection.get(0)))
+                    val album = cursor.getString(cursor.getColumnIndex(projection.get(1)))
+                    val image = cursor.getString(cursor.getColumnIndex(projection.get(2)))
                     if (!albumSet.contains(albumId)) {
                         /*
                         It may happen that some image file paths are still present in cache,
@@ -221,7 +221,7 @@ class AlbumSelectActivity : HelperActivity() {
                         file = File(image)
                         if (file.exists()) {
                             val extensionFile: String? = Utils.getFileExtension(file.absolutePath)
-                            val mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport().get(extensionFile)
+                            val mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport()[extensionFile]
                             if (mimeTypeFile != null && album != null) {
                                 temp.add(AlbumMultiItems(album, image))
                                 albumSet.add(albumId)

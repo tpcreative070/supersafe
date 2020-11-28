@@ -19,8 +19,9 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
 //    var presenter: CloudManagerPresenter? = null
     var isPauseCloudSync = true
     var isDownload = false
-    var isSpaceSaver = false
+    var isSaverSpace = false
     var isRefresh = false
+    val isPreviousSaverSpace  = Utils.getSaverSpace()
     lateinit var viewModel : CloudManagerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +44,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
     }
 
     override fun onCheckedChanged(compoundButton: CompoundButton?, b: Boolean) {
-        Utils.Log(TAG, "onCheckedChanged...............!!!")
-        when (compoundButton?.getId()) {
+        when (compoundButton?.id) {
             R.id.btnSwitchPauseSync -> {
                 isPauseCloudSync = b
                 Utils.pauseSync(b)
@@ -56,16 +56,30 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
                     switch_SaveSpace?.isChecked = false
                 }
                 if (b) {
+                    /*Checking Google Drive connecting*/
+                    if(!Utils.isConnectedToGoogleDrive()){
+                        Utils.showDialog(this,R.string.need_signed_in_to_google_drive_before_using_this_feature, object : ServiceManager.ServiceManagerSyncDataListener {
+                            override fun onCompleted() {
+                                Navigator.onCheckSystem(this@CloudManagerAct, null)
+                            }
+                            override fun onError() {
+                            }
+                            override fun onCancel() {
+                            }
+                        })
+                        return
+                    }
                     isDownload = false
-                    isSpaceSaver = true
+                    isSaverSpace = true
                     enableSaverSpace()
                 } else {
-                    isSpaceSaver = false
+                    isSaverSpace = false
                     disableSaverSpace(EnumStatus.GET_LIST_FILE)
                 }
                 Utils.putSaverSpace(b)
             }
         }
+        Utils.Log(TAG, "onCheckedChanged...............isDownload $isDownload isSaverSapce $isSaverSpace")
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -90,21 +104,19 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        if (!isPauseCloudSync) {
-            ServiceManager.getInstance()?.onPreparingSyncData()
-        }
         /*Check disable saver func*/
-        if (isDownload && !isSpaceSaver) {
-            /*Stopping saver saver*/
-            Utils.stoppingSaverSpace()
+        if (isDownload && isPreviousSaverSpace != Utils.getSaverSpace()) {
+            /*Stop saver saver*/
+            Utils.stopSaverSpace()
+            Utils.Log(TAG, "stop saver space")
+        }
+        if (isSaverSpace && isPreviousSaverSpace != Utils.getSaverSpace()) {
+            /*Start saver space*/
+            viewModel.startSaverSpace()
+            Utils.Log(TAG, "start saver space")
+        }
+        if (isRefresh || isPreviousSaverSpace != Utils.getSaverSpace() || !isPauseCloudSync) {
             ServiceManager.getInstance()?.onPreparingSyncData()
-            Utils.Log(TAG, "Re-Download file")
-        }
-        if (isSpaceSaver) {
-            viewModel.destroySaver()
-        }
-        if (isRefresh) {
-            ServiceManager.getInstance()?.onPreparingSyncCategoryData()
         }
     }
 

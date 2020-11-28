@@ -104,7 +104,7 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
                 imgSelect?.visibility = View.INVISIBLE
             }
             try {
-                val path: String? = data.getThumbnail()
+                val path: String = data.getThumbnail()
                 when (EnumFormatType.values()[data.formatType]) {
                     EnumFormatType.AUDIO -> {
                         imgVideoCam?.visibility = View.VISIBLE
@@ -119,7 +119,7 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
                         imgVideoCam?.visibility = View.VISIBLE
                         imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.baseline_videocam_white_36))
                         tvTitle?.visibility = View.INVISIBLE
-                        if (path?.isFileExist()!!) {
+                        if (path.isFileExist()) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
                                     .load(path.readFile())
@@ -129,7 +129,7 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
                     EnumFormatType.IMAGE -> {
                         tvTitle?.visibility = View.INVISIBLE
                         imgVideoCam?.visibility = View.INVISIBLE
-                        if (path!!.isFileExist()) {
+                        if (path.isFileExist()) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
                                     .load(path.readFile())

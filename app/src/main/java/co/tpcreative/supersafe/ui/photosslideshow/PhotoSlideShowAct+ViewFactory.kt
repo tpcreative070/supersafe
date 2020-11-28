@@ -4,6 +4,7 @@ import android.os.Looper
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.helper.SQLHelper
@@ -12,6 +13,7 @@ import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.ui.albumdetail.exportingFiles
 import co.tpcreative.supersafe.viewmodel.PhotoSlideShowViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.activity_photos_slideshow.*
@@ -193,11 +195,19 @@ fun PhotoSlideShowAct.deleteItems(isExport : Boolean? = false){
 }
 
 fun PhotoSlideShowAct.exportingFiles(mData : MutableList<ItemModel>,isSharingFiles : Boolean) = CoroutineScope(Dispatchers.Main).launch{
-    if(!Utils.isConnectedToGoogleDrive()){
-        Utils.onBasicAlertNotify(this@exportingFiles,"Alert","Please connect Google drive first")
-        return@launch
-    }
     if (Utils.getSaverSpace()){
+        if(!Utils.isConnectedToGoogleDrive()){
+            Utils.showDialog(this@exportingFiles,R.string.need_signed_in_to_google_drive_before_using_this_feature, object : ServiceManager.ServiceManagerSyncDataListener {
+                override fun onCompleted() {
+                    Navigator.onCheckSystem(this@exportingFiles, null)
+                }
+                override fun onError() {
+                }
+                override fun onCancel() {
+                }
+            })
+            return@launch
+        }
         progressing = EnumStepProgressing.DOWNLOADING
         viewModel.isLoading.postValue(true)
         val mDataRequestingDownload = mData.filter { value ->  EnumFormatType.values()[value.formatType] == EnumFormatType.IMAGE }.toMutableList()

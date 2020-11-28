@@ -195,7 +195,5 @@ fun CloudManagerAct.disableSaverSpace(enumStatus: EnumStatus) {
 }
 
 fun CloudManagerAct.enableSaverSpace(){
-    viewModel.enableSaverSpace().observe(this, Observer {
-        getData()
-    })
+    getData()
 }

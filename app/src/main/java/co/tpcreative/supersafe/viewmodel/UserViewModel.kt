@@ -52,7 +52,6 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                     }else{
                         val mData: DataResponse? = mResultSignUp.data.data
                         Utils.setUserPreShare(mData?.user)
-                        ServiceManager.getInstance()?.onInitConfigurationFile()
                         emit(mResultSignUp)
                     }
                 }
@@ -79,7 +78,6 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                     }else{
                         val mData: DataResponse? = mResultSignIn.data.data
                         Utils.setUserPreShare(mData?.user)
-                        ServiceManager.getInstance()?.onInitConfigurationFile()
                         val mResultSentEmail = emailViewModel.sendEmail(EnumStatus.SIGN_IN)
                         when(mResultSentEmail.status){
                             Status.SUCCESS ->{

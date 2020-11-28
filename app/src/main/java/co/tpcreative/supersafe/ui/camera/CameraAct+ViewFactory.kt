@@ -13,6 +13,9 @@ import co.tpcreative.supersafe.model.MainCategoryModel
 import com.bumptech.glide.Glide
 import com.otaliastudios.cameraview.controls.Grid
 import kotlinx.android.synthetic.main.activity_camera.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 fun CameraAct.iniUI(){
     if (camera != null) {
@@ -47,11 +50,11 @@ fun CameraAct.iniUI(){
     }
 }
 
-fun CameraAct.onReviewPicture(data : Bitmap){
+fun CameraAct.onReviewPicture(data : ByteArray) = CoroutineScope(Dispatchers.Main).launch{
     Glide
             .with(SuperSafeApplication.getInstance())
             .load(data)
             .centerCrop()
-            .override(70,70)
+            .override(100,100)
             .into(imgReview);
 }

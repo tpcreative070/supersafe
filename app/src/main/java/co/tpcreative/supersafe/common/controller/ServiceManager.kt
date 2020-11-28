@@ -74,10 +74,6 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    fun onInitConfigurationFile() {
-
-    }
-
     private var isWaitingSendMail = false
 
     /*Preparing sync data*/
@@ -497,9 +493,8 @@ class ServiceManager : BaseServiceView<Any?> {
                             SQLHelper.insertedItem(items)
                             if (!categories.isCustom_Cover) {
                                 if (enumFormatType == EnumFormatType.IMAGE) {
-                                    val main: MainCategoryModel = categories as MainCategoryModel
-                                    main.items_id = items.items_id
-                                    SQLHelper.updateCategory(main)
+                                    categories.items_id = items.items_id
+                                    SQLHelper.updateCategory(categories)
                                 }
                             }
                         }
@@ -511,7 +506,6 @@ class ServiceManager : BaseServiceView<Any?> {
                 } else {
                     SingletonPrivateFragment.getInstance()?.onUpdateView()
                 }
-                Utils.Log(TAG, "Original path :" + originalPath)
                 /*Share intent is not deleted*/
                 if (!getRequestShareIntent()) {
                     Utils.onDeleteFile(originalPath)
@@ -606,7 +600,7 @@ class ServiceManager : BaseServiceView<Any?> {
         return myService
     }
 
-    private fun getString(res: Int): String? {
+    private fun getString(res: Int): String {
         return SuperSafeApplication.getInstance().getString(res)
     }
 
@@ -652,10 +646,9 @@ class ServiceManager : BaseServiceView<Any?> {
                 items.size = "" + mb
                 SQLHelper.insertedItem(items)
                 Utils.Log(TAG,"Saved file to local db")
-                if (mainCategories.isCustom_Cover) {
+                if (!mainCategories.isCustom_Cover) {
                     mainCategories.items_id = items.items_id
                     SQLHelper.updateCategory(mainCategories)
-                    Utils.Log(TAG, "Special main categories " + Gson().toJson(mainCategories))
                 }
             }
             GalleryCameraMediaManager.getInstance()?.setProgressing(false)

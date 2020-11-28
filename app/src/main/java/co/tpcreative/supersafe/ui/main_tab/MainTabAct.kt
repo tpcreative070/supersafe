@@ -118,7 +118,7 @@ class MainTabAct : BaseGoogleApi(){
                         Navigator.onMoveToPremium(this@MainTabAct)
                     }
                     override fun dismiss() {
-                        Utils.stoppingSaverSpace()
+                        Utils.stopSaverSpace()
                         Utils.stoppingPremiumFeatures()
                         Utils.putAlreadyAskedExpiration(true)
                     }

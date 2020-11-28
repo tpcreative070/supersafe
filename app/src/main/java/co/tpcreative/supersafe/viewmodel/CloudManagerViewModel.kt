@@ -104,28 +104,9 @@ class CloudManagerViewModel : BaseViewModel<ItemModel>(){
         emit(true)
     }
 
-    fun enableSaverSpace()  = liveData(Dispatchers.Main){
-        val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isSaver = false, isFakePin = false)
-        if (mList != null && mList.size > 0) {
-            for (i in mList.indices) {
-                when (EnumFormatType.values()[mList[i].formatType]) {
-                    EnumFormatType.IMAGE -> {
-                        mList[i].isSaver = true
-                        SQLHelper.updatedItem(mList[i])
-                        Utils.Log(TAG, "Continue updating...")
-                    }
-                    else -> Utils.Log(TAG,"Nothing")
-                }
-            }
-        } else {
-            Utils.Log(TAG, "Already saver files")
-        }
-        emit(true)
-    }
-
     fun disableSaverSpace(enumStatus: EnumStatus?) = liveData(Dispatchers.Main){
         var sizeFile : Long = 0
-        val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isSaver = true, isFakePin = false)
+        val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true,isFakePin = false)
         if (mList != null) {
             for (i in mList.indices) {
                 when (EnumFormatType.values()[mList[i].formatType]) {
@@ -136,8 +117,6 @@ class CloudManagerViewModel : BaseViewModel<ItemModel>(){
                             }
                             EnumStatus.DOWNLOAD -> {
                                 sizeFile = 0
-                                mList[i].isSaver = false
-                                SQLHelper.updatedItem(mList[i])
                             }
                             else -> Utils.Log(TAG,"Nothing")
                         }
@@ -149,12 +128,14 @@ class CloudManagerViewModel : BaseViewModel<ItemModel>(){
         emit(sizeFile)
     }
 
-    fun destroySaver(){
-        val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isSaver = true, isFakePin = false)
+    fun startSaverSpace(){
+        val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isFakePin = false)
         mList?.let {
             for (index in it) {
                 when (EnumFormatType.values()[index.formatType]) {
                     EnumFormatType.IMAGE -> {
+                        index.isSaver = true
+                        SQLHelper.updatedItem(index)
                         index.getOriginal().deleteFile()
                     }
                     else -> Utils.Log(TAG,"Nothing")

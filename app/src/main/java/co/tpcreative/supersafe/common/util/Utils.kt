@@ -1103,15 +1103,17 @@ object Utils {
     }
 
     /*Stopping saver space*/
-    fun stoppingSaverSpace(){
-        val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isSaver = false, isFakePin = false)
+    fun stopSaverSpace(){
+        val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isFakePin = false)
         mList?.let { mResultList ->
             for (i in mResultList.indices) {
                 when (EnumFormatType.values()[mResultList[i].formatType]) {
                     EnumFormatType.IMAGE -> {
-                        if (mResultList[i].isSyncCloud && mResultList[i].originalSync) {
+                        if (mResultList[i].originalSync) {
                             mResultList[i].isSyncCloud = false
                             mResultList[i].originalSync = false
+                            mResultList[i].isSaver = false
+                            mResultList[i].statusProgress = EnumStatusProgress.NONE.ordinal
                             SQLHelper.updatedItem(mResultList[i])
                         }
                     }
@@ -1156,7 +1158,7 @@ object Utils {
         }
         var output: File? = File(mFolderName + item.originalName + item.fileExtension)
         if (output?.isFileExist(output.absolutePath) == true) {
-            output = File(mFolderName + item.originalName + "(1)" + item.fileExtension)
+            output = File(mFolderName + item.originalName + "(${System.currentTimeMillis()})" + item.fileExtension)
         }
         return output
     }

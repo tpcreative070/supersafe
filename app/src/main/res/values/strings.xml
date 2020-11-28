@@ -92,7 +92,7 @@
     <string name="enter_name">Enter name</string>
     <string name="me">ME</string>
     <string name="privates">PRIVATE</string>
-
+    <string name="need_signed_in_to_google_drive_before_using_this_feature">Please connect to YOUR GOOGLE DRIVE before to use this feature</string>
     <string name="label_custom_color">Custom colors</string>
     <string name="label_custom_theme">Custom theme</string>
     <string name="label_add_action">Add action</string>

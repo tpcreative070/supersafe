@@ -125,11 +125,7 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
                 return
             }
             isReload = true
-            result.toBitmap {
-                it?.let {mBitmap ->
-                    onReviewPicture(mBitmap)
-                }
-            }
+            onReviewPicture(mData)
             ServiceManager.getInstance()?.onSaveDataOnCamera(mData, mainCategories)
             Utils.Log(TAG, "take picture")
         }
