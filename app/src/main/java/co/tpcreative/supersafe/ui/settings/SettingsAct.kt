@@ -8,9 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.WindowManager
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -141,7 +139,7 @@ class SettingsAct : BaseActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
-        var mPosition = Utils.getPositionTheme()
+        var mPosition = Utils.getPositionThemeMode()
         private var mAccount: Preference? = null
         private var mLockScreen: Preference? = null
         private var mTheme: Preference? = null
@@ -235,7 +233,7 @@ class SettingsAct : BaseActivity() {
                             return@OnPreferenceClickListener true
                         }
                         askDeviceMode {
-                            ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionTheme()))
+                            ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionThemeMode()))
                         }
                     }
                 }
@@ -328,7 +326,7 @@ class SettingsAct : BaseActivity() {
 
         private fun onShowPremium() {
             try {
-                val builder = MaterialDialog.Builder(context!!,Utils.getCurrentTheme())
+                val builder = MaterialDialog.Builder(context!!,Utils.getCurrentThemeMode())
                 val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
                 builder.setHeaderBackground(themeApp?.getAccentColor()!!)
                 builder.setTitle(getString(R.string.this_is_premium_feature))
@@ -350,15 +348,15 @@ class SettingsAct : BaseActivity() {
         }
 
         private fun askDeviceMode(onCompleted: (done: Boolean) -> Unit) {
-            val dialogBuilder = MaterialDialog.Builder(context!!, Utils.getCurrentTheme())
+            val dialogBuilder = MaterialDialog.Builder(context!!, Utils.getCurrentThemeMode())
             dialogBuilder.setTitle(R.string.change_mode)
             dialogBuilder.setPadding(40, 40, 40, 0)
             dialogBuilder.setMargin(60, 0, 60, 0)
-            dialogBuilder.setSingleChoiceItems(R.array.themeEntryArray, Utils.getPositionTheme(), DialogInterface.OnClickListener { dialogInterface, m ->
+            dialogBuilder.setSingleChoiceItems(R.array.themeEntryArray, Utils.getPositionThemeMode(), DialogInterface.OnClickListener { dialogInterface, m ->
                 this.mPosition = m
             })
             dialogBuilder.setPositiveButton(R.string.yes) { _, i ->
-                Utils.setPositionTheme(EnumThemeModel.byPosition(mPosition).ordinal)
+                Utils.setPositionThemeMode(EnumThemeModel.byPosition(mPosition).ordinal)
                 onCompleted(true)
             }
             val dialog = dialogBuilder.create()

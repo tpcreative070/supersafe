@@ -137,7 +137,7 @@ fun CloudManagerAct.onShowDialog(size : Long) {
 
 fun CloudManagerAct.onShowPremium() {
     try {
-        val builder = MaterialDialog.Builder(this, Utils.getCurrentTheme())
+        val builder = MaterialDialog.Builder(this, Utils.getCurrentThemeMode())
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         builder.setHeaderBackground(themeApp?.getAccentColor()!!)
         builder.setTitle(getString(R.string.this_is_premium_feature))

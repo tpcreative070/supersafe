@@ -53,7 +53,6 @@ import java.io.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 /**
  * Created by pc on 07/16/2017.
@@ -984,9 +983,6 @@ object Utils {
         val mCheckout: CheckoutItems? = getCheckoutItems()
         mCheckout?.let { mCheckoutResult ->
             if (mCheckoutResult.isPurchasedLifeTime || mCheckoutResult.isPurchasedOneYears || mCheckoutResult.isPurchasedSixMonths) {
-                if (!mCheckoutResult.isPurchasedLifeTime){
-                    putAlreadyAskedExpiration(true)
-                }
                 return true
             }
         }
@@ -1080,18 +1076,26 @@ object Utils {
         }
     }
 
-    fun getPositionTheme(): Int {
+    fun getPositionThemeMode(): Int {
         return PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme), 0)
     }
 
-    fun setPositionTheme(positionTheme: Int) {
+    fun setPositionThemeMode(positionTheme: Int) {
         PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme), positionTheme)
     }
 
-    fun getCurrentTheme(): Int {
-        return if (getPositionTheme() == 0) {
+    fun getCurrentThemeMode(): Int {
+        return if (getPositionThemeMode() == 0) {
             R.style.LightDialogTheme
         } else R.style.DarkDialogTheme
+    }
+
+    fun getThemeColor() : Int{
+        return PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
+    }
+
+    fun putThemeColor(position : Int){
+        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), position)
     }
 
     fun deleteFolderOfItemId(items_id: String) {
@@ -1128,19 +1132,24 @@ object Utils {
         PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_fake_pin), false)
         PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_break_in_alert), false)
         PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_secret_door), false)
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), false)
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), false)
-        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
-        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme), 0)
-        ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionTheme()))
+        if(getSaverSpace()){
+            stopSaverSpace()
+            putSaverSpace(false)
+        }
+        if (getPositionThemeMode()>0){
+            setPositionThemeMode(0)
+            ThemeHelper.applyTheme(EnumThemeModel.byPosition(getPositionThemeMode()))
+        }
+        if (getThemeColor()>0){
+            putThemeColor(0)
+        }
     }
 
-    fun putAlreadyAskedExpiration(status: Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_already_asked_expiration), status)
-    }
-
-    fun isAlreadyAskedExpiration() : Boolean{
-       return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_already_asked_expiration), false)
+    fun checkingServicesToStopPremiumFeatures() : Boolean{
+        if (getSaverSpace() || getThemeColor()>0 || getPositionThemeMode() > 0 || isEnabledFakePin() || isBreakAlert()){
+            return true
+        }
+        return false
     }
 
     fun isVertical() : Boolean {

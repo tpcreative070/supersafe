@@ -66,7 +66,7 @@ class ThemeSettingsAct : BaseActivity(), ThemeSettingsAdapter.ItemSelectedListen
         viewModel.mThemeApp = dataSource[position]
         setStatusBarColored(this, themeApp.getPrimaryColor(), themeApp.getPrimaryDarkColor())
         tvTitle?.setTextColor(ContextCompat.getColor(this,themeApp.getAccentColor()))
-        PrefsController.putInt(getString(R.string.key_theme_object), position)
+        Utils.putThemeColor(position)
         adapter?.notifyItemChanged(position)
     }
 

@@ -166,7 +166,7 @@ fun PremiumAct.onCheckout(data: PurchaseData?, purchase: EnumPurchase?) {
 }
 
 fun PremiumAct.askWarningFakeCheckout() {
-    val dialogBuilder = MaterialDialog.Builder(this, Utils.getCurrentTheme())
+    val dialogBuilder = MaterialDialog.Builder(this, Utils.getCurrentThemeMode())
     dialogBuilder.setTitle(R.string.key_alert)
     dialogBuilder.setPadding(40, 40, 40, 0)
     dialogBuilder.setMargin(60, 0, 60, 0)

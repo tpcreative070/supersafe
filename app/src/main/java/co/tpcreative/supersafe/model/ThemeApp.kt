@@ -3,6 +3,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
+import co.tpcreative.supersafe.common.util.Utils
 import java.io.Serializable
 import java.util.*
 class ThemeApp : Serializable {
@@ -63,7 +64,7 @@ class ThemeApp : Serializable {
 
     fun getThemeInfo(): ThemeApp? {
         try {
-            val value: Int = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
+            val value: Int = Utils.getThemeColor()
             val mThem: List<ThemeApp> = ThemeUtil.getThemeList()
             if (mThem.size > value) {
                 return mThem[value]

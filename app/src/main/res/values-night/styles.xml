@@ -10,7 +10,10 @@
     </style>
 
     <style name="DarkDialogTheme" parent="@style/MaterialDialog">
-        <item name="colorPrimary">?attr/dialogColorPrimary</item>
+        <!--
+        Grey color for dialog of button
+        !-->
+        <item name="colorPrimary">@color/grey_lighter</item>
         <item name="colorPrimaryDark">?attr/dialogColorPrimaryDark</item>
         <item name="colorAccent">?attr/dialogColorAccent</item>
         <!--

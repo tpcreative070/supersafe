@@ -50,7 +50,7 @@ fun AlbumCoverAct.initUI(){
 
 fun AlbumCoverAct.onShowPremium() {
     try {
-        val builder =  MaterialDialog.Builder(this, Utils.getCurrentTheme())
+        val builder =  MaterialDialog.Builder(this, Utils.getCurrentThemeMode())
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         builder.setHeaderBackground(themeApp?.getAccentColor()!!)
         builder.setTitle(getString(R.string.this_is_premium_feature))

@@ -71,7 +71,8 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedSixMonths = data.autoRenewing
                         Utils.Log(TAG,"Checking...6")
-                        if (!mCheckout.isPurchasedSixMonths && !Utils.isAlreadyAskedExpiration()) {
+                        /*When subscription request to recharge*/
+                        if (!mCheckout.isPurchasedSixMonths && Utils.checkingServicesToStopPremiumFeatures()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
                     } else {
@@ -81,7 +82,8 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                     mCheckout = CheckoutItems()
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedSixMonths = data.autoRenewing
-                        if (!mCheckout.isPurchasedSixMonths && !Utils.isAlreadyAskedExpiration()) {
+                        /*When subscription request to recharge*/
+                        if (!mCheckout.isPurchasedSixMonths && Utils.checkingServicesToStopPremiumFeatures()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
                     } else {
@@ -97,7 +99,8 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedOneYears = data.autoRenewing
                         Utils.Log(TAG,"Checking...1y")
-                        if (!mCheckout.isPurchasedOneYears && !Utils.isAlreadyAskedExpiration()) {
+                        /*When subscription request to recharge*/
+                        if (!mCheckout.isPurchasedOneYears && Utils.checkingServicesToStopPremiumFeatures()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
                     } else {
@@ -107,7 +110,8 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                     mCheckout = CheckoutItems()
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedOneYears = data.autoRenewing
-                        if (!mCheckout.isPurchasedOneYears && !Utils.isAlreadyAskedExpiration()) {
+                        /*When subscription request to recharge*/
+                        if (!mCheckout.isPurchasedOneYears && Utils.checkingServicesToStopPremiumFeatures()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
                     } else {
@@ -117,9 +121,16 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                 Utils.Log(TAG,"Preparing save ${Gson().toJson(mCheckout)}")
                 Utils.setCheckoutItems(mCheckout)
             }
-            else -> Utils.setCheckoutItems(CheckoutItems())
+            else -> {
+                /*When the user cancel and refund*/
+                if (Utils.checkingServicesToStopPremiumFeatures()){
+                    Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
+                }
+                Utils.setCheckoutItems(CheckoutItems())
+            }
         }
     }
+
 
     companion object {
         private var instance: PremiumManager? = null

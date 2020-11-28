@@ -96,7 +96,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA)
         requiredScopesString.add(DriveScopes.DRIVE_FILE)
         Utils.onCheckNewVersion()
-        ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionTheme()))
+        ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionThemeMode()))
     }
 
     fun getGoogleSignInOptions(account: Account?): GoogleSignInOptions? {
@@ -397,6 +397,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isDebugPremium(): Boolean {
-        return true
+        return false
     }
 }
