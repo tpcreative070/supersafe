@@ -702,6 +702,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 }
             }
             EnumStatus.CONNECTED -> {
+                Utils.setRequestSyncData(true)
                 Utils.onPushEventBus(EnumStatus.CONNECTED)
                 if (!Utils.getUserId().isNullOrEmpty()){
                     onGetUserInfo()
