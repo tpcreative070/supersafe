@@ -48,7 +48,7 @@ fun PremiumAct.initUI(){
         }
         if (BillingProcessor.isIabServiceAvailable(this)) {
             Utils.Log(TAG, "purchase new")
-            if (bp?.isSubscribed(getString(R.string.six_months))!!) {
+            if (bp?.isSubscribed(getString(R.string.six_months)) == true) {
                 Utils.Log(TAG, "Already charged")
                 bp?.loadOwnedPurchasesFromGoogle()
             } else {
@@ -64,7 +64,7 @@ fun PremiumAct.initUI(){
         Utils.Log(TAG, "Years")
         if (BillingProcessor.isIabServiceAvailable(this)) {
             Utils.Log(TAG, "purchase new")
-            if (bp?.isSubscribed(getString(R.string.one_years))!!) {
+            if (bp?.isSubscribed(getString(R.string.one_years)) == true) {
                 Utils.Log(TAG, "Already charged")
                 bp?.loadOwnedPurchasesFromGoogle()
             } else {
@@ -79,7 +79,7 @@ fun PremiumAct.initUI(){
         }
         if (BillingProcessor.isIabServiceAvailable(this)) {
             Utils.Log(TAG, "purchase new")
-            if (bp?.isPurchased(getString(R.string.life_time))!!) {
+            if (bp?.isPurchased(getString(R.string.life_time)) == true) {
                 Utils.Log(TAG, "Already charged")
                 bp?.consumePurchase(getString(R.string.life_time))
                 bp?.loadOwnedPurchasesFromGoogle()
@@ -187,7 +187,11 @@ fun PremiumAct.onStartInAppPurchase() {
 fun PremiumAct.checkout(data : PurchaseData){
     viewModel.checkout(data).observe(this, Observer {
         when(it.status){
-            Status.SUCCESS -> onUpdatedView()
+            Status.SUCCESS -> {
+                if (Utils.isRealCheckedOut(data.orderId)) {
+                    onUpdatedView()
+                }
+            }
             else -> Utils.onBasicAlertNotify(this,"Alert",it.message ?:"")
         }
     })
