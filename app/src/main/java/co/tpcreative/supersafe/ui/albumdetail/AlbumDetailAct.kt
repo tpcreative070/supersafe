@@ -61,7 +61,10 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
         when (event) {
             EnumStatus.REFRESH -> {
                 runOnUiThread {
-                    getData()
+                    /*Checking after update view*/
+                    if (countSelected==0){
+                        getData()
+                    }
                 }
             }
             EnumStatus.FINISH -> {
@@ -69,7 +72,10 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
             }
             EnumStatus.UPDATED_VIEW_DETAIL_ALBUM -> {
                 runOnUiThread {
-                    getData()
+                    /*Checking after update view*/
+                    if (countSelected==0){
+                        getData()
+                    }
                 }
             }
             else -> Utils.Log(TAG, "Nothing ==> Event bus")
@@ -231,7 +237,10 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
             Navigator.CAMERA_ACTION -> {
                 if (resultCode == Activity.RESULT_OK) {
                     Utils.Log(TAG, "reload data")
-                    getData()
+                    /*Checking after update view*/
+                    if (countSelected==0){
+                        getData()
+                    }
                 } else {
                     Utils.Log(TAG, "Nothing to do on Camera")
                 }
@@ -239,7 +248,10 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
             Navigator.PHOTO_SLIDE_SHOW -> {
                 if (resultCode == Activity.RESULT_OK) {
                     Utils.Log(TAG, "reload data")
-                    getData()
+                    /*Checking after update view*/
+                    if (countSelected==0){
+                        getData()
+                    }
                 } else {
                     Utils.Log(TAG, "Nothing to do on Camera")
                 }
