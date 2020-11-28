@@ -37,12 +37,15 @@ import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.*
+import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.api.client.util.Base64
 import com.google.common.base.Charsets
 import com.google.gson.Gson
@@ -848,10 +851,36 @@ object Utils {
         PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), Gson().toJson(user))
     }
 
+    fun isRequestGoogleDriveSignOut() : Boolean{
+        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sign_out_google_drive), false)
+    }
+
+    fun putRequestGoogleDriveSignOut(value : Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sign_out_google_drive), value)
+    }
+
+    fun clearAppDataAndReCreateData(){
+        SuperSafeApplication.getInstance().deleteFolder()
+        SuperSafeApplication.getInstance().initFolder()
+        SQLHelper.onCleanDatabase()
+        PrefsController.clear()
+        setUserPreShare(User())
+        SQLHelper.getList()
+        EncryptDecryptFilesHelper.getInstance()?.cleanUp()
+        EncryptDecryptPinHelper.getInstance()?.cleanUp()
+        val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(SuperSafeApplication.getInstance())
+        if (account!=null){
+            putRequestGoogleDriveSignOut(true)
+        }else{
+            putRequestGoogleDriveSignOut(false)
+        }
+        Log(TAG,"clearAppDataAndReCreateData")
+    }
+
     fun setDriveConnect(isConnected : Boolean? = null,accessToken : String? = null,cloudId : String? = null){
         val mUser = getUserInfo()
         isConnected?.let {
-            Utils.Log(TAG,"show drive connected here $it")
+            Log(TAG,"show drive connected here $it")
             mUser?.driveConnected = it
         }
         if (!accessToken.isNullOrEmpty()){

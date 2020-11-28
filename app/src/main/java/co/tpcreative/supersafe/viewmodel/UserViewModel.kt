@@ -4,10 +4,13 @@ import androidx.lifecycle.liveData
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.requester.MicService
 import co.tpcreative.supersafe.common.api.requester.UserService
+import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.getString
 import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
+import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.*
@@ -50,6 +53,9 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                         emailResponseError(mResultSignUp.data.responseMessage!!)
                         emit(Resource.error(mResultSignUp.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignUp.data.responseMessage ?:"",null))
                     }else{
+                        /*Clean up cache before enter up app*/
+                        Utils.clearAppDataAndReCreateData()
+                        Utils.Log(TAG,"clearAppDataAndReCreateData")
                         val mData: DataResponse? = mResultSignUp.data.data
                         Utils.setUserPreShare(mData?.user)
                         emit(mResultSignUp)
@@ -76,6 +82,9 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                         emailResponseError(getString(R.string.signed_in_failed))
                         emit(Resource.error(mResultSignIn.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignIn.data.responseMessage ?:"",null))
                     }else{
+                        /*Clean up cache before enter up app*/
+                        Utils.clearAppDataAndReCreateData()
+                        Utils.Log(TAG,"clearAppDataAndReCreateData")
                         val mData: DataResponse? = mResultSignIn.data.data
                         Utils.setUserPreShare(mData?.user)
                         val mResultSentEmail = emailViewModel.sendEmail(EnumStatus.SIGN_IN)

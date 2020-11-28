@@ -23,7 +23,6 @@ class EncryptDecryptPinHelper {
         return String(bytes!!)
     }
 
-
     private fun getConfigurationFile(): EncryptConfiguration? {
         configurationFile = EncryptConfiguration.Builder()
                 .setChuckSize(1024 * 2)
@@ -32,7 +31,14 @@ class EncryptDecryptPinHelper {
         return configurationFile
     }
 
+    private fun checkConfig(){
+        if (configurationFile == null){
+            configurationFile = getConfigurationFile()
+        }
+    }
+
     fun createFile(output: File?, input: File?, mode: Int): Boolean {
+        checkConfig()
         var inputStream: FileInputStream? = null
         try {
             inputStream = FileInputStream(input)
@@ -65,6 +71,7 @@ class EncryptDecryptPinHelper {
     }
 
     fun createLargeFile(output: File?, input: File?, cipher: Cipher): Boolean {
+        checkConfig()
         if (configurationFile == null || !(configurationFile?.isEncrypted)!!) {
             return false
         }
@@ -99,6 +106,7 @@ class EncryptDecryptPinHelper {
     }
 
     fun createFileByteDataNoEncrypt(context: Context, data: ByteArray?)  : File {
+        checkConfig()
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                 "picture.jpg")
         var os: OutputStream? = null
@@ -120,6 +128,7 @@ class EncryptDecryptPinHelper {
     }
 
     fun getCipher(mode: Int): Cipher? {
+        checkConfig()
         if (configurationFile != null && configurationFile?.isEncrypted!!) {
             try {
                 val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
@@ -151,6 +160,7 @@ class EncryptDecryptPinHelper {
     }
 
     fun createFile(path: String?, content: ByteArray?): Boolean {
+        checkConfig()
         var mContent = content
         var stream: OutputStream? = null
         try {
@@ -176,6 +186,7 @@ class EncryptDecryptPinHelper {
     }
 
     fun readFile(stream: FileInputStream): ByteArray? {
+        checkConfig()
         open class Reader : Thread() {
             var array: ByteArray? = null
         }
@@ -279,6 +290,10 @@ class EncryptDecryptPinHelper {
 
     fun isDirectoryExists(path: String?): Boolean {
         return File(path).exists()
+    }
+
+    fun cleanUp(){
+        configurationFile = null
     }
 
     companion object {

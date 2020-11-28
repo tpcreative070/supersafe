@@ -78,12 +78,8 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
                         Navigator.onMoveToMainTab(this@SplashScreenAct, false)
                     } else {
-                        SuperSafeApplication.getInstance().deleteFolder()
-                        SuperSafeApplication.getInstance().initFolder()
-                        SQLHelper.onCleanDatabase()
-                        Utils.setUserPreShare(User())
-                        SQLHelper.getList()
-                        PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), true)
+                        Utils.clearAppDataAndReCreateData()
+                        Utils.Log(TAG,"clearAppDataAndReCreateData")
                         Navigator.onMoveToDashBoard(this@SplashScreenAct)
                     }
                 } else {

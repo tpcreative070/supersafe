@@ -42,18 +42,14 @@ class EncryptDecryptFilesHelper {
         return configurationFile
     }
 
-    fun checkConfig(){
-        getSecretKey()?.let {
-            if (configurationFile==null){
-                configurationFile = EncryptConfiguration.Builder()
-                        .setChuckSize(1024 * 2)
-                        .setEncryptContent(SecurityUtil.IVX, it, SecurityUtil.SALT)
-                        .build()
-            }
+    private fun checkConfig(){
+        if (configurationFile==null){
+            configurationFile = getConfigurationFile()
         }
     }
 
     fun createFile(output: File?, input: File?, mode: Int): Boolean {
+        checkConfig()
         var inputStream: FileInputStream? = null
         try {
             inputStream = FileInputStream(input)
@@ -86,6 +82,7 @@ class EncryptDecryptFilesHelper {
     }
 
     fun createLargeFile(output: File?, input: File?, cipher: Cipher): Boolean {
+        checkConfig()
         if (configurationFile == null || configurationFile?.isEncrypted != true) {
             return false
         }
@@ -120,6 +117,7 @@ class EncryptDecryptFilesHelper {
     }
 
     fun createFileByteDataNoEncrypt(context: Context, data: ByteArray?)  : File{
+        checkConfig()
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                 "picture.jpg")
         var os: OutputStream? = null
@@ -141,6 +139,7 @@ class EncryptDecryptFilesHelper {
     }
 
     fun getCipher(mode: Int): Cipher? {
+        checkConfig()
         if (configurationFile != null && configurationFile?.isEncrypted==true) {
             try {
                 val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
@@ -172,6 +171,7 @@ class EncryptDecryptFilesHelper {
     }
 
     fun createFile(path: String?, content: ByteArray?): Boolean {
+        checkConfig()
         var mContent = content
         var stream: OutputStream? = null
         try {
@@ -197,6 +197,7 @@ class EncryptDecryptFilesHelper {
     }
 
     fun readFile(stream: FileInputStream): ByteArray? {
+        checkConfig()
         open class Reader : Thread() {
             var array: ByteArray? = null
         }
@@ -260,7 +261,6 @@ class EncryptDecryptFilesHelper {
 
     fun deleteDirectoryImpl(path: String): Boolean {
         val directory = File(path)
-
         // If the directory exists then delete
         if (directory.exists()) {
             val files = directory.listFiles() ?: return true
@@ -300,6 +300,10 @@ class EncryptDecryptFilesHelper {
 
     fun isDirectoryExists(path: String?): Boolean {
         return File(path).exists()
+    }
+
+    fun cleanUp(){
+        configurationFile = null
     }
 
     companion object {

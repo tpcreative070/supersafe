@@ -322,17 +322,17 @@ object PrefsController {
      * @see Editor.clear
      */
     fun clear(): SharedPreferences.Editor? {
-        val editor: SharedPreferences.Editor = getPreferences()!!.edit().clear()
+        val editor: SharedPreferences.Editor? = getPreferences()?.edit()?.clear()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            editor.commit()
+            editor?.commit()
         } else {
-            editor.apply()
+            editor?.apply()
         }
         return editor
     }
 
     fun edit(): SharedPreferences.Editor? {
-        return getPreferences()!!.edit()
+        return getPreferences()?.edit()
     }
 
     /**

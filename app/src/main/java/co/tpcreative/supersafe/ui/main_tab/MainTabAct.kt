@@ -37,7 +37,6 @@ class MainTabAct : BaseGoogleApi(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_tab)
         initUI()
-        EncryptDecryptFilesHelper.getInstance()?.checkConfig()
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken())
     }
     override fun onOrientationChange(isFaceDown: Boolean) {
@@ -55,6 +54,7 @@ class MainTabAct : BaseGoogleApi(){
                 rlOverLay?.visibility = View.INVISIBLE
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 PremiumManager.getInstance().onStartInAppPurchase()
+                Utils.setRequestSyncData(true)
             }
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
@@ -222,7 +222,7 @@ class MainTabAct : BaseGoogleApi(){
                             Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE)
                             return
                         }
-                        val mCategory: MainCategoryModel? = list[0]
+                        val mCategory: MainCategoryModel = list[0]
                         val mResult = mCategory?.let { it1 -> Utils.getDataItemsFromImport(it1,it) }
                         if (mResult != null) {
                             importingData(mResult)

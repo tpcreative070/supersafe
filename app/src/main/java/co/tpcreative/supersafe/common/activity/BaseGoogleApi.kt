@@ -335,9 +335,10 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             if (mUser != null) {
                 mUser.driveConnected = false
                 Utils.setUserPreShare(mUser)
-                PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), false)
+                Utils.putRequestGoogleDriveSignOut(false)
             }
             onDriveSignOut()
+            Utils.Log(TAG, "signOut")
         }
     }
 
@@ -359,14 +360,13 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         Utils.Log(TAG, "onRevokeAccess")
         mGoogleSignInClient?.revokeAccess()?.addOnCompleteListener(this) {
             onDriveRevokeAccess()
-            PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), false)
+            Utils.putRequestGoogleDriveSignOut(false)
             Utils.onPushEventBus(EnumStatus.SYNC_ERROR)
         }
     }
 
     protected fun onCheckRequestSignOut() {
-        val isRequest: Boolean = PrefsController.getBoolean(getString(R.string.key_request_sign_out_google_drive), false)
-        if (isRequest) {
+        if (Utils.isRequestGoogleDriveSignOut()) {
             signOut()
         }
     }

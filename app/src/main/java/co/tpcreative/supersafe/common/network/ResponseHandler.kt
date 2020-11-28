@@ -36,7 +36,9 @@ open class ResponseHandler {
                         mDriveObject?.let {
                             Utils.setDriveConnect(false)
                             ServiceManager.getInstance()?.updatedDriveAccessToken()
+                            Utils.Log(TAG,"ServiceManager.getInstance()?.updatedDriveAccessToken()")
                         }
+                        Utils.Log(TAG,"ServiceManager.getInstance()?.updatedDriveAccessToken() ?????????")
                         Resource.error(mCode!!,mMessage ?: "Unknown", null)
                     }
                 } catch (e: IOException) {
