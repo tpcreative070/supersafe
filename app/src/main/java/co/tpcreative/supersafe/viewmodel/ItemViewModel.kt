@@ -106,7 +106,7 @@ class ItemViewModel(private val itemService: ItemService) : BaseViewModel<ItemMo
             try {
                 val mItemContent = getItemContentToInsert(item,drive_id)
                 checkImportedDataBeforeSyncData(mItemContent!!)
-                val mRequest = SyncItemsRequest(Utils.getUserId(), Utils.getUserCloudId(), SuperSafeApplication.getInstance().getDeviceId(), mItemContent!!)
+                val mRequest = SyncItemsRequest(Utils.getUserId(), Utils.getUserCloudId(), SuperSafeApplication.getInstance().getDeviceId(), mItemContent)
                 val mResult = itemService.syncData(mRequest)
                 when(mResult.status){
                     Status.SUCCESS ->{

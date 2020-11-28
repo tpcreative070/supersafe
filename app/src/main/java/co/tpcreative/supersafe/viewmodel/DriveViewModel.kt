@@ -64,8 +64,8 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
         return withContext(Dispatchers.IO){
             try {
                 val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
-                val listUpload: MutableList<ItemModel>? = Utils.getMergedOriginalThumbnailList(true, mResult!!)
-                for (index in listUpload!!){
+                val listUpload: MutableList<ItemModel> = Utils.getMergedOriginalThumbnailList(true, mResult!!)
+                for (index in listUpload){
                     val mResultUpload = driveService.uploadFile(index,onGetContentOfUpload(index),mProgressUploading,onGetFilePath(index))
                     when(mResultUpload.status){
                         Status.SUCCESS ->{
@@ -93,8 +93,8 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
             try {
                 val mResult: MutableList<ItemModel>? = SQLHelper.getDeleteItemRequest()
                 /*Merged original and thumbnail*/
-                val listRequestDelete: MutableList<ItemModel>? = Utils.getMergedOriginalThumbnailList(false, mResult!!)
-                for (index in listRequestDelete!!){
+                val listRequestDelete: MutableList<ItemModel> = Utils.getMergedOriginalThumbnailList(false, mResult!!)
+                for (index in listRequestDelete){
                    val mResultDeleteCloud =  driveService.deleteCloudItemCor(index.global_id!!)
                     when(mResultDeleteCloud.status){
                         Status.SUCCESS ->{
