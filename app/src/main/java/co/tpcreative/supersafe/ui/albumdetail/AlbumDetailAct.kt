@@ -13,6 +13,7 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
+import co.tpcreative.supersafe.common.extension.deleteDirectory
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Configuration
@@ -95,10 +96,11 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
+        /*Always check to delete de share folder*/
+        SuperSafeApplication.getInstance().getSuperSafeShare().deleteDirectory()
         if (viewModel.isRequestSyncData){
             SingletonPrivateFragment.getInstance()?.onUpdateView()
             ServiceManager.getInstance()?.onPreparingSyncData()
-            EncryptDecryptFilesHelper.getInstance()?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
         }
     }
 
