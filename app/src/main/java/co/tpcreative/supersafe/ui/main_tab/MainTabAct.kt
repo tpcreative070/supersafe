@@ -294,7 +294,9 @@ class MainTabAct : BaseGoogleApi(){
     }
 
     override fun onDriveError() {}
-    override fun onDriveSignOut() {}
+    override fun onDriveSignOut() {
+        Navigator.onCheckSystem(this,null)
+    }
     override fun onDriveRevokeAccess() {}
     override fun startServiceNow() {}
     fun onSuggestionAddFiles() {
