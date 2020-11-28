@@ -82,7 +82,7 @@ fun MoveAlbumFragment.openAlbum() {
     if (mConfig?.dialogHeight!! < 0) {
         mBehavior?.peekHeight = if (mConfig?.dialogHeight!! <= Configuration.DIALOG_HALF) screenHeight / 2 else screenHeight
     } else {
-        if (mConfig?.dialogHeight!! >= screenHeight) screenHeight else mConfig?.dialogHeight?.let { mBehavior?.setPeekHeight(it) }
+        if (mConfig?.dialogHeight ?:100 >= screenHeight) else mConfig?.dialogHeight?.let { mBehavior?.setPeekHeight(it) }
     }
     dialog?.show()
 }
