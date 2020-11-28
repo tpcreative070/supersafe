@@ -47,6 +47,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enterpin)
+        enterPinAct = this
         initUI()
     }
 
@@ -371,7 +372,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
     }
 
     /*Settings preference*/
-    inner class SettingsFragment : PreferenceFragmentCompat() {
+    class SettingsFragment : PreferenceFragmentCompat() {
         private var mChangePin: MyPreference? = null
         private var mFaceDown: MySwitchPreference? = null
         private var mFingerPrint: MySwitchPreference? = null
@@ -388,7 +389,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                     if (preference.key == getString(R.string.key_change_pin)) {
                         Utils.Log(TAG, "Action here!!!")
                         enumPinPreviousAction = EnumPinAction.VERIFY_TO_CHANGE
-                        changeStatus(EnumStatus.VERIFY, EnumPinAction.VERIFY_TO_CHANGE)
+                        enterPinAct.changeStatus(EnumStatus.VERIFY, EnumPinAction.VERIFY_TO_CHANGE)
                     }
                 }
                 true
@@ -488,15 +489,16 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
 
     companion object {
         val TAG = EnterPinAct::class.java.simpleName
-        val EXTRA_SET_PIN: String? = "SET_PIN"
-        val EXTRA_ENUM_ACTION: String? = "ENUM_ACTION"
+        val EXTRA_SET_PIN: String = "SET_PIN"
+        val EXTRA_ENUM_ACTION: String = "ENUM_ACTION"
         const val PIN_LENGTH = 100
         var mCalc: CalculatorImpl? = null
         var mPinAction: EnumPinAction? = null
         var enumPinPreviousAction: EnumPinAction? = null
         var mPinActionNext: EnumPinAction? = null
         lateinit var viewModel: LockScreenViewModel
-        fun getIntent(context: Context?, action: Int, actionNext: Int): Intent? {
+        lateinit var enterPinAct : EnterPinAct
+        fun getIntent(context: Context?, action: Int, actionNext: Int): Intent {
             val intent = Intent(context, EnterPinAct::class.java)
             intent.putExtra(EXTRA_SET_PIN, action)
             intent.putExtra(EXTRA_ENUM_ACTION, actionNext)
