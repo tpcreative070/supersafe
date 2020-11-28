@@ -21,7 +21,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
     var isDownload = false
     var isSaverSpace = false
     var isRefresh = false
-    val isPreviousSaverSpace  = Utils.getSaverSpace()
+    private val isPreviousSaverSpace  = Utils.getSaverSpace()
     lateinit var viewModel : CloudManagerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
