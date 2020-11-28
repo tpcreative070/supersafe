@@ -1286,6 +1286,16 @@ object Utils {
     fun isRequestSyncData() : Boolean {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data),true)
     }
+
+    fun deletedItemsOnAnotherCloudId(){
+        val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isFakePin = false)
+        mList?.let {
+            for (index in it){
+                SQLHelper.deleteItem(index)
+                deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + index.items_id)
+            }
+        }
+    }
 }
 
 interface UtilsListener {

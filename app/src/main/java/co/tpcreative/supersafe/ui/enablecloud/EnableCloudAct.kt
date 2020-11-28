@@ -120,10 +120,12 @@ class EnableCloudAct : BaseGoogleApi(){
                     override fun onCompleted() {
                         onShowProgressDialog()
                         signIn(accountName)
+                        Utils.deletedItemsOnAnotherCloudId()
                     }
                     override fun onError() {
                         onShowProgressDialog()
                         signIn(accountName)
+                        Utils.deletedItemsOnAnotherCloudId()
                     }
                     override fun onCancel() {}
                 })
