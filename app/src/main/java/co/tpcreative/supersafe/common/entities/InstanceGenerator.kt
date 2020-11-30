@@ -805,6 +805,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                         InstanceGenerator::class.java, SuperSafeApplication.getInstance().getString(R.string.key_database))
                         .addMigrations(SuperSafeApplication.getInstance().migrationFrom4To5,SuperSafeApplication.getInstance().migrationFrom5To6)
                         .allowMainThreadQueries()
+                        .fallbackToDestructiveMigration()
                         .build()
             }
             return instance
