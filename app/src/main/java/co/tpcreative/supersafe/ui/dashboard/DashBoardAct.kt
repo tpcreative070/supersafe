@@ -10,7 +10,6 @@ class DashBoardAct : BaseActivityNoneSlide() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
         initUI()
-        Utils.clearAppDataAndReCreateData()
     }
 
     override fun onResume() {
