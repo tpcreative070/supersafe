@@ -20,11 +20,9 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.RetrofitBuilder
 import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
@@ -103,7 +101,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         superSafeShare = superSafe + "share/"
         superSafePicture = "".getExternalStorageDirectory(Environment.DIRECTORY_DOWNLOADS) + "/SuperSafeExport/"
         registerActivityLifecycleCallbacks(this)
-        //registerComponentCallbacks(DetectComponentCallbacks2())
         Utils.Log(TAG, superSafe)
         options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
@@ -165,10 +162,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     override fun onActivityResumed(p0: Activity) {
-//        if(isRunningBackground == true){
-//            Utils.Log("DetectComponentCallbacks2", "app went to foreground");
-//            isRunningBackground = false;
-//        }
         Utils.Log(TAG, "onActivityResumed")
     }
 
