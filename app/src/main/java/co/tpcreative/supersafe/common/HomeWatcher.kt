@@ -32,11 +32,11 @@ class HomeWatcher(private val mContext: Context?) {
     }
 
     internal inner class InnerReceiver : BroadcastReceiver() {
-        val SYSTEM_DIALOG_REASON_KEY: String? = "reason"
-        val SYSTEM_DIALOG_REASON_RECENT_APPS: String? = "recentapps"
-        val SYSTEM_DIALOG_REASON_HOME_KEY: String? = "homekey"
+        val SYSTEM_DIALOG_REASON_KEY: String = "reason"
+        val SYSTEM_DIALOG_REASON_RECENT_APPS: String = "recentapps"
+        val SYSTEM_DIALOG_REASON_HOME_KEY: String = "homekey"
         override fun onReceive(context: Context?, intent: Intent?) {
-            val action: String? = intent?.getAction()
+            val action: String? = intent?.action
             if (action == Intent.ACTION_CLOSE_SYSTEM_DIALOGS) {
                 val reason: String? = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY)
                 if (reason != null) {
@@ -59,7 +59,7 @@ class HomeWatcher(private val mContext: Context?) {
     }
 
     companion object {
-        val TAG: String? = "hg"
+        val TAG: String = "hg"
     }
 
     init {

@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
@@ -32,10 +33,7 @@ import com.google.android.gms.tasks.Task
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.drive.DriveScopes
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.IOException
 
 abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
@@ -62,10 +60,9 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     }
 
     fun onCallLockScreen() {
-        val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        when (val action = EnumPinAction.values()[value]) {
+        when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
             EnumPinAction.SPLASH_SCREEN -> {
-                PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal)
+                Utils.putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
                 window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 Navigator.onMoveToVerifyPin(this, EnumPinAction.NONE)
@@ -122,31 +119,30 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     }
 
     fun onRegisterHomeWatcher() {
-        Utils.Log(TAG, "Register")
-        /*Home action*/
-        if (mHomeWatcher != null) {
-            if (mHomeWatcher?.isRegistered!!) {
-                return
-            }
-        }
-        mHomeWatcher = HomeWatcher(this)
-        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
-            override fun onHomePressed() {
-                val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                when (val action = EnumPinAction.values()[value]) {
-                    EnumPinAction.NONE -> {
-                        Utils.onHomePressed()
-                        onStopListenerAWhile()
-                    }
-                    else -> {
-                        Utils.Log(TAG, "Nothing to do on home " + action.name)
-                    }
-                }
-                mHomeWatcher?.stopWatch()
-            }
-            override fun onHomeLongPressed() {}
-        })
-        mHomeWatcher?.startWatch()
+//        Utils.Log(TAG, "Register")
+//        /*Home action*/
+//        if (mHomeWatcher != null) {
+//            if (mHomeWatcher?.isRegistered!!) {
+//                return
+//            }
+//        }
+//        mHomeWatcher = HomeWatcher(this)
+//        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
+//            override fun onHomePressed() {
+//                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
+//                    EnumPinAction.NONE -> {
+//                        Utils.onHomePressed()
+//                        onStopListenerAWhile()
+//                    }
+//                    else -> {
+//                        Utils.Log(TAG, "Nothing to do on home " + action.name)
+//                    }
+//                }
+//                mHomeWatcher?.stopWatch()
+//            }
+//            override fun onHomeLongPressed() {}
+//        })
+//        mHomeWatcher?.startWatch()
     }
 
     override fun onLowMemory() {
@@ -171,19 +167,22 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     override fun onStart() {
         super.onStart()
         Utils.onScanFile(this,"scan.log")
-        val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        when (val action = EnumPinAction.values()[value]) {
+        Utils.Log(TAG, "onStart 1..........${SingletonManager.getInstance().isVisitLockScreen()})  ${Utils.getScreenStatus()}")
+        when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
             EnumPinAction.SCREEN_LOCK -> {
                 if (!SingletonManager.getInstance().isVisitLockScreen()) {
+                    Utils.Log(TAG, "onStart 2..........${SingletonManager.getInstance().isVisitLockScreen()})  ${Utils.getScreenStatus()}")
                     SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
                     Utils.Log(TAG, "Pressed home button")
                     SingletonManager.getInstance().setVisitLockScreen(true)
                     Utils.Log(TAG, "Verify pin")
                 } else {
+                    Utils.Log(TAG, "onStart 3..........${SingletonManager.getInstance().isVisitLockScreen()})  ${Utils.getScreenStatus()}")
                     Utils.Log(TAG, "Verify pin already")
                 }
             }
             else -> {
+                Utils.Log(TAG, "onStart 4..........${SingletonManager.getInstance().isVisitLockScreen()})  ${Utils.getScreenStatus()}")
                 Utils.Log(TAG, "Nothing to do on start " + action.name)
             }
         }
@@ -202,7 +201,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
                 Utils.onWriteLog("Sign-in failed on Google drive..", EnumStatus.SIGN_IN)
             }
         }
-        Utils.Log(TAG, "onStart..........")
     }
 
     protected fun signIn(email: String?) {

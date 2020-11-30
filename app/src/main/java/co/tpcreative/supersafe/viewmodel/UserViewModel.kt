@@ -54,7 +54,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                         emit(Resource.error(mResultSignUp.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignUp.data.responseMessage ?:"",null))
                     }else{
                         /*Clean up cache before enter up app*/
-                        Utils.clearAppDataAndReCreateData()
+                        //Utils.clearAppDataAndReCreateData()
                         Utils.Log(TAG,"clearAppDataAndReCreateData")
                         val mData: DataResponse? = mResultSignUp.data.data
                         Utils.setUserPreShare(mData?.user)
@@ -83,7 +83,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                         emit(Resource.error(mResultSignIn.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignIn.data.responseMessage ?:"",null))
                     }else{
                         /*Clean up cache before enter up app*/
-                        Utils.clearAppDataAndReCreateData()
+                        //Utils.clearAppDataAndReCreateData()
                         Utils.Log(TAG,"clearAppDataAndReCreateData")
                         val mData: DataResponse? = mResultSignIn.data.data
                         Utils.setUserPreShare(mData?.user)

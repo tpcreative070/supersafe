@@ -92,32 +92,31 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveAlbumFragment.OnGa
 
     protected fun onRegisterHomeWatcher() {
         /*Home action*/
-        if (mHomeWatcher != null) {
-            if (mHomeWatcher!!.isRegistered) {
-                return
-            }
-        }
-        mHomeWatcher = HomeWatcher(this)
-        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
-            override fun onHomePressed() {
-                val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                when (val action = EnumPinAction.values()[value]) {
-                    EnumPinAction.NONE -> {
-                        Utils.onHomePressed()
-                        onStopListenerAWhile()
-                    }
-                    else -> {
-                        Utils.Log(TAG, "Nothing to do on home " + action.name)
-                    }
-                }
-                mHomeWatcher?.stopWatch()
-            }
-
-            override fun onHomeLongPressed() {
-                Utils.Log(TAG, "Pressed long home button")
-            }
-        })
-        mHomeWatcher?.startWatch()
+//        if (mHomeWatcher != null) {
+//            if (mHomeWatcher!!.isRegistered) {
+//                return
+//            }
+//        }
+//        mHomeWatcher = HomeWatcher(this)
+//        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
+//            override fun onHomePressed() {
+//                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
+//                    EnumPinAction.NONE -> {
+//                        Utils.onHomePressed()
+//                        onStopListenerAWhile()
+//                    }
+//                    else -> {
+//                        Utils.Log(TAG, "Nothing to do on home " + action.name)
+//                    }
+//                }
+//                mHomeWatcher?.stopWatch()
+//            }
+//
+//            override fun onHomeLongPressed() {
+//                Utils.Log(TAG, "Pressed long home button")
+//            }
+//        })
+//        mHomeWatcher?.startWatch()
     }
 
     override fun onLowMemory() {
@@ -142,8 +141,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveAlbumFragment.OnGa
     override fun onStart() {
         super.onStart()
         Utils.onScanFile(this,"scan.log")
-        val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        when (val action = EnumPinAction.values()[value]) {
+        when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
             EnumPinAction.SCREEN_LOCK -> {
                 if (!SingletonManager.Companion.getInstance().isVisitLockScreen()) {
                     SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }

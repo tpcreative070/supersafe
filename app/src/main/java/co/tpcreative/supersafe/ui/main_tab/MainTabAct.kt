@@ -54,7 +54,6 @@ class MainTabAct : BaseGoogleApi(){
                 rlOverLay?.visibility = View.INVISIBLE
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 PremiumManager.getInstance().onStartInAppPurchase()
-                Utils.setRequestSyncData(true)
             }
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
@@ -128,6 +127,7 @@ class MainTabAct : BaseGoogleApi(){
 
     override fun onResume() {
         super.onResume()
+        Utils.Log(TAG, "onResume")
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
@@ -137,7 +137,7 @@ class MainTabAct : BaseGoogleApi(){
         if (Utils.isRequestSyncData()){
             ServiceManager.getInstance()?.onPreparingSyncData()
         }
-        Utils.Log(TAG, "onResume")
+
     }
 
     override fun onDestroy() {
@@ -155,6 +155,11 @@ class MainTabAct : BaseGoogleApi(){
 
     override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Utils.Log(TAG,"onStart !!!!")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -143,8 +143,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
     override fun onDestroy() {
         super.onDestroy()
         SingletonManager.getInstance().setVisitLockScreen(false)
-        val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        when (EnumPinAction.values()[value]) {
+        when (EnumPinAction.values()[Utils.getScreenStatus()]) {
             EnumPinAction.NONE -> {
                 val mUser: User? = Utils.getUserInfo()
                 if (mUser != null) {
@@ -217,7 +216,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                         Utils.onPushEventBus(EnumStatus.UNLOCK)
                         finish()
                         Utils.Log(TAG, "Action ...................done")
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+                        Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
                     }
                     EnumPinAction.VERIFY -> {
                         finish()
@@ -229,7 +228,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                 mPinAction = action
                 when (action) {
                     EnumPinAction.DONE -> {
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+                        Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
                         finish()
                     }
                     else -> Utils.Log(TAG, "Nothing")
@@ -239,7 +238,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                 mPinAction = action
                 when (action) {
                     EnumPinAction.DONE -> {
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+                        Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
                         finish()
                     }
                     else -> Utils.Log(TAG, "Nothing")
@@ -249,7 +248,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                 mPinAction = action
                 when (action) {
                     EnumPinAction.DONE -> {
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+                        Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
                         finish()
                     }
                     else -> Utils.Log(TAG, "Nothing")
@@ -259,7 +258,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                 mPinAction = action
                 when (action) {
                     EnumPinAction.DONE -> {
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+                        Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
                         finish()
                     }
                     else -> Utils.Log(TAG, "Nothing")
@@ -270,7 +269,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                 when (action) {
                     EnumPinAction.DONE -> {
                         SingletonManager.getInstance().setAnimation(false)
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+                        Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
                         if (SingletonManager.getInstance().isVisitFakePin()) {
                             finish()
                         } else {
@@ -284,7 +283,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                 mPinAction = action
                 when (action) {
                     EnumPinAction.DONE -> {
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+                        Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
                         finish()
                     }
                     else -> Utils.Log(TAG, "Nothing")
@@ -300,8 +299,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
         mPinAction?.name?.let { Utils.Log(TAG, it) }
         when (mPinAction) {
             EnumPinAction.VERIFY -> {
-                val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                when (EnumPinAction.values()[value]) {
+                when (EnumPinAction.values()[Utils.getScreenStatus()]) {
                     EnumPinAction.SCREEN_LOCK -> {
                         Utils.onPushEventBus(EnumStatus.FINISH)
                         Navigator.onMoveToFaceDown(this)

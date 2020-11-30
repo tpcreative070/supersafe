@@ -5,6 +5,9 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.controller.SingletonManager
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerAct
@@ -118,32 +121,54 @@ object Navigator {
     }
 
     fun onMoveSetPin(context: Context, action: EnumPinAction) {
-        val intent: Intent? = EnterPinAct.getIntent(context, EnumPinAction.SET.ordinal, action.ordinal)
+        /*Prevent running ask verify pin*/
+//        if (SuperSafeApplication.isRunningBackground==true){
+//            return
+//        }
+        val intent: Intent = EnterPinAct.getIntent(context, EnumPinAction.SET.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToVerifyPin(activity: Activity, action: EnumPinAction) {
-        val intent: Intent? = EnterPinAct.getIntent(activity, EnumPinAction.VERIFY.ordinal, action.ordinal)
+        /*Prevent running ask verify pin*/
+//        if (SuperSafeApplication.isRunningBackground==true){
+//            Utils.Log("MainTabAct", "onStart..........SuperSafeApplication.isRunningBackground")
+//            return
+//        }
+        Utils.Log("MainTabAct", "onStart intent..........SuperSafeApplication.isRunningBackground")
+        val intent: Intent = EnterPinAct.getIntent(activity, EnumPinAction.VERIFY.ordinal, action.ordinal)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         activity.startActivityForResult(intent, VERIFY_PIN)
     }
 
     fun onMoveToChangePin(context: Context, action: EnumPinAction) {
-        val intent: Intent? = EnterPinAct.getIntent(context, EnumPinAction.INIT_PREFERENCE.ordinal, action.ordinal)
+        /*Prevent running ask verify pin*/
+//        if (SuperSafeApplication.isRunningBackground==true){
+//            return
+//        }
+        val intent: Intent = EnterPinAct.getIntent(context, EnumPinAction.INIT_PREFERENCE.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToFakePin(context: Context, action: EnumPinAction) {
-        val intent: Intent? = EnterPinAct.getIntent(context, EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal, action.ordinal)
+        /*Prevent running ask verify pin*/
+//        if (SuperSafeApplication.isRunningBackground==true){
+//            return
+//        }
+        val intent: Intent = EnterPinAct.getIntent(context, EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToResetPin(context: Context, action: EnumPinAction) {
-        val intent: Intent? = EnterPinAct.getIntent(context, EnumPinAction.RESET.ordinal, action.ordinal)
-        intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        /*Prevent running ask verify pin*/
+//        if (SuperSafeApplication.isRunningBackground==true){
+//            return
+//        }
+        val intent: Intent = EnterPinAct.getIntent(context, EnumPinAction.RESET.ordinal, action.ordinal)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 

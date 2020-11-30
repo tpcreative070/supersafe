@@ -10,22 +10,31 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import androidx.core.content.PermissionChecker
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.RetrofitBuilder
 import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.model.EnumPinAction
+import co.tpcreative.supersafe.model.EnumThemeModel
+import co.tpcreative.supersafe.model.EnumTypeServices
+import co.tpcreative.supersafe.model.MigrationModel
+import co.tpcreative.supersafe.ui.enterpin.EnterPinAct
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
@@ -36,7 +45,7 @@ import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
 
-class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycleCallbacks {
+class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycleCallbacks, LifecycleObserver {
     private lateinit var superSafe: String
     private lateinit var superSafeOldPath: String
     private lateinit var superSafePrivate: String
@@ -51,23 +60,30 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     private var isLive = false
     private var activity: Activity? = null
     private var mMapMigrationItem: MutableMap<String, MigrationModel> = HashMap<String, MigrationModel>()
+    private val classes = Stack<Activity>()
+
     override fun onCreate() {
         super.onCreate()
+        initData()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this);
+    }
+
+    fun initData(){
         mInstance = this
         isLive = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
         serverApiCor = RetrofitBuilder.getService(typeService = EnumTypeServices.SYSTEM)
-        serverDriveApiCor = RetrofitBuilder.getService(getString(R.string.url_google),typeService = EnumTypeServices.GOOGLE_DRIVE)
-        serverMicCor = RetrofitBuilder.getService(getString(R.string.url_graph_microsoft),typeService = EnumTypeServices.EMAIL_OUTLOOK)
-        ServiceManager.getInstance()?.setContext(this)
+        serverDriveApiCor = RetrofitBuilder.getService(getString(R.string.url_google), typeService = EnumTypeServices.GOOGLE_DRIVE)
+        serverMicCor = RetrofitBuilder.getService(getString(R.string.url_graph_microsoft), typeService = EnumTypeServices.EMAIL_OUTLOOK)
+        //ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
                 .setContext(applicationContext)
                 ?.setMode(ContextWrapper.MODE_PRIVATE)
                 ?.setPrefsName(packageName)
                 ?.setUseDefaultSharedPreference(true)
                 ?.build()
-        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+        Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
         PrefsController.putLong(getString(R.string.key_seek_to), 0)
         PrefsController.putInt(getString(R.string.key_lastWindowIndex), 0)
         /*Migration*/
@@ -87,6 +103,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         superSafeShare = superSafe + "share/"
         superSafePicture = "".getExternalStorageDirectory(Environment.DIRECTORY_DOWNLOADS) + "/SuperSafeExport/"
         registerActivityLifecycleCallbacks(this)
+        //registerComponentCallbacks(DetectComponentCallbacks2())
         Utils.Log(TAG, superSafe)
         options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
@@ -122,30 +139,49 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
         if (this.activity == null) {
             this.activity = activity
+            Utils.Log(TAG, "onActivityCreated")
         }
+        if (activity is EnterPinAct){
+            classes.add(activity)
+        }
+    }
+
+    override fun onActivityStarted(p0: Activity) {
+        Utils.Log(TAG, "onActivityStarted $isRunningBackground")
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    private fun onAppBackgrounded() {
+        Utils.Log(TAG, "App in background")
+        isRunningBackground = true
+        Utils.putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    private fun onAppForegrounded() {
+        isRunningBackground  = false
+        Utils.Log("MainTabAct", "onStart..........onAppForegrounded")
+        Utils.Log(TAG, "App in foreground")
+    }
+
+    override fun onActivityResumed(p0: Activity) {
+//        if(isRunningBackground == true){
+//            Utils.Log("DetectComponentCallbacks2", "app went to foreground");
+//            isRunningBackground = false;
+//        }
+        Utils.Log(TAG, "onActivityResumed")
+    }
+
+    override fun onActivityPaused(p0: Activity) {
+        Utils.Log(TAG, "onActivityPaused")
+    }
+
+    override fun onActivityStopped(p0: Activity) {
+        Utils.Log(TAG, "onActivityStopped")
     }
 
     fun getActivity(): Activity? {
         return activity
-    }
-
-    override fun onActivityResumed(activity: Activity) {
-        ++resumed
-    }
-
-    override fun onActivityPaused(activity: Activity) {
-        ++paused
-        Utils.Log(TAG, "application is in foreground: " + (resumed > paused))
-    }
-
-    override fun onActivityStarted(activity: Activity) {
-        ++started
-        Utils.Log(TAG, "onActivityStarted")
-    }
-
-    override fun onActivityStopped(activity: Activity) {
-        ++stopped
-        Utils.Log(TAG, "application is visible: " + (started > stopped))
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
@@ -218,9 +254,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             }
             val isFile = (getSuperSafe() + key).isFileExist()
             if (isFile) {
-                val value = EncryptDecryptPinHelper.getInstance()?.readTextFile((getSuperSafe() + key))
-                Utils.Log(TAG, "Key value is : $value")
-                return value
+                return EncryptDecryptPinHelper.getInstance()?.readTextFile((getSuperSafe() + key))
             }
         } catch (e: Exception) {
             e.message
@@ -302,14 +336,11 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
 
     companion object {
         private val TAG = SuperSafeApplication::class.java.simpleName
-        private var resumed = 0
-        private var paused = 0
-        private var started = 0
-        private var stopped = 0
         private var url: String? = null
         var serverApiCor : ApiService? = null
         var serverDriveApiCor : ApiService? = null
         var serverMicCor : ApiService? = null
+        var isRunningBackground : Boolean? = false
         @Volatile
         private var mInstance: SuperSafeApplication? = null
         fun getInstance(): SuperSafeApplication {
@@ -317,13 +348,13 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         }
     }
 
-    val oldVersion: Migration = object : Migration(4, 5) {
+    val migrationFrom4To5: Migration = object : Migration(4, 5) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isUpdate' INTEGER NOT NULL DEFAULT 0")
         }
     }
 
-    val migrationTo: Migration = object : Migration(5, 6) {
+    val migrationFrom5To6: Migration = object : Migration(5, 6) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isRequestChecking' INTEGER NOT NULL DEFAULT 0")
         }
@@ -344,14 +375,14 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         if (mMapMigrationItem.isNotEmpty()) {
             for (index in mMapMigrationItem){
                 val mValue = index.value
-                moveTo(mValue.mInput,mValue.mOutput)
+                moveTo(mValue.mInput, mValue.mOutput)
                 responseMigration.invoke(mMapMigrationItem.size)
-                Utils.Log(TAG,"loop of index ${mValue.Id}")
+                Utils.Log(TAG, "loop of index ${mValue.Id}")
             }
         }
     }
 
-    lateinit var responseMigration : (value : Int?) -> Unit
+    lateinit var responseMigration : (value: Int?) -> Unit
 
     private suspend fun moveTo(source: File, dest: File) = withContext(Dispatchers.IO){
         try {

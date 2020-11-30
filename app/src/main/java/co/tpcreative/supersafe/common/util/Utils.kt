@@ -36,6 +36,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
+import co.tpcreative.supersafe.common.entities.InstanceGenerator
 import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
@@ -50,6 +51,9 @@ import com.google.api.client.util.Base64
 import com.google.common.base.Charsets
 import com.google.gson.Gson
 import com.tapadoo.alerter.Alerter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.apache.commons.io.FilenameUtils
 import org.greenrobot.eventbus.EventBus
 import java.io.*
@@ -570,13 +574,13 @@ object Utils {
         }
     }
 
-    fun onHomePressed() {
-        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal)
+    fun onHomePressed(){
+        putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
         Log(TAG, "Pressed home button")
-        if (!SingletonManager.getInstance().isVisitLockScreen()) {
+        if (!SingletonManager.getInstance().isVisitLockScreen()){
             SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
             SingletonManager.getInstance().setVisitLockScreen(true)
-            Log(TAG, "Verify pin")
+            Log(TAG, "---------------------------------------------------------------------------------Verify pin---------------------------------------------------------------------------------")
         } else {
             Log(TAG, "Verify pin already")
         }
@@ -860,8 +864,11 @@ object Utils {
     }
 
     fun clearAppDataAndReCreateData(){
+        SuperSafeApplication.getInstance().initData()
         SuperSafeApplication.getInstance().deleteFolder()
         SuperSafeApplication.getInstance().initFolder()
+        InstanceGenerator.getInstance(SuperSafeApplication.getInstance())?.cleanUp()
+        InstanceGenerator.getInstance(SuperSafeApplication.getInstance())
         SQLHelper.onCleanDatabase()
         PrefsController.clear()
         setUserPreShare(User())
@@ -874,6 +881,9 @@ object Utils {
         }else{
             putRequestGoogleDriveSignOut(false)
         }
+        ServiceManager.getInstance()?.onStopService()
+        ServiceManager.getInstance()?.cleanUp()
+        setRequestSyncData(true)
         Log(TAG,"clearAppDataAndReCreateData")
     }
 
@@ -1295,6 +1305,14 @@ object Utils {
                 deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + index.items_id)
             }
         }
+    }
+
+    fun getScreenStatus() : Int{
+        return PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
+    }
+
+    fun putScreenStatus(value : Int){
+        return PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), value)
     }
 }
 

@@ -74,7 +74,7 @@ object PrefsController {
      * @see SharedPreferences.getInt
      */
     fun getInt(key: String?, defValue: Int): Int {
-        return getPreferences()!!.getInt(key, defValue)
+        return getPreferences()?.getInt(key, defValue) ?: 0
     }
 
     /**
@@ -86,7 +86,7 @@ object PrefsController {
      * @see SharedPreferences.getBoolean
      */
     fun getBoolean(key: String?, defValue: Boolean): Boolean {
-        return getPreferences()!!.getBoolean(key, defValue)
+        return getPreferences()?.getBoolean(key, defValue) ?: false
     }
 
     /**
@@ -98,7 +98,7 @@ object PrefsController {
      * @see SharedPreferences.getLong
      */
     fun getLong(key: String?, defValue: Long): Long {
-        return getPreferences()!!.getLong(key, defValue)
+        return getPreferences()?.getLong(key, defValue) ?: 0
     }
 
     /**
@@ -112,7 +112,7 @@ object PrefsController {
      * @see SharedPreferences.getLong
      */
     fun getDouble(key: String?, defValue: Double): Double {
-        return java.lang.Double.longBitsToDouble(getPreferences()!!.getLong(key, java.lang.Double.doubleToLongBits(defValue)))
+        return java.lang.Double.longBitsToDouble(getPreferences()?.getLong(key, java.lang.Double.doubleToLongBits(defValue)) ?: 0)
     }
 
     /**
@@ -124,7 +124,7 @@ object PrefsController {
      * @see SharedPreferences.getFloat
      */
     fun getFloat(key: String?, defValue: Float): Float {
-        return getPreferences()!!.getFloat(key, defValue)
+        return getPreferences()?.getFloat(key, defValue) ?: 0f
     }
 
     /**
@@ -136,7 +136,7 @@ object PrefsController {
      * @see SharedPreferences.getString
      */
     fun getString(key: String?, defValue: String?): String? {
-        return getPreferences()!!.getString(key, defValue)
+        return getPreferences()?.getString(key, defValue)
     }
 
     /**
@@ -160,12 +160,12 @@ object PrefsController {
      * @see Editor.putLong
      */
     fun putLong(key: String?, value: Long) {
-        val editor: SharedPreferences.Editor = getPreferences()!!.edit()
-        editor.putLong(key, value)
+        val editor: SharedPreferences.Editor? = getPreferences()?.edit()
+        editor?.putLong(key, value)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            editor.commit()
+            editor?.commit()
         } else {
-            editor.apply()
+            editor?.apply()
         }
     }
 
@@ -175,12 +175,12 @@ object PrefsController {
      * @see Editor.putInt
      */
     fun putInt(key: String?, value: Int) {
-        val editor: SharedPreferences.Editor = getPreferences()!!.edit()
-        editor.putInt(key, value)
+        val editor: SharedPreferences.Editor? = getPreferences()?.edit()
+        editor?.putInt(key, value)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            editor.commit()
+            editor?.commit()
         } else {
-            editor.apply()
+            editor?.apply()
         }
     }
 
@@ -192,12 +192,12 @@ object PrefsController {
      * @see Editor.putLong
      */
     fun putDouble(key: String?, value: Double) {
-        val editor: SharedPreferences.Editor = getPreferences()!!.edit()
-        editor.putLong(key, java.lang.Double.doubleToRawLongBits(value))
+        val editor: SharedPreferences.Editor? = getPreferences()?.edit()
+        editor?.putLong(key, java.lang.Double.doubleToRawLongBits(value))
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            editor.commit()
+            editor?.commit()
         } else {
-            editor.apply()
+            editor?.apply()
         }
     }
 
@@ -207,12 +207,12 @@ object PrefsController {
      * @see Editor.putFloat
      */
     fun putFloat(key: String?, value: Float) {
-        val editor: SharedPreferences.Editor = getPreferences()!!.edit()
-        editor.putFloat(key, value)
+        val editor: SharedPreferences.Editor? = getPreferences()?.edit()
+        editor?.putFloat(key, value)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            editor.commit()
+            editor?.commit()
         } else {
-            editor.apply()
+            editor?.apply()
         }
     }
 
@@ -222,12 +222,12 @@ object PrefsController {
      * @see Editor.putBoolean
      */
     fun putBoolean(key: String?, value: Boolean) {
-        val editor: SharedPreferences.Editor = getPreferences()!!.edit()
-        editor.putBoolean(key, value)
+        val editor: SharedPreferences.Editor? = getPreferences()?.edit()
+        editor?.putBoolean(key, value)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            editor.commit()
+            editor?.commit()
         } else {
-            editor.apply()
+            editor?.apply()
         }
     }
 
@@ -237,12 +237,12 @@ object PrefsController {
      * @see Editor.putString
      */
     fun putString(key: String?, value: String?) {
-        val editor: SharedPreferences.Editor = getPreferences()!!.edit()
-        editor.putString(key, value)
+        val editor: SharedPreferences.Editor? = getPreferences()?.edit()
+        editor?.putString(key, value)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            editor.commit()
+            editor?.commit()
         } else {
-            editor.apply()
+            editor?.apply()
         }
     }
 
@@ -253,33 +253,35 @@ object PrefsController {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     fun putStringSet(key: String?, value: MutableSet<String?>?) {
-        val editor: SharedPreferences.Editor = getPreferences()!!.edit()
+        val editor: SharedPreferences.Editor? = getPreferences()?.edit()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            editor.putStringSet(key, value)
+            editor?.putStringSet(key, value)
         } else {
             // Workaround for pre-HC's lack of StringSets
             var stringSetLength = 0
-            if (mPrefs!!.contains(key + LENGTH)) {
+            if (mPrefs?.contains(key + LENGTH) == true) {
                 // First read what the value was
-                stringSetLength = mPrefs!!.getInt(key + LENGTH, -1)
+                stringSetLength = mPrefs?.getInt(key + LENGTH, -1) ?: 0
             }
-            editor.putInt(key + LENGTH, value!!.size)
+            editor?.putInt(key + LENGTH, value?.size ?: 0)
             var i = 0
-            for (aValue in value) {
-                editor.putString("$key[$i]", aValue)
-                i++
+            if (value != null) {
+                for (aValue in value) {
+                    editor?.putString("$key[$i]", aValue)
+                    i++
+                }
             }
             while (i < stringSetLength) {
 
                 // Remove any remaining values
-                editor.remove("$key[$i]")
+                editor?.remove("$key[$i]")
                 i++
             }
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            editor.commit()
+            editor?.commit()
         } else {
-            editor.apply()
+            editor?.apply()
         }
     }
 
@@ -289,22 +291,22 @@ object PrefsController {
      */
     fun remove(key: String?) {
         val prefs: SharedPreferences? = getPreferences()
-        val editor: SharedPreferences.Editor = prefs!!.edit()
-        if (prefs.contains(key + LENGTH)) {
+        val editor: SharedPreferences.Editor? = prefs?.edit()
+        if (prefs?.contains(key + LENGTH) == true) {
             // Workaround for pre-HC's lack of StringSets
             val stringSetLength: Int = prefs.getInt(key + LENGTH, -1)
             if (stringSetLength >= 0) {
-                editor.remove(key + LENGTH)
+                editor?.remove(key + LENGTH)
                 for (i in 0 until stringSetLength) {
-                    editor.remove("$key[$i]")
+                    editor?.remove("$key[$i]")
                 }
             }
         }
-        editor.remove(key)
+        editor?.remove(key)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            editor.commit()
+            editor?.commit()
         } else {
-            editor.apply()
+            editor?.apply()
         }
     }
 
@@ -314,7 +316,7 @@ object PrefsController {
      * @see SharedPreferences.contains
      */
     operator fun contains(key: String?): Boolean {
-        return getPreferences()!!.contains(key)
+        return getPreferences()?.contains(key) ?: false
     }
 
     /**
@@ -404,7 +406,7 @@ object PrefsController {
                 throw RuntimeException("Context not set, please set context before building the Prefs instance.")
             }
             if (TextUtils.isEmpty(mKey)) {
-                mKey = mContext?.getPackageName()
+                mKey = mContext?.packageName
             }
             if (mUseDefault) {
                 mKey += DEFAULT_SUFFIX

@@ -776,7 +776,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         return null
     }
 
-    fun getBreakInAlertsList(): MutableList<BreakInAlertsEntityModel>? {
+    fun getBreakInAlertsList(): MutableList<BreakInAlertsEntityModel> {
         val mResult: MutableList<BreakInAlertsEntity>? = instance?.breakInAlertsDao()?.loadAll()
         val mList: MutableList<BreakInAlertsEntityModel> = ArrayList<BreakInAlertsEntityModel>()
         if (mResult != null) {
@@ -784,27 +784,26 @@ abstract class InstanceGenerator : RoomDatabase() {
                 mList.add(BreakInAlertsEntityModel(index))
             }
             Collections.sort(mList, Comparator { lhs, rhs ->
-                val count_1 = lhs.id.toInt()
-                val count_2 = rhs.id.toInt()
-                count_1 - count_2
+                lhs.id - rhs.id
             })
         }
         return mList
     }
 
+    fun cleanUp(){
+        instance = null
+    }
+
     companion object {
         @Ignore
         private var instance: InstanceGenerator? = null
-
-        //    @Ignore
-        //    public abstract SecretDao secretDao();
         @Ignore
         val TAG = InstanceGenerator::class.java.simpleName
-        fun getInstance(context: Context?): InstanceGenerator? {
+        fun getInstance(context: Context): InstanceGenerator? {
             if (instance == null) {
-                instance = Room.databaseBuilder(SuperSafeApplication.getInstance(),
+                instance = Room.databaseBuilder(context,
                         InstanceGenerator::class.java, SuperSafeApplication.getInstance().getString(R.string.key_database))
-                        .addMigrations(SuperSafeApplication.getInstance().oldVersion,SuperSafeApplication.getInstance().migrationTo)
+                        .addMigrations(SuperSafeApplication.getInstance().migrationFrom4To5,SuperSafeApplication.getInstance().migrationFrom5To6)
                         .allowMainThreadQueries()
                         .build()
             }

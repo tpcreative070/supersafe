@@ -42,7 +42,7 @@ import java.io.IOException
 import java.util.*
 import javax.crypto.Cipher
 
-class ServiceManager : BaseServiceView<Any?> {
+class ServiceManager() : BaseServiceView<Any?> {
     private var myService: SuperSafeService? = null
     private var mContext: Context? = null
 
@@ -65,7 +65,6 @@ class ServiceManager : BaseServiceView<Any?> {
             myService?.bindView(this@ServiceManager)
             initService()
             Utils.onScanFile(SuperSafeApplication.getInstance(), "scan.log")
-            Utils.setRequestSyncData(true)
         }
 
         //binder comes from server to communicate with method's of
@@ -75,6 +74,9 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
+    fun cleanUp(){
+        instance = null
+    }
     private var isWaitingSendMail = false
 
     /*Preparing sync data*/
@@ -271,6 +273,9 @@ class ServiceManager : BaseServiceView<Any?> {
         actionProgressing = EnumStatus.DONE
         Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
         SingletonPrivateFragment.getInstance()?.onUpdateView()
+        if (SuperSafeApplication.isRunningBackground == true){
+            onDismissServices()
+        }
     }
 
 
@@ -583,7 +588,7 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    private fun onStopService() {
+    fun onStopService() {
         if (myService != null) {
             myConnection?.let { mContext?.unbindService(it) }
             myService = null
@@ -686,8 +691,7 @@ class ServiceManager : BaseServiceView<Any?> {
     override fun onSuccessful(message: String?, status: EnumStatus) {
         when (status) {
             EnumStatus.SCREEN_OFF -> {
-                val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                when (EnumPinAction.values()[value]) {
+                when (EnumPinAction.values()[Utils.getScreenStatus()]) {
                     EnumPinAction.NONE -> {
                         val key: String = SuperSafeApplication.getInstance().readKey() as String
                         if ("" != key) {
@@ -793,6 +797,10 @@ class ServiceManager : BaseServiceView<Any?> {
         fun onCompleted()
         fun onError()
         fun onCancel()
+    }
+
+    init {
+       mContext = SuperSafeApplication.getInstance()
     }
 
     companion object {

@@ -75,7 +75,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
             if (grantAccess) {
                 if (isRunning) {
                     if ("" != value) {
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
+                        Utils.putScreenStatus(EnumPinAction.SPLASH_SCREEN.ordinal)
                         Navigator.onMoveToMainTab(this@SplashScreenAct, false)
                     } else {
                         Utils.clearAppDataAndReCreateData()
@@ -97,7 +97,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         when (event) {
             EnumStatus.MIGRATION_DONE -> {
                 SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
-                PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
+                Utils.putScreenStatus(EnumPinAction.SPLASH_SCREEN.ordinal)
                 Navigator.onMoveToMainTab(this,false)
                 SuperSafeApplication.getInstance().getSuperSafeOldPath().deleteDirectory()
                 finish()
