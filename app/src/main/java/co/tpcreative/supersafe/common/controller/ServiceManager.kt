@@ -186,7 +186,9 @@ class ServiceManager() : BaseServiceView<Any?> {
                 if (Utils.isRequestSyncData()) {
                     onPreparingSyncDataCor()
                 }else{
-                    Utils.onPushEventBus(EnumStatus.DONE)
+                    if (Utils.isConnectedToGoogleDrive()){
+                        Utils.onPushEventBus(EnumStatus.DONE)
+                    }
                     isRequestingSyncCor = false
                 }
                 Utils.Log(TAG, mResult.data?.data?.trackingSync?.toJson())
