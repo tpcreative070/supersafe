@@ -117,6 +117,8 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                 when(mResultUpdated.status){
                     Status.SUCCESS -> {
                         val mData = mResultUpdated.data?.data
+                        /*updated access token to request delete old access token*/
+                        setUpdatedAccessTokenOnlyValue(mData)
                         val mResultDeleteOldToken = service.deleteOldAccessTokenCor(mResult)
                         when(mResultDeleteOldToken.status){
                             Status.SUCCESS ->{
@@ -342,6 +344,14 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         mData?.user?.let {
             user?.author = it.author
             Utils.setUserPreShare(user)
+        }
+    }
+
+    private fun setUpdatedAccessTokenOnlyValue(mData : DataResponse?){
+        val mUser: User? = Utils.getUserInfo()
+        mData?.let {
+            mUser?.author?.session_token = it.user?.author?.session_token
+            Utils.setUserPreShare(mUser)
         }
     }
 
