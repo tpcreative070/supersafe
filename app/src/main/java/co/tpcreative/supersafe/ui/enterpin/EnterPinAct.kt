@@ -324,6 +324,9 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
             EnumPinAction.FAKE_PIN ->{
                 super.onBackPressed()
             }
+            EnumPinAction.INIT_PREFERENCE ->{
+                super.onBackPressed()
+            }
             else -> {
                 Utils.Log(TAG,"Waiting...")
                 Utils.Log(TAG, "Nothing ${mPinAction?.name}")
