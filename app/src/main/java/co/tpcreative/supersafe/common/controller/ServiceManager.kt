@@ -17,8 +17,6 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.requester.*
 import co.tpcreative.supersafe.common.extension.*
-import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
-import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
