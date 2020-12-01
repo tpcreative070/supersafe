@@ -113,6 +113,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+        android:background="@color/sd_overlay_new_color"
         android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
