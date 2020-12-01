@@ -8,7 +8,7 @@ import java.io.File
 suspend fun File.createFile(output: File, input: File, mode: Int) : Boolean?{
    return withContext(Dispatchers.IO){
         try {
-           EncryptDecryptFilesHelper.getInstance()?.createFile(output, input, mode)
+           EncryptDecryptFilesHelper.getInstance()?.createLargeFile(output, input, mode)
        }catch (e: Exception){
            false
        }

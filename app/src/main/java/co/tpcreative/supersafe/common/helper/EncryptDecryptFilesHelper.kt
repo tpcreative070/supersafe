@@ -81,7 +81,7 @@ class EncryptDecryptFilesHelper {
         return true
     }
 
-    fun createLargeFile(output: File?, input: File?, cipher: Cipher): Boolean {
+    fun createLargeFile(output: File?, input: File?, cipher: Int): Boolean {
         checkConfig()
         if (configurationFile == null || configurationFile?.isEncrypted != true) {
             return false
@@ -91,7 +91,7 @@ class EncryptDecryptFilesHelper {
         try {
             inputStream = FileInputStream(input)
             val outputStream = FileOutputStream(output)
-            cipherOutputStream = CipherOutputStream(outputStream, cipher)
+            cipherOutputStream = CipherOutputStream(outputStream, getCipher(cipher))
             //note the following line
             val buffer = ByteArray(1024 * 1024)
             var bytesRead: Int
@@ -140,16 +140,28 @@ class EncryptDecryptFilesHelper {
 
     fun getCipher(mode: Int): Cipher? {
         checkConfig()
-        if (configurationFile != null && configurationFile?.isEncrypted==true) {
-            try {
+        try {
+            if (Cipher.ENCRYPT_MODE == mode){
+                if (mCipherCrypted!=null){
+                    return mCipherCrypted
+                }
                 val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
                 val mIvParameterSpec = IvParameterSpec(configurationFile?.ivParameter)
-                mCipher = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION)
-                mCipher?.init(mode, mSecretKeySpec, mIvParameterSpec)
-                return mCipher
-            } catch (e: Exception) {
-                e.printStackTrace()
+                mCipherCrypted = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION)
+                mCipherCrypted?.init(mode, mSecretKeySpec, mIvParameterSpec)
+                return mCipherCrypted
+            }else{
+                if (mCipherDecrypted!=null){
+                    return mCipherDecrypted
+                }
+                val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
+                val mIvParameterSpec = IvParameterSpec(configurationFile?.ivParameter)
+                mCipherDecrypted = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION)
+                mCipherDecrypted?.init(mode, mSecretKeySpec, mIvParameterSpec)
+                return mCipherDecrypted
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         return null
     }
@@ -309,7 +321,8 @@ class EncryptDecryptFilesHelper {
     companion object {
         private var instance: EncryptDecryptFilesHelper? = null
         private val TAG = EncryptDecryptFilesHelper::class.java.simpleName
-        private var mCipher: Cipher? = null
+        private var mCipherCrypted: Cipher? = null
+        private var mCipherDecrypted: Cipher? = null
         var configurationFile : EncryptConfiguration? = null
         fun getInstance(): EncryptDecryptFilesHelper? {
             if (instance == null) {
