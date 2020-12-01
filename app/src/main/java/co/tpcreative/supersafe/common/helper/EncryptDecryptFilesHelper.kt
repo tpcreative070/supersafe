@@ -142,14 +142,14 @@ class EncryptDecryptFilesHelper {
         checkConfig()
         try {
             if (Cipher.ENCRYPT_MODE == mode){
-                if (mCipherCrypted!=null){
-                    return mCipherCrypted
+                if (mCipherEncrypted!=null){
+                    return mCipherEncrypted
                 }
                 val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
                 val mIvParameterSpec = IvParameterSpec(configurationFile?.ivParameter)
-                mCipherCrypted = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION)
-                mCipherCrypted?.init(mode, mSecretKeySpec, mIvParameterSpec)
-                return mCipherCrypted
+                mCipherEncrypted = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION)
+                mCipherEncrypted?.init(mode, mSecretKeySpec, mIvParameterSpec)
+                return mCipherEncrypted
             }else{
                 if (mCipherDecrypted!=null){
                     return mCipherDecrypted
@@ -321,7 +321,7 @@ class EncryptDecryptFilesHelper {
     companion object {
         private var instance: EncryptDecryptFilesHelper? = null
         private val TAG = EncryptDecryptFilesHelper::class.java.simpleName
-        private var mCipherCrypted: Cipher? = null
+        private var mCipherEncrypted: Cipher? = null
         private var mCipherDecrypted: Cipher? = null
         var configurationFile : EncryptConfiguration? = null
         fun getInstance(): EncryptDecryptFilesHelper? {
