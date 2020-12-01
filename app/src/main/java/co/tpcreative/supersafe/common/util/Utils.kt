@@ -13,6 +13,7 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.PowerManager
 import android.os.StatFs
 import android.provider.MediaStore
 import android.text.TextUtils
@@ -51,16 +52,13 @@ import com.google.api.client.util.Base64
 import com.google.common.base.Charsets
 import com.google.gson.Gson
 import com.tapadoo.alerter.Alerter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.apache.commons.io.FilenameUtils
 import org.greenrobot.eventbus.EventBus
 import java.io.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 /**
  * Created by pc on 07/16/2017.
@@ -581,7 +579,7 @@ object Utils {
         if (!SingletonManager.getInstance().isVisitLockScreen()){
             SuperSafeApplication.getInstance().getActivity()?.let {
                 Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE)
-                Log(TAG,"Navigation to Verify PIN")
+                Log(TAG, "Navigation to Verify PIN")
             }
             SingletonManager.getInstance().setVisitLockScreen(true)
             Log(TAG, "---------------------------------------------------------------------------------Verify pin---------------------------------------------------------------------------------")
@@ -642,8 +640,8 @@ object Utils {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), false)
     }
 
-    fun pauseSync(isPaused : Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync),isPaused)
+    fun pauseSync(isPaused: Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), isPaused)
     }
 
     fun isCheckSyncSuggestion(): Boolean {
@@ -770,7 +768,7 @@ object Utils {
     /*Check request delete category from global*/
     fun checkCategoryDeleteSyncedLocal(mSyncedList: List<MainCategoryModel>): List<MainCategoryModel> {
         val mListResult: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
-        val mListLocal: List<MainCategoryModel>? = SQLHelper.requestSyncCategories(isSyncOwnServer =true,isFakePin = false)
+        val mListLocal: List<MainCategoryModel>? = SQLHelper.requestSyncCategories(isSyncOwnServer = true, isFakePin = false)
         /*Convert list to hash-map*/
         val mMap: Map<String?, MainCategoryModel>? = mSyncedList.associateBy({ it.categories_id }, { it })
         mListLocal?.let {
@@ -791,8 +789,8 @@ object Utils {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), false)
     }
 
-    fun putSaverSpace(isSaver : Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space),isSaver)
+    fun putSaverSpace(isSaver: Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), isSaver)
     }
 
     /*Delete folder*/
@@ -854,8 +852,8 @@ object Utils {
     }
 
     fun setUserPreShare(user: User?) {
-        Log(TAG,"User id ====================> ${user?.email}")
-        Log(TAG,"Cloud id ===================> ${user?.cloud_id}")
+        Log(TAG, "User id ====================> ${user?.email}")
+        Log(TAG, "Cloud id ===================> ${user?.cloud_id}")
         PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), Gson().toJson(user))
     }
 
@@ -863,7 +861,7 @@ object Utils {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sign_out_google_drive), false)
     }
 
-    fun putRequestGoogleDriveSignOut(value : Boolean){
+    fun putRequestGoogleDriveSignOut(value: Boolean){
         PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sign_out_google_drive), value)
     }
 
@@ -888,13 +886,13 @@ object Utils {
         ServiceManager.getInstance()?.onStopService()
         ServiceManager.getInstance()?.cleanUp()
         setRequestSyncData(true)
-        Log(TAG,"clearAppDataAndReCreateData")
+        Log(TAG, "clearAppDataAndReCreateData")
     }
 
-    fun setDriveConnect(isConnected : Boolean? = null,accessToken : String? = null,cloudId : String? = null){
+    fun setDriveConnect(isConnected: Boolean? = null, accessToken: String? = null, cloudId: String? = null){
         val mUser = getUserInfo()
         isConnected?.let {
-            Log(TAG,"show drive connected here $it")
+            Log(TAG, "show drive connected here $it")
             mUser?.driveConnected = it
         }
         if (!accessToken.isNullOrEmpty()){
@@ -906,7 +904,7 @@ object Utils {
         setUserPreShare(mUser)
     }
 
-    fun setEmailToken(data : EmailToken?){
+    fun setEmailToken(data: EmailToken?){
         val mUser = getUserInfo()
         val token: EmailToken? = mUser?.email_token
         token?.access_token = data?.token_type + " " + data?.access_token
@@ -953,11 +951,11 @@ object Utils {
         }
     }
 
-    fun insertValue(item : ItemModel){
+    fun insertValue(item: ItemModel){
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val resolver = SuperSafeApplication.getInstance().contentResolver
-                val mFile = geOutputExportFiles(item,false)
+                val mFile = geOutputExportFiles(item, false)
                 val contentValues = ContentValues()
                 contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, mFile?.name)
                 contentValues.put(MediaStore.MediaColumns.MIME_TYPE, item.mimeType)
@@ -965,7 +963,7 @@ object Utils {
                 resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
             }
         }
-        catch (e : Exception){
+        catch (e: Exception){
             e.printStackTrace()
         }
     }
@@ -1032,7 +1030,7 @@ object Utils {
         return false
     }
 
-    fun setBreakAlert(value : Boolean){
+    fun setBreakAlert(value: Boolean){
         PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_break_in_alert), value)
     }
 
@@ -1140,7 +1138,7 @@ object Utils {
         return PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
     }
 
-    fun putThemeColor(position : Int){
+    fun putThemeColor(position: Int){
         PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), position)
     }
 
@@ -1202,11 +1200,11 @@ object Utils {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_vertical_adapter), false)
     }
 
-    fun setIsVertical(isVertical : Boolean){
+    fun setIsVertical(isVertical: Boolean){
         return PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_vertical_adapter), isVertical)
     }
 
-    fun geOutputExportFiles(item : ItemModel, isSharingFiles : Boolean) : File?{
+    fun geOutputExportFiles(item: ItemModel, isSharingFiles: Boolean) : File?{
         var mFolderName = SuperSafeApplication.getInstance().getSuperSafePicture()
         if (isSharingFiles){
             mFolderName = SuperSafeApplication.getInstance().getSuperSafeShare()
@@ -1218,7 +1216,7 @@ object Utils {
         return output
     }
 
-    fun geInputExportFiles(item : ItemModel, isSharingFiles : Boolean) : File?{
+    fun geInputExportFiles(item: ItemModel, isSharingFiles: Boolean) : File?{
         var path = item.getOriginal()
         if (isSharingFiles){
             path = if (item.mimeType == SuperSafeApplication.getInstance().getString(R.string.key_gif)) {
@@ -1230,7 +1228,7 @@ object Utils {
         return File(path)
     }
 
-    fun isRequestDeletedLocal(index : ItemModel) :Boolean{
+    fun isRequestDeletedLocal(index: ItemModel) :Boolean{
         val formatTypeFile = EnumFormatType.values()[index.formatType]
         return if (formatTypeFile == EnumFormatType.AUDIO && index.global_original_id == null) {
             true
@@ -1239,7 +1237,7 @@ object Utils {
         } else (index.global_original_id == null) and (index.global_thumbnail_id == null)
     }
 
-    fun availableToSave(mData : MutableList<ItemModel>) : String?{
+    fun availableToSave(mData: MutableList<ItemModel>) : String?{
         var spaceAvailable: Long = 0
         for (index in mData) {
             if (index.isSaver) {
@@ -1257,7 +1255,7 @@ object Utils {
 //        Utils.showDialog(this, message = message)
     }
 
-    fun getDataItemsFromImport(mainCategory : MainCategoryModel,mData : MutableList<ImageModel>) : MutableList<ImportFilesModel> {
+    fun getDataItemsFromImport(mainCategory: MainCategoryModel, mData: MutableList<ImageModel>) : MutableList<ImportFilesModel> {
         val mList = mutableListOf<ImportFilesModel>()
         for (index in mData){
             val path = index.path
@@ -1271,7 +1269,7 @@ object Utils {
             Log(TAG, "file extension " + getFileExtension(path))
             try {
                 val mimeTypeFile: MimeTypeFile? = mediaTypeSupport()[fileExtension]
-                 mimeTypeFile?.let {mResult ->
+                 mimeTypeFile?.let { mResult ->
                      mResult.name = name
                      val importFiles = ImportFilesModel(mainCategory, mResult, path, 0, false)
                      mList.add(importFiles)
@@ -1288,20 +1286,20 @@ object Utils {
         return mData?._id
     }
 
-    fun setLastTimeSyncData(value : String){
-        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_last_time_sync_data),value)
+    fun setLastTimeSyncData(value: String){
+        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_last_time_sync_data), value)
     }
 
     fun getLastTimeSyncData() : String {
-        return PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_last_time_sync_data),"") ?: ""
+        return PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_last_time_sync_data), "") ?: ""
     }
 
-    fun setRequestSyncData(value : Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data),value)
+    fun setRequestSyncData(value: Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data), value)
     }
 
     fun isRequestSyncData() : Boolean {
-        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data),true)
+        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data), true)
     }
 
     fun deletedItemsOnAnotherCloudId(){
@@ -1318,8 +1316,24 @@ object Utils {
         return PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
     }
 
-    fun putScreenStatus(value : Int){
+    fun putScreenStatus(value: Int){
         return PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), value)
+    }
+
+    fun getHomePressed() : Boolean{
+        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_home_pressed), false)
+    }
+
+    fun putHomePressed(value: Boolean){
+        return PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_home_pressed), value)
+    }
+
+    fun isScreenOn(activity: Activity) : Boolean {
+        val pm = activity.getSystemService(Context.POWER_SERVICE) as PowerManager
+        if (pm.isInteractive) {
+            return true
+        }
+        return false
     }
 }
 

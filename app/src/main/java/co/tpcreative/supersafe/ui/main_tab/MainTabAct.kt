@@ -255,11 +255,17 @@ class MainTabAct : BaseGoogleApi(){
     }
 
     override fun onPause() {
+        Utils.Log(TAG,"onResume ->putHomePressed")
         super.onPause()
         if (!Utils.isConnectedToGoogleDrive()){
             onAnimationIcon(EnumStatus.SYNC_ERROR)
             Utils.Log(TAG," onAnimationIcon(EnumStatus.SYNC_ERROR)")
         }
+    }
+
+    override fun onStop() {
+        Utils.Log(TAG,"onResume ->putHomePressed")
+        super.onStop()
     }
 
     override fun onBackPressed() {
