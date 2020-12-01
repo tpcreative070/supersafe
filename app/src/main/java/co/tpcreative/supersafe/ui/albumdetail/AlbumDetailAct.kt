@@ -274,6 +274,8 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
                 if (actionMode != null) {
                     actionMode?.finish()
                 }
+                /*After shared done*/
+                Utils.putScreenStatus(EnumPinAction.SCREEN_UNLOCK.ordinal)
                 Utils.Log(TAG, "share action")
             }
             else -> {

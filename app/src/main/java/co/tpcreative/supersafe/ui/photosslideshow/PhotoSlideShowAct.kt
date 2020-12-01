@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.photosslideshow
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -165,6 +166,21 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
             setResult(RESULT_OK, intent)
         }
         super.onBackPressed()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Utils.Log(TAG, "Selected album :")
+        when (requestCode) {
+            Navigator.SHARE -> {
+                /*After shared done*/
+                Utils.putScreenStatus(EnumPinAction.SCREEN_UNLOCK.ordinal)
+                Utils.Log(TAG, "share action")
+            }
+            else -> {
+                Utils.Log(TAG, "Nothing to do")
+            }
+        }
     }
 
     inner class SamplePagerAdapter(private val context: Context?) : PagerAdapter() {
