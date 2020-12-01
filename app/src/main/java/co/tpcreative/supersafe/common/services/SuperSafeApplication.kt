@@ -422,7 +422,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
 
     fun isDebugPremium(): Boolean {
         if (BuildConfig.DEBUG){
-            return true
+            return false
         }
         return false
     }

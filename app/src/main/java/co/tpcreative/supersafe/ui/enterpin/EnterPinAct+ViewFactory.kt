@@ -7,17 +7,14 @@ import co.infinum.goldfinger.Goldfinger
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonScreenLock
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.CalculatorImpl
 import co.tpcreative.supersafe.common.util.Constants
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.User
 import co.tpcreative.supersafe.ui.enterpin.EnterPinAct.Companion.viewModel
 import co.tpcreative.supersafe.viewmodel.LockScreenViewModel
 import kotlinx.android.synthetic.main.activity_enterpin.*
@@ -100,8 +97,7 @@ fun EnterPinAct.initUI() {
                 false
             }
             if (Utils.isSensorAvailable()) {
-                val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
-                if (isFingerPrintUnLock) {
+                if (Utils.isAvailableBiometric() && Utils.getScreenStatus()==EnumPinAction.SCREEN_LOCK.ordinal) {
                     initBiometric()
                 }
             }

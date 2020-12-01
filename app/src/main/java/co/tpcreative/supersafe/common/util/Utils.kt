@@ -1077,6 +1077,9 @@ object Utils {
         return mAuthor?.driveConnected ?: false
     }
 
+    fun isAvailableBiometric() : Boolean{
+       return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_fingerprint_unlock), false)
+    }
     fun getSyncData() : SyncData? {
         return getUserInfo()?.syncData
     }
