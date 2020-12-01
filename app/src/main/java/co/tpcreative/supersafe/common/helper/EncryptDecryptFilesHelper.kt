@@ -3,10 +3,13 @@ import android.content.Context
 import android.os.Environment
 import co.tpcreative.supersafe.common.encypt.EncryptConfiguration
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ImmutablePair
 import co.tpcreative.supersafe.common.util.SizeUnit
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
 import javax.crypto.Cipher
@@ -81,6 +84,31 @@ class EncryptDecryptFilesHelper {
         return true
     }
 
+    fun createFileTest(output: File?, input: File?, mode: Int): Boolean{
+        checkConfig()
+        try {
+            val fis = FileInputStream(input)
+            val bufferLength = 1024*1024
+            val buffer = ByteArray(bufferLength)
+            val fos = FileOutputStream(output)
+            val bos = BufferedOutputStream(fos, bufferLength)
+            var read = 0
+            read = fis.read(buffer, 0, read)
+            while (read != -1) {
+                val mData = encrypt(buffer, mode)
+                bos.write(mData, 0, read)
+                read = fis.read(buffer) // if read value is -1, it escapes loop.
+            }
+            fis.close()
+            bos.flush()
+            bos.close()
+            return true
+        } catch (exception: IOException) {
+            exception.printStackTrace()
+            return false
+        }
+    }
+
     fun createLargeFile(output: File?, input: File?, cipher: Int): Boolean {
         checkConfig()
         if (configurationFile == null || configurationFile?.isEncrypted != true) {
@@ -141,18 +169,18 @@ class EncryptDecryptFilesHelper {
     fun getCipher(mode: Int): Cipher? {
         checkConfig()
         try {
-            if (Cipher.ENCRYPT_MODE == mode){
+            return if (Cipher.ENCRYPT_MODE == mode){
                 val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
                 val mIvParameterSpec = IvParameterSpec(configurationFile?.ivParameter)
                 val mCipherEncrypted = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION)
                 mCipherEncrypted?.init(mode, mSecretKeySpec, mIvParameterSpec)
-                return mCipherEncrypted
+                mCipherEncrypted
             }else{
                 val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
                 val mIvParameterSpec = IvParameterSpec(configurationFile?.ivParameter)
                 val mCipherDecrypted = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION)
                 mCipherDecrypted?.init(mode, mSecretKeySpec, mIvParameterSpec)
-                return mCipherDecrypted
+                mCipherDecrypted
             }
         } catch (e: Exception) {
             e.printStackTrace()

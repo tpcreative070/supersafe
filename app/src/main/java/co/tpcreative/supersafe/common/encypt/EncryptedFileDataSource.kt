@@ -140,10 +140,10 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
 
     class EncryptedFileDataSourceException(cause: IOException?) : IOException(cause)
     class StreamingCipherInputStream(inputStream: InputStream?, cipher: Cipher?, secretKeySpec: SecretKeySpec?, ivParameterSpec: IvParameterSpec?) : CipherInputStream(inputStream, cipher) {
-        private val mUpstream: InputStream?
-        private val mCipher: Cipher?
-        private val mSecretKeySpec: SecretKeySpec?
-        private val mIvParameterSpec: IvParameterSpec?
+        private val mUpstream: InputStream? = inputStream
+        private val mCipher: Cipher? = cipher
+        private val mSecretKeySpec: SecretKeySpec? = secretKeySpec
+        private val mIvParameterSpec: IvParameterSpec? = ivParameterSpec
 
         @Throws(IOException::class)
         override fun read(b: ByteArray?, off: Int, len: Int): Int {
@@ -158,7 +158,7 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
                 val blockOffset = bytesToSkip - skip
                 val numberOfBlocks = blockOffset / AES_BLOCK_SIZE
                 // from here to the next inline comment, i don't understand
-                val ivForOffsetAsBigInteger: BigInteger = BigInteger(1, mIvParameterSpec?.getIV()).add(BigInteger.valueOf(numberOfBlocks))
+                val ivForOffsetAsBigInteger: BigInteger = BigInteger(1, mIvParameterSpec?.iv).add(BigInteger.valueOf(numberOfBlocks))
                 val ivForOffsetByteArray: ByteArray = ivForOffsetAsBigInteger.toByteArray()
                 val computedIvParameterSpecForOffset: IvParameterSpec?
                 if (ivForOffsetByteArray.size < AES_BLOCK_SIZE) {
@@ -191,12 +191,6 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
             private const val AES_BLOCK_SIZE = 16
         }
 
-        init {
-            mUpstream = inputStream
-            mCipher = cipher
-            mSecretKeySpec = secretKeySpec
-            mIvParameterSpec = ivParameterSpec
-        }
     }
 
     companion object {
