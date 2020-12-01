@@ -981,18 +981,6 @@ object Utils {
         }
     }
 
-    fun checkRequestUploadItemData() {
-        val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
-        if (mResult != null) {
-            if (mResult.size > 0 && isCheckingAllowUpload()) {
-                ServiceManager.getInstance()?.onPreparingSyncData()
-                return
-            }
-        }
-        ServiceManager.getInstance()?.onDefaultValue()
-        Log(TAG, "All items already synced...........")
-    }
-
     fun isRealCheckedOut(orderId: String): Boolean {
         return orderId.contains("GPA")
     }

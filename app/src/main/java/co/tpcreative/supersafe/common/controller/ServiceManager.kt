@@ -238,7 +238,6 @@ class ServiceManager() : BaseServiceView<Any?> {
                                                                         Status.SUCCESS -> {
                                                                             Utils.onPushEventBus(EnumStatus.DONE)
                                                                             Utils.Log(TAG,"Sync completed")
-                                                                            Utils.checkRequestUploadItemData()
                                                                         }
                                                                         else -> Utils.Log(TAG,mResultDeletedItem.message)
                                                                     }
@@ -276,8 +275,7 @@ class ServiceManager() : BaseServiceView<Any?> {
             onDismissServices()
         }
     }
-
-
+    
     fun updatedDriveAccessToken() = CoroutineScope(Dispatchers.IO).launch {
         RefreshTokenSingleton.getInstance().onStart(ServiceManager::class.java)
     }
