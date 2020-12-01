@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.EnumStatus
 
 class HomeWatcher(private val mContext: Context?) {
-    private val mFilter: IntentFilter?
     private var mListener: OnHomePressedListener? = null
     private var mReceiver: InnerReceiver? = null
     var isRegistered = false
@@ -17,7 +17,7 @@ class HomeWatcher(private val mContext: Context?) {
 
     fun startWatch() {
         if (mReceiver != null) {
-            mContext?.registerReceiver(mReceiver, mFilter)
+            mContext?.registerReceiver(mReceiver, IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
             isRegistered = true
         }
     }
@@ -60,9 +60,5 @@ class HomeWatcher(private val mContext: Context?) {
 
     companion object {
         val TAG: String = "hg"
-    }
-
-    init {
-        mFilter = IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
     }
 }
