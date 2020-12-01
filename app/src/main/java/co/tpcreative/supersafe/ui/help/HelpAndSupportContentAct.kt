@@ -48,16 +48,11 @@ class HelpAndSupportContentAct : BaseActivity(), TextView.OnEditorActionListener
             EventBus.getDefault().register(this)
         }
         Utils.hideSoftKeyboard(this)
-        onRegisterHomeWatcher()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
-        EventBus.getDefault().unregister(this)
-    }
-
-    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 

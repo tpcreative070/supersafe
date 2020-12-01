@@ -59,7 +59,6 @@ class PlayerAct : BasePlayerActivity(), PlayerAdapter.ItemSelectedListener {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        onRegisterHomeWatcher()
     }
 
     override fun onDestroy() {

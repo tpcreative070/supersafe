@@ -41,7 +41,6 @@ class SecretDoorAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        onRegisterHomeWatcher()
         val value: Boolean = PrefsController.getBoolean(getString(R.string.key_secret_door), false)
         val options: Boolean = PrefsController.getBoolean(getString(R.string.key_calculator), false)
         btnSwitch?.isChecked = value
@@ -57,10 +56,6 @@ class SecretDoorAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
     override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
-        EventBus.getDefault().unregister(this)
-    }
-
-    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 

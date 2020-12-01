@@ -33,6 +33,7 @@ class ThemeSettingsAct : BaseActivity(), ThemeSettingsAdapter.ItemSelectedListen
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -41,7 +42,6 @@ class ThemeSettingsAct : BaseActivity(), ThemeSettingsAdapter.ItemSelectedListen
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        onRegisterHomeWatcher()
     }
 
     override fun onDestroy() {
@@ -51,10 +51,6 @@ class ThemeSettingsAct : BaseActivity(), ThemeSettingsAdapter.ItemSelectedListen
         if (isUpdated) {
             Utils.onPushEventBus(EnumStatus.RECREATE)
         }
-    }
-
-    override fun onStopListenerAWhile() {
-        EventBus.getDefault().unregister(this)
     }
 
     override fun onOrientationChange(isFaceDown: Boolean) {

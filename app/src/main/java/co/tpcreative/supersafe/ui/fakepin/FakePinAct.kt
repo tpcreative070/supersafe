@@ -36,16 +36,11 @@ class FakePinAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        onRegisterHomeWatcher()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Utils.Log(BaseActivity.TAG, "OnDestroy")
-        EventBus.getDefault().unregister(this)
-    }
-
-    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 

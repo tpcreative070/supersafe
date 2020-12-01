@@ -9,7 +9,6 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.HomeWatcher
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.common.controller.PrefsController
@@ -22,10 +21,8 @@ import co.tpcreative.supersafe.model.ThemeApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 
 abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
-    private var mHomeWatcher: HomeWatcher? = null
     var TAG : String = this::class.java.simpleName
     val mainScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,10 +61,6 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
         super.onPause()
         SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
-        if (mHomeWatcher != null) {
-            Utils.Log(TAG, "Stop home watcher....")
-            mHomeWatcher?.stopWatch()
-        }
     }
 
     override fun onStop() {
@@ -85,36 +78,6 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
         Utils.Log(TAG, "onResume....")
         SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         super.onResume()
-    }
-
-    protected fun onRegisterHomeWatcher() {
-        /*Home action*/
-        if (mHomeWatcher != null) {
-            if (mHomeWatcher?.isRegistered!!) {
-                return
-            }
-        }
-        mHomeWatcher = HomeWatcher(this)
-        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
-            override fun onHomePressed() {
-                Utils.Log(TAG, "HomePressed")
-                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
-                    EnumPinAction.NONE -> {
-                        Utils.onHomePressed()
-                        onStopListenerAWhile()
-                    }
-                    else -> {
-                        Utils.Log(TAG, "Nothing to do on home " + action.name)
-                    }
-                }
-                mHomeWatcher?.stopWatch()
-            }
-
-            override fun onHomeLongPressed() {
-                Utils.Log(TAG, "Pressed long home button")
-            }
-        })
-        mHomeWatcher?.startWatch()
     }
 
     override fun onLowMemory() {
@@ -155,8 +118,6 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
             }
         }
     }
-
-    protected abstract fun onStopListenerAWhile()
 
     companion object {
         val TAG = BaseActivity::class.java.simpleName

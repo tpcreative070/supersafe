@@ -109,7 +109,6 @@ class ImageSelectActivity : HelperActivity() {
 
     override fun onResume() {
         super.onResume()
-        onRegisterHomeWatcher()
     }
 
     override fun onStop() {

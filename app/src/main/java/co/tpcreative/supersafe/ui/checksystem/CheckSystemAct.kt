@@ -50,10 +50,6 @@ class CheckSystemAct : BaseGoogleApi(){
         EventBus.getDefault().unregister(this)
     }
 
-    override fun onStopListenerAWhile() {
-        EventBus.getDefault().unregister(this)
-    }
-
     override fun onOrientationChange(isFaceDown: Boolean) {
         onFaceDown(isFaceDown)
     }

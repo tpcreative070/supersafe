@@ -49,7 +49,6 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        onRegisterHomeWatcher()
         onUpdatedView()
     }
 
@@ -61,10 +60,6 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
             SingletonPrivateFragment.getInstance()?.onUpdateView()
             ServiceManager.getInstance()?.onPreparingSyncData()
         }
-    }
-
-    override fun onStopListenerAWhile() {
-        EventBus.getDefault().unregister(this)
     }
 
     override fun onOrientationChange(isFaceDown: Boolean) {

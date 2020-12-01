@@ -81,7 +81,6 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
             camera?.open()
         }
         GalleryCameraMediaManager.getInstance()?.setProgressing(false)
-        onRegisterHomeWatcher()
     }
 
     override fun onDestroy() {
@@ -90,10 +89,6 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
         if (camera != null) {
             camera?.destroy()
         }
-        EventBus.getDefault().unregister(this)
-    }
-
-    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 

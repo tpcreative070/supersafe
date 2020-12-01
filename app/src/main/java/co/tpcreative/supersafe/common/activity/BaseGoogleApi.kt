@@ -18,7 +18,6 @@ import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.common.HomeWatcher
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.model.*
@@ -38,7 +37,6 @@ import java.io.IOException
 abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mSignInAccount: GoogleSignInAccount? = null
     private var mGoogleSignInClient: GoogleSignInClient? = null
-    private var mHomeWatcher: HomeWatcher? = null
     var TAG : String = this::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,10 +93,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         super.onPause()
         SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
-        if (mHomeWatcher != null) {
-            Utils.Log(TAG, "Stop home watcher....")
-            mHomeWatcher?.stopWatch()
-        }
     }
 
     override fun onStop() {
@@ -118,28 +112,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     fun onRegisterHomeWatcher() {
         Utils.Log(TAG, "Register")
         /*Home action*/
-        if (mHomeWatcher != null) {
-            if (mHomeWatcher?.isRegistered!!) {
-                return
-            }
-        }
-        mHomeWatcher = HomeWatcher(this)
-        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
-            override fun onHomePressed() {
-                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
-                    EnumPinAction.NONE -> {
-                        Utils.onHomePressed()
-                        onStopListenerAWhile()
-                    }
-                    else -> {
-                        Utils.Log(TAG, "Nothing to do on home " + action.name)
-                    }
-                }
-                mHomeWatcher?.stopWatch()
-            }
-            override fun onHomeLongPressed() {}
-        })
-        mHomeWatcher?.startWatch()
     }
 
     override fun onLowMemory() {
@@ -323,7 +295,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     protected abstract fun onDriveRevokeAccess()
     protected abstract fun isSignIn(): Boolean
     protected abstract fun startServiceNow()
-    protected abstract fun onStopListenerAWhile()
     protected fun signOut() {
         mGoogleSignInClient?.signOut()?.addOnCompleteListener(this) {
             val mUser: User? = Utils.getUserInfo()

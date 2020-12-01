@@ -207,7 +207,6 @@ dependencies {
     implementation 'id.zelory:compressor:3.0.0'
     kapt "com.github.bumptech.glide:compiler:$glide"
     implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:3.2.0'
-    implementation 'com.github.Binary-Finery:Bungee:3.0'
 }
 /*Resolved duplicated for Google api client*/
 

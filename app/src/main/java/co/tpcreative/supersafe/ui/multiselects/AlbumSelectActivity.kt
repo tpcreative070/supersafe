@@ -102,7 +102,6 @@ class AlbumSelectActivity : HelperActivity() {
 
     override fun onResume() {
         super.onResume()
-        onRegisterHomeWatcher()
     }
 
     override fun onStop() {

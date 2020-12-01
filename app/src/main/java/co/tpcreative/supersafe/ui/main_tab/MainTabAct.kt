@@ -153,10 +153,6 @@ class MainTabAct : BaseGoogleApi(){
         }
     }
 
-    override fun onStopListenerAWhile() {
-        EventBus.getDefault().unregister(this)
-    }
-
     override fun onStart() {
         super.onStart()
         Utils.Log(TAG,"onStart !!!!")

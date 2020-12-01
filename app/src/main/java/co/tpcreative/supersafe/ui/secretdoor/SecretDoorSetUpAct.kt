@@ -32,16 +32,11 @@ class SecretDoorSetUpAct : BaseActivity(), Calculator {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        onRegisterHomeWatcher()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
-        EventBus.getDefault().unregister(this)
-    }
-
-    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 

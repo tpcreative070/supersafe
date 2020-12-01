@@ -77,7 +77,6 @@ class SettingsAct : BaseActivity() {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        onRegisterHomeWatcher()
     }
 
     override fun onDestroy() {
@@ -86,10 +85,6 @@ class SettingsAct : BaseActivity() {
         EventBus.getDefault().unregister(this)
         /*Checking change style mode*/
         ServiceManager.getInstance()?.onStartService()
-    }
-
-    override fun onStopListenerAWhile() {
-        EventBus.getDefault().unregister(this)
     }
 
     override fun onOrientationChange(isFaceDown: Boolean) {
@@ -340,7 +335,7 @@ class SettingsAct : BaseActivity() {
                         Navigator.onMoveToPremium(context!!)
                     }
                 })
-                builder.setNegativeButton(getText(R.string.later)) { dialogInterface, i -> }
+                builder.setNegativeButton(getText(R.string.later)) { _, _ -> }
                 builder.show()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -352,7 +347,7 @@ class SettingsAct : BaseActivity() {
             dialogBuilder.setTitle(R.string.change_mode)
             dialogBuilder.setPadding(40, 40, 40, 0)
             dialogBuilder.setMargin(60, 0, 60, 0)
-            dialogBuilder.setSingleChoiceItems(R.array.themeEntryArray, Utils.getPositionThemeMode(), DialogInterface.OnClickListener { dialogInterface, m ->
+            dialogBuilder.setSingleChoiceItems(R.array.themeEntryArray, Utils.getPositionThemeMode(), DialogInterface.OnClickListener { _, m ->
                 this.mPosition = m
             })
             dialogBuilder.setPositiveButton(R.string.yes) { _, i ->
