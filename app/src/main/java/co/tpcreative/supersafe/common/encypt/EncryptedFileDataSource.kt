@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.common.encyptimport
+package co.tpcreative.supersafe.common.encypt
 import android.net.Uri
 import co.tpcreative.supersafe.common.util.Utils
 import com.google.android.exoplayer2.C

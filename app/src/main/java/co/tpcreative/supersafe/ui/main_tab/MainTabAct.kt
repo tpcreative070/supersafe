@@ -59,9 +59,6 @@ class MainTabAct : BaseGoogleApi(){
                 Navigator.onMoveToFaceDown(this)
             }
             EnumStatus.PRIVATE_DONE -> {
-                if (Utils.isRequestSyncData()){
-                    ServiceManager.getInstance()?.onPreparingSyncData()
-                }
                 if (speedDial != null) {
                     speedDial?.show()
                 }
@@ -79,10 +76,6 @@ class MainTabAct : BaseGoogleApi(){
                 })
             }
             EnumStatus.DONE -> {
-                /*Checking data to sync*/
-                if (Utils.isRequestSyncData() || Utils.isRequestUpload()){
-                    ServiceManager.getInstance()?.onPreparingSyncData()
-                }
                 runOnUiThread(Runnable {
                     Utils.Log(TAG, "sync value " + event.name)
                     onAnimationIcon(event)
