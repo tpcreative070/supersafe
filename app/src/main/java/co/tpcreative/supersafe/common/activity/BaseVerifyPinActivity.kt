@@ -21,7 +21,6 @@ import kotlinx.coroutines.cancel
 
 abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     var TAG : String = this::class.java.simpleName
-    val mainScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
@@ -60,7 +59,6 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
 
     override fun onDestroy() {
         super.onDestroy()
-        mainScope.cancel()
     }
 
     override fun onBackPressed() {

@@ -34,6 +34,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.*
+import org.greenrobot.eventbus.EventBus
 import java.io.IOException
 
 abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
@@ -41,7 +42,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var mHomeWatcher: HomeWatcher? = null
     var TAG : String = this::class.java.simpleName
-    val mainScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null)!!)
@@ -115,34 +115,33 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
 
     override fun onDestroy() {
         super.onDestroy()
-        mainScope.cancel()
     }
 
     fun onRegisterHomeWatcher() {
-//        Utils.Log(TAG, "Register")
-//        /*Home action*/
-//        if (mHomeWatcher != null) {
-//            if (mHomeWatcher?.isRegistered!!) {
-//                return
-//            }
-//        }
-//        mHomeWatcher = HomeWatcher(this)
-//        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
-//            override fun onHomePressed() {
-//                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
-//                    EnumPinAction.NONE -> {
-//                        Utils.onHomePressed()
-//                        onStopListenerAWhile()
-//                    }
-//                    else -> {
-//                        Utils.Log(TAG, "Nothing to do on home " + action.name)
-//                    }
-//                }
-//                mHomeWatcher?.stopWatch()
-//            }
-//            override fun onHomeLongPressed() {}
-//        })
-//        mHomeWatcher?.startWatch()
+        Utils.Log(TAG, "Register")
+        /*Home action*/
+        if (mHomeWatcher != null) {
+            if (mHomeWatcher?.isRegistered!!) {
+                return
+            }
+        }
+        mHomeWatcher = HomeWatcher(this)
+        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
+            override fun onHomePressed() {
+                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
+                    EnumPinAction.NONE -> {
+                        Utils.onHomePressed()
+                        onStopListenerAWhile()
+                    }
+                    else -> {
+                        Utils.Log(TAG, "Nothing to do on home " + action.name)
+                    }
+                }
+                mHomeWatcher?.stopWatch()
+            }
+            override fun onHomeLongPressed() {}
+        })
+        mHomeWatcher?.startWatch()
     }
 
     override fun onLowMemory() {

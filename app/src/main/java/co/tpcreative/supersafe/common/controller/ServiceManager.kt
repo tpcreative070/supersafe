@@ -695,8 +695,8 @@ class ServiceManager() : BaseServiceView<Any?> {
                     EnumPinAction.NONE -> {
                         val key: String = SuperSafeApplication.getInstance().readKey() as String
                         if ("" != key) {
-                            //Utils.onHomePressed()
-                            Utils.putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
+                            Utils.onHomePressed()
+                            //Utils.putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
                         }
                     }
                     else -> {

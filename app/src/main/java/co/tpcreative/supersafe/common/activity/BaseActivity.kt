@@ -88,32 +88,32 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
 
     protected fun onRegisterHomeWatcher() {
         /*Home action*/
-//        if (mHomeWatcher != null) {
-//            if (mHomeWatcher?.isRegistered!!) {
-//                return
-//            }
-//        }
-//        mHomeWatcher = HomeWatcher(this)
-//        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
-//            override fun onHomePressed() {
-//                Utils.Log(TAG, "HomePressed")
-//                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
-//                    EnumPinAction.NONE -> {
-//                        Utils.onHomePressed()
-//                        onStopListenerAWhile()
-//                    }
-//                    else -> {
-//                        Utils.Log(TAG, "Nothing to do on home " + action.name)
-//                    }
-//                }
-//                mHomeWatcher?.stopWatch()
-//            }
-//
-//            override fun onHomeLongPressed() {
-//                Utils.Log(TAG, "Pressed long home button")
-//            }
-//        })
-//        mHomeWatcher?.startWatch()
+        if (mHomeWatcher != null) {
+            if (mHomeWatcher?.isRegistered!!) {
+                return
+            }
+        }
+        mHomeWatcher = HomeWatcher(this)
+        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
+            override fun onHomePressed() {
+                Utils.Log(TAG, "HomePressed")
+                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
+                    EnumPinAction.NONE -> {
+                        Utils.onHomePressed()
+                        onStopListenerAWhile()
+                    }
+                    else -> {
+                        Utils.Log(TAG, "Nothing to do on home " + action.name)
+                    }
+                }
+                mHomeWatcher?.stopWatch()
+            }
+
+            override fun onHomeLongPressed() {
+                Utils.Log(TAG, "Pressed long home button")
+            }
+        })
+        mHomeWatcher?.startWatch()
     }
 
     override fun onLowMemory() {

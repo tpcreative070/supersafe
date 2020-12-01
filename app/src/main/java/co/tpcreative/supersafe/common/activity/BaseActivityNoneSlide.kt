@@ -24,7 +24,6 @@ import kotlinx.coroutines.cancel
 abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mHomeWatcher: HomeWatcher? = null
     var TAG : String = this::class.java.simpleName
-    val mainScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
@@ -63,7 +62,6 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
     override fun onDestroy() {
         Utils.Log(TAG, "onDestroy....")
         super.onDestroy()
-        mainScope.cancel()
     }
 
     override fun onPause() {

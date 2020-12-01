@@ -121,21 +121,11 @@ object Navigator {
     }
 
     fun onMoveSetPin(context: Context, action: EnumPinAction) {
-        /*Prevent running ask verify pin*/
-//        if (SuperSafeApplication.isRunningBackground==true){
-//            return
-//        }
         val intent: Intent = EnterPinAct.getIntent(context, EnumPinAction.SET.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToVerifyPin(activity: Activity, action: EnumPinAction) {
-        /*Prevent running ask verify pin*/
-//        if (SuperSafeApplication.isRunningBackground==true){
-//            Utils.Log("MainTabAct", "onStart..........SuperSafeApplication.isRunningBackground")
-//            return
-//        }
-        Utils.Log("MainTabAct", "onStart intent..........SuperSafeApplication.isRunningBackground")
         val intent: Intent = EnterPinAct.getIntent(activity, EnumPinAction.VERIFY.ordinal, action.ordinal)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -144,28 +134,16 @@ object Navigator {
     }
 
     fun onMoveToChangePin(context: Context, action: EnumPinAction) {
-        /*Prevent running ask verify pin*/
-//        if (SuperSafeApplication.isRunningBackground==true){
-//            return
-//        }
         val intent: Intent = EnterPinAct.getIntent(context, EnumPinAction.INIT_PREFERENCE.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToFakePin(context: Context, action: EnumPinAction) {
-        /*Prevent running ask verify pin*/
-//        if (SuperSafeApplication.isRunningBackground==true){
-//            return
-//        }
         val intent: Intent = EnterPinAct.getIntent(context, EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToResetPin(context: Context, action: EnumPinAction) {
-        /*Prevent running ask verify pin*/
-//        if (SuperSafeApplication.isRunningBackground==true){
-//            return
-//        }
         val intent: Intent = EnterPinAct.getIntent(context, EnumPinAction.RESET.ordinal, action.ordinal)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

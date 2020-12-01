@@ -578,7 +578,10 @@ object Utils {
         putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
         Log(TAG, "Pressed home button")
         if (!SingletonManager.getInstance().isVisitLockScreen()){
-            SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
+            SuperSafeApplication.getInstance().getActivity()?.let {
+                Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE)
+                Log(TAG,"Navigation to Verify PIN")
+            }
             SingletonManager.getInstance().setVisitLockScreen(true)
             Log(TAG, "---------------------------------------------------------------------------------Verify pin---------------------------------------------------------------------------------")
         } else {

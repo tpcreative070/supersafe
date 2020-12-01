@@ -8,13 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 
 abstract class BaseActivityNone : AppCompatActivity() {
     var TAG : String = this::class.java.simpleName
-    val mainScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
@@ -44,7 +40,6 @@ abstract class BaseActivityNone : AppCompatActivity() {
     override fun onDestroy() {
         Utils.Log(TAG, "onDestroy....")
         super.onDestroy()
-        mainScope.cancel()
     }
 
     override fun onResume() {

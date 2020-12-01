@@ -23,7 +23,6 @@ import kotlinx.coroutines.cancel
 abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mHomeWatcher: HomeWatcher? = null
     var TAG : String = this::class.java.simpleName
-    val mainScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
@@ -57,7 +56,6 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
     override fun onDestroy() {
         Utils.Log(TAG, "onDestroy....")
         super.onDestroy()
-        mainScope.cancel()
     }
 
     override fun onPause() {
@@ -78,31 +76,31 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
 
     protected fun onRegisterHomeWatcher() {
         /*Home action*/
-//        if (mHomeWatcher != null) {
-//            if (mHomeWatcher?.isRegistered!!) {
-//                return
-//            }
-//        }
-//        mHomeWatcher = HomeWatcher(this)
-//        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
-//            override fun onHomePressed() {
-//                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
-//                    EnumPinAction.NONE -> {
-//                        Utils.onHomePressed()
-//                        onStopListenerAWhile()
-//                    }
-//                    else -> {
-//                        Utils.Log(TAG, "Nothing to do on home " + action.name)
-//                    }
-//                }
-//                mHomeWatcher?.stopWatch()
-//            }
-//
-//            override fun onHomeLongPressed() {
-//                Utils.Log(TAG, "Pressed long home button")
-//            }
-//        })
-//        mHomeWatcher?.startWatch()
+        if (mHomeWatcher != null) {
+            if (mHomeWatcher?.isRegistered!!) {
+                return
+            }
+        }
+        mHomeWatcher = HomeWatcher(this)
+        mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
+            override fun onHomePressed() {
+                when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
+                    EnumPinAction.NONE -> {
+                        Utils.onHomePressed()
+                        onStopListenerAWhile()
+                    }
+                    else -> {
+                        Utils.Log(TAG, "Nothing to do on home " + action.name)
+                    }
+                }
+                mHomeWatcher?.stopWatch()
+            }
+
+            override fun onHomeLongPressed() {
+                Utils.Log(TAG, "Pressed long home button")
+            }
+        })
+        mHomeWatcher?.startWatch()
     }
 
     override fun onLowMemory() {

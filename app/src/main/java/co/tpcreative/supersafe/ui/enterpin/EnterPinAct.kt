@@ -500,6 +500,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
         lateinit var viewModel: LockScreenViewModel
         lateinit var enterPinAct : EnterPinAct
         fun getIntent(context: Context?, action: Int, actionNext: Int): Intent {
+            Utils.Log(TAG,"start intent EnterPinAct")
             val intent = Intent(context, EnterPinAct::class.java)
             intent.putExtra(EXTRA_SET_PIN, action)
             intent.putExtra(EXTRA_ENUM_ACTION, actionNext)

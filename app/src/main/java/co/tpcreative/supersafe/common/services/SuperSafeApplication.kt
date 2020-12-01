@@ -157,7 +157,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private fun onAppForegrounded() {
         isRunningBackground  = false
-        Utils.Log("MainTabAct", "onStart..........onAppForegrounded")
         Utils.Log(TAG, "App in foreground")
     }
 
