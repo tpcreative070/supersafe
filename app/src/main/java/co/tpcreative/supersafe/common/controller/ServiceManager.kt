@@ -275,7 +275,7 @@ class ServiceManager() : BaseServiceView<Any?> {
             onDismissServices()
         }
     }
-    
+
     fun updatedDriveAccessToken() = CoroutineScope(Dispatchers.IO).launch {
         RefreshTokenSingleton.getInstance().onStart(ServiceManager::class.java)
     }

@@ -79,6 +79,10 @@ class MainTabAct : BaseGoogleApi(){
                 })
             }
             EnumStatus.DONE -> {
+                /*Checking data to sync*/
+                if (Utils.isRequestSyncData() || Utils.isRequestUpload()){
+                    ServiceManager.getInstance()?.onPreparingSyncData()
+                }
                 runOnUiThread(Runnable {
                     Utils.Log(TAG, "sync value " + event.name)
                     onAnimationIcon(event)
