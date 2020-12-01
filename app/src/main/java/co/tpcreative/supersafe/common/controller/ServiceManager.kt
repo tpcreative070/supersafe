@@ -29,7 +29,6 @@ import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.*
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.common.net.MediaType
-import com.google.gson.Gson
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.format
 import id.zelory.compressor.constraint.quality
@@ -91,7 +90,7 @@ class ServiceManager() : BaseServiceView<Any?> {
             RefreshTokenSingleton.getInstance().onStart(ServiceManager::class.java)
             return
         }
-        if (!Utils.isAllowSyncData()) {
+        if (!Utils.isCheckingAllowDriveConnect()) {
             Utils.Log(TAG, "onPreparingSyncData is unauthorized")
             Utils.onWriteLog(EnumStatus.AUTHOR_SYNC, EnumStatus.AUTHOR_SYNC, "onPreparingSyncData is unauthorized")
             return
@@ -183,7 +182,7 @@ class ServiceManager() : BaseServiceView<Any?> {
         val mResult = itemViewModel.trackingSync()
         when(mResult.status){
             Status.SUCCESS -> {
-                if (Utils.isRequestSyncData()) {
+                if (Utils.isRequestSyncData() || Utils.isRequestUpload()) {
                     onPreparingSyncDataCor()
                 }else{
                     if (Utils.isConnectedToGoogleDrive()){
@@ -219,7 +218,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                         val mResultDownloadedFiles = driveViewModel.downLoadData(false,mResultItemList.data)
                                         when(mResultDownloadedFiles.status){
                                             Status.SUCCESS -> {
-                                                if (!Utils.isCheckAllowUpload()){
+                                                if (!Utils.isCheckingAllowUpload()){
                                                     Utils.Log(TAG,"onPreparingUploadData ==> Left 0. Please wait for next month or upgrade to premium version");
                                                     Utils.onPushEventBus(EnumStatus.DONE);
                                                     Utils.onPushEventBus(EnumStatus.REFRESH);

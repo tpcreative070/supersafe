@@ -631,11 +631,6 @@ object Utils {
         return SuperSafeApplication.getInstance().getDeviceId()
     }
 
-    /*Checking allow sync data*/
-    fun isAllowSyncData(): Boolean {
-        return isAllowRequestDriveApis()
-    }
-
     fun isPauseSync(): Boolean {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), false)
     }
@@ -989,7 +984,7 @@ object Utils {
     fun checkRequestUploadItemData() {
         val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
         if (mResult != null) {
-            if (mResult.size > 0 && isCheckAllowUpload()) {
+            if (mResult.size > 0 && isCheckingAllowUpload()) {
                 ServiceManager.getInstance()?.onPreparingSyncData()
                 return
             }
@@ -1043,7 +1038,7 @@ object Utils {
         return mUser?.verified ?: false
     }
 
-    fun isCheckAllowUpload(): Boolean {
+    fun isCheckingAllowUpload(): Boolean {
         val mUser = getUserInfo() ?: return false
         val syncData: SyncData? = mUser.syncData
         if (!isPremium()) {
@@ -1056,7 +1051,7 @@ object Utils {
         return true
     }
 
-    private fun isAllowRequestDriveApis(): Boolean {
+    fun isCheckingAllowDriveConnect(): Boolean {
         val mUser = getUserInfo()
         mUser?.let { mUserResult ->
             if (mUserResult.driveConnected) {
@@ -1300,6 +1295,18 @@ object Utils {
 
     fun isRequestSyncData() : Boolean {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data), true)
+    }
+
+    fun isRequestUpload() : Boolean{
+        if (isCheckingAllowDriveConnect() && isCheckingAllowUpload()){
+            val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
+            mResult?.let {
+                if (it.size>0){
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     fun deletedItemsOnAnotherCloudId(){

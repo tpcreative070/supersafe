@@ -134,10 +134,9 @@ class MainTabAct : BaseGoogleApi(){
         onCallLockScreen()
         onRegisterHomeWatcher()
         ServiceManager.getInstance()?.setRequestShareIntent(false)
-        if (Utils.isRequestSyncData()){
+        if (Utils.isRequestSyncData() || Utils.isRequestUpload()){
             ServiceManager.getInstance()?.onPreparingSyncData()
         }
-
     }
 
     override fun onDestroy() {
