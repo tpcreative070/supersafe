@@ -22,6 +22,7 @@ import co.tpcreative.supersafe.ui.move_album.openAlbum
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 
 abstract class BaseGalleryActivity : AppCompatActivity(), MoveAlbumFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener {

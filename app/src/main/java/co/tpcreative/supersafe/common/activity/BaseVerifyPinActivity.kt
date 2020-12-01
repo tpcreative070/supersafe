@@ -103,9 +103,6 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
     }
 
     open fun handleGoldfingerResult(result: Goldfinger.Result) {
-//        if (result.type() == Goldfinger.Type.SUCCESS || result.type() == Goldfinger.Type.ERROR) {
-//            val formattedResult = String.format("%s - %s", result.type().toString(), result.reason().toString())
-//        }
         if (result.type() == Goldfinger.Type.SUCCESS){
             onBiometricSuccessful()
         }

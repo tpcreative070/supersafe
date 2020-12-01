@@ -19,6 +19,7 @@ import co.tpcreative.supersafe.model.ThemeApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mHomeWatcher: HomeWatcher? = null
