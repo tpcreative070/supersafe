@@ -3,13 +3,10 @@ import android.content.Context
 import android.os.Environment
 import co.tpcreative.supersafe.common.encypt.EncryptConfiguration
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ImmutablePair
 import co.tpcreative.supersafe.common.util.SizeUnit
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.User
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
 import javax.crypto.Cipher
