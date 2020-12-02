@@ -8,18 +8,18 @@ import java.io.File
 suspend fun File.createFile(output: File, input: File, mode: Int) : Boolean?{
    return withContext(Dispatchers.IO){
         try {
-           EncryptDecryptFilesHelper.getInstance()?.createFileTest(output, input, mode)
+           EncryptDecryptFilesHelper.getInstance()?.createFile(output, input, mode)
        }catch (e: Exception){
            false
        }
    }
 }
 
-
-suspend fun File.createLargeFile(output: File, input: File, mode: Int) : Boolean?{
+/*Create this files to play audio and video*/
+suspend fun File.createCipherFile(output: File, input: File, mode: Int) : Boolean?{
     return withContext(Dispatchers.IO){
         try {
-            EncryptDecryptFilesHelper.getInstance()?.createLargeFile(output, input, mode)
+            EncryptDecryptFilesHelper.getInstance()?.createCipherFile(output, input, mode)
         }catch (e: Exception){
             false
         }

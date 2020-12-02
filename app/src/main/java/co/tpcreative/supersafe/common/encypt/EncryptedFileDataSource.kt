@@ -17,14 +17,14 @@ import javax.crypto.spec.SecretKeySpec
  * Created by michaeldunn on 3/13/17.
  */
 class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, ivParameterSpec: IvParameterSpec?, listener: TransferListener<in EncryptedFileDataSource?>?) : DataSource {
-    private val mTransferListener: TransferListener<in EncryptedFileDataSource?>?
+    private val mTransferListener: TransferListener<in EncryptedFileDataSource?>? = listener
     private var mInputStream: StreamingCipherInputStream? = null
     private var mUri: Uri? = null
     private var mBytesRemaining: Long = 0
     private var mOpened = false
-    private val mCipher: Cipher?
-    private val mSecretKeySpec: SecretKeySpec?
-    private val mIvParameterSpec: IvParameterSpec?
+    private val mCipher: Cipher? = cipher
+    private val mSecretKeySpec: SecretKeySpec? = secretKeySpec
+    private val mIvParameterSpec: IvParameterSpec? = ivParameterSpec
 
     @Throws(EncryptedFileDataSourceException::class)
     override fun open(dataSpec: DataSpec?): Long {
@@ -52,7 +52,7 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
 
     @Throws(FileNotFoundException::class)
     private fun setupInputStream() {
-        val encryptedFile = File(mUri?.path)
+        val encryptedFile = File(mUri?.path ?: "")
         val fileInputStream = FileInputStream(encryptedFile)
         mInputStream = StreamingCipherInputStream(fileInputStream, mCipher, mSecretKeySpec, mIvParameterSpec)
     }
@@ -161,12 +161,12 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
                 val ivForOffsetAsBigInteger: BigInteger = BigInteger(1, mIvParameterSpec?.iv).add(BigInteger.valueOf(numberOfBlocks))
                 val ivForOffsetByteArray: ByteArray = ivForOffsetAsBigInteger.toByteArray()
                 val computedIvParameterSpecForOffset: IvParameterSpec?
-                if (ivForOffsetByteArray.size < AES_BLOCK_SIZE) {
+                computedIvParameterSpecForOffset = if (ivForOffsetByteArray.size < AES_BLOCK_SIZE) {
                     val resizedIvForOffsetByteArray = ByteArray(AES_BLOCK_SIZE)
                     System.arraycopy(ivForOffsetByteArray, 0, resizedIvForOffsetByteArray, AES_BLOCK_SIZE - ivForOffsetByteArray.size, ivForOffsetByteArray.size)
-                    computedIvParameterSpecForOffset = IvParameterSpec(resizedIvForOffsetByteArray)
+                    IvParameterSpec(resizedIvForOffsetByteArray)
                 } else {
-                    computedIvParameterSpecForOffset = IvParameterSpec(ivForOffsetByteArray, ivForOffsetByteArray.size - AES_BLOCK_SIZE, AES_BLOCK_SIZE)
+                    IvParameterSpec(ivForOffsetByteArray, ivForOffsetByteArray.size - AES_BLOCK_SIZE, AES_BLOCK_SIZE)
                 }
                 mCipher?.init(Cipher.ENCRYPT_MODE, mSecretKeySpec, computedIvParameterSpecForOffset)
                 val skipBuffer = ByteArray(skip)
@@ -197,10 +197,4 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
         private val TAG = EncryptedFileDataSource::class.java.simpleName
     }
 
-    init {
-        mCipher = cipher
-        mSecretKeySpec = secretKeySpec
-        mIvParameterSpec = ivParameterSpec
-        mTransferListener = listener
-    }
 }

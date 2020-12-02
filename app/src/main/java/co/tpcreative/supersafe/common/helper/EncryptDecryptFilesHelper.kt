@@ -48,40 +48,7 @@ class EncryptDecryptFilesHelper {
         }
     }
 
-    fun createFile(output: File?, input: File?, mode: Int): Boolean {
-        checkConfig()
-        var inputStream: FileInputStream? = null
-        try {
-            inputStream = FileInputStream(input)
-            var length = 0
-            val fOutputStream = FileOutputStream(
-                    output)
-            //note the following line
-            var buffer: ByteArray? = ByteArray(1024 * 1024)
-            while (inputStream.read(buffer).also { length = it } > 0) {
-                if (configurationFile != null && configurationFile?.isEncrypted == true) {
-                    buffer = encrypt(buffer!!, mode)
-                }
-                fOutputStream.write(buffer, 0, length)
-            }
-            fOutputStream.flush()
-            fOutputStream.close()
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return false
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close()
-                } catch (ignored: IOException) {
-                    ignored.printStackTrace()
-                }
-            }
-        }
-        return true
-    }
-
-    fun createFileTest(output: File?, input: File?, mode: Int): Boolean{
+    fun createFile(output: File?, input: File?, mode: Int): Boolean{
         checkConfig()
         try {
             val fis = FileInputStream(input)
@@ -106,7 +73,7 @@ class EncryptDecryptFilesHelper {
         }
     }
 
-    fun createLargeFile(output: File?, input: File?, cipher: Int): Boolean {
+    fun createCipherFile(output: File?, input: File?, cipher: Int): Boolean {
         checkConfig()
         if (configurationFile == null || configurationFile?.isEncrypted != true) {
             return false

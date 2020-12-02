@@ -397,7 +397,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                val itemsVideo = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.VIDEO, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
                                Utils.Log(TAG, "Call thumbnail")
                                val createdThumbnail: Boolean = thumbnail?.toByteArray()?.createFile(thumbnailPath)!!
-                               val createdOriginal = File(originalPath).createLargeFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
+                               val createdOriginal = File(originalPath).createCipherFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
                                Utils.Log(TAG, "Call original")
                                if (createdThumbnail && createdOriginal!!) {
                                    handleResponseImport(itemsVideo,mMainCategories,mPath)
@@ -419,7 +419,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                pathContent.createDirectory()
                                val originalPath = pathContent + currentTime
                                val itemsAudio = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.AUDIO, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
-                               val createdOriginal = File(originalPath).createLargeFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
+                               val createdOriginal = File(originalPath).createCipherFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
                                if (createdOriginal!!) {
                                    handleResponseImport(itemsAudio,mMainCategories,mPath)
                                    Utils.Log(TAG, "CreatedFile successful")
@@ -753,7 +753,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                 mOutPut.createFile(mOutPut,mInput,Cipher.DECRYPT_MODE)
                             }
                             else -> {
-                                mOutPut.createLargeFile(mOutPut,mInput,Cipher.DECRYPT_MODE)
+                                mOutPut.createCipherFile(mOutPut,mInput,Cipher.DECRYPT_MODE)
                             }
                         }
                         mResponseList.add(mOutPut)
@@ -773,7 +773,7 @@ class ServiceManager() : BaseServiceView<Any?> {
         }
     }
 
-    fun onDefaultValue() {
+    private fun onDefaultValue() {
         isWaitingSendMail = false
         isRequestingUpdateUserToken = false
         isRequestingSyncCor = false
