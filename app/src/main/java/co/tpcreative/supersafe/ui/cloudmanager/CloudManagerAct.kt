@@ -54,6 +54,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
                     onShowPremium()
                     Utils.putSaverSpace(false)
                     switch_SaveSpace?.isChecked = false
+                    return
                 }
                 if (b) {
                     /*Checking Google Drive connecting*/

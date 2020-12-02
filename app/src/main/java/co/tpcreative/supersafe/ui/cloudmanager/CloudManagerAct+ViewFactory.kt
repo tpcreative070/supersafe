@@ -187,7 +187,7 @@ fun CloudManagerAct.disableSaverSpace(enumStatus: EnumStatus) {
             }
             EnumStatus.DOWNLOAD -> {
                 isDownload = true
-                tvDeviceSaving.text = ConvertUtils.byte2FitMemorySize(0)
+                viewModel.deviceSaving.postValue(ConvertUtils.byte2FitMemorySize(0))
             }
             else -> Utils.Log(TAG,"Nothing")
         }
