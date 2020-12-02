@@ -1192,14 +1192,14 @@ object Utils {
         if (isSharingFiles){
             mFolderName = SuperSafeApplication.getInstance().getSuperSafeShare()
         }
-        var output: File? = File(mFolderName + item.originalName + item.fileExtension)
+        var output: File? = File(mFolderName + item.title)
         if (output?.isFileExist(output.absolutePath) == true) {
-            output = File(mFolderName + item.originalName + "(${System.currentTimeMillis()})" + item.fileExtension)
+            output = File(mFolderName + output.nameWithoutExtension + "(${System.currentTimeMillis()})" + item.fileExtension)
         }
         return output
     }
 
-    fun geInputExportFiles(item: ItemModel, isSharingFiles: Boolean) : File?{
+    fun geInputExportFiles(item: ItemModel, isSharingFiles: Boolean) : File{
         var path = item.getOriginal()
         if (isSharingFiles){
             path = if (item.mimeType == SuperSafeApplication.getInstance().getString(R.string.key_gif)) {

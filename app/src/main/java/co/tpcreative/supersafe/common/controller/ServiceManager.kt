@@ -742,7 +742,7 @@ class ServiceManager() : BaseServiceView<Any?> {
             try {
                 val mResponseList = mutableListOf<File>()
                 for (index in mData){
-                    val mInput  = Utils.geInputExportFiles(index,isSharingFiles)!!
+                    val mInput  = Utils.geInputExportFiles(index,isSharingFiles)
                     val mOutPut: File = Utils.geOutputExportFiles(index,isSharingFiles)!!
                     try {
                         when (EnumFormatType.values()[index.formatType]){
