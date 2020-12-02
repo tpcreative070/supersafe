@@ -1199,15 +1199,8 @@ object Utils {
         return output
     }
 
-    fun geInputExportFiles(item: ItemModel, isSharingFiles: Boolean) : File{
-        var path = item.getOriginal()
-        if (isSharingFiles){
-            path = if (item.mimeType == SuperSafeApplication.getInstance().getString(R.string.key_gif)) {
-                item.getOriginal()
-            } else {
-                item.getThumbnail()
-            }
-        }
+    fun geInputExportFiles(item: ItemModel) : File{
+        val path = item.getOriginal()
         return File(path)
     }
 

@@ -691,8 +691,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                 when (EnumPinAction.values()[Utils.getScreenStatus()]) {
                     EnumPinAction.NONE -> {
                         val key: String = SuperSafeApplication.getInstance().readKey() as String
-                        if ("" != key) {
-                            //Utils.onHomePressed()
+                        if (key.isNotEmpty()) {
                             Utils.putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
                         }
                     }
@@ -705,7 +704,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                 Utils.setRequestSyncData(true)
                 Utils.onPushEventBus(EnumStatus.CONNECTED)
                 if (!Utils.getUserId().isNullOrEmpty()){
-                    onGetUserInfo()
+                    onPreparingSyncData()
                 }
             }
             EnumStatus.DISCONNECTED -> {
@@ -742,7 +741,7 @@ class ServiceManager() : BaseServiceView<Any?> {
             try {
                 val mResponseList = mutableListOf<File>()
                 for (index in mData){
-                    val mInput  = Utils.geInputExportFiles(index,isSharingFiles)
+                    val mInput  = Utils.geInputExportFiles(index)
                     val mOutPut: File = Utils.geOutputExportFiles(index,isSharingFiles)!!
                     try {
                         when (EnumFormatType.values()[index.formatType]){
