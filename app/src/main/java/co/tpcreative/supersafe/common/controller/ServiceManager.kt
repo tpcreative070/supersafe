@@ -42,7 +42,6 @@ import javax.crypto.Cipher
 class ServiceManager() : BaseServiceView<Any?> {
     private var myService: SuperSafeService? = null
     private var mContext: Context? = null
-
     /*Improved sync data*/
     private var isRequestShareIntent = false
     private var isRequestingSyncCor = false
@@ -752,6 +751,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                 mOutPut.createFile(mOutPut,mInput,Cipher.DECRYPT_MODE)
                             }
                             else -> {
+                                /*Exporting type is video and audio, Because configuration to play media is cipher object*/
                                 mOutPut.createCipherFile(mOutPut,mInput,Cipher.DECRYPT_MODE)
                             }
                         }

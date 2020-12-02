@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.controller
-
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.ContextWrapper
@@ -9,8 +8,8 @@ import android.text.TextUtils
 import java.util.*
 
 object PrefsController {
-    private val DEFAULT_SUFFIX: String? = "_preferences"
-    private val LENGTH: String? = "#LENGTH"
+    private val DEFAULT_SUFFIX: String = "_preferences"
+    private val LENGTH: String = "#LENGTH"
     private var mPrefs: SharedPreferences? = null
     private var mContext: Context? = null
     private val TAG = PrefsController::class.java.simpleName
@@ -352,7 +351,7 @@ object PrefsController {
          * @param prefsName the filename used for the sharedpreference
          * @return the [com.pixplicity.easyprefs.library.Prefs.Builder] object.
          */
-        fun setPrefsName(prefsName: String?): Builder? {
+        fun setPrefsName(prefsName: String?): Builder {
             mKey = prefsName
             return this
         }
@@ -363,7 +362,7 @@ object PrefsController {
          * @param context the application context
          * @return the [com.pixplicity.easyprefs.library.Prefs.Builder] object.
          */
-        fun setContext(context: Context?): Builder? {
+        fun setContext(context: Context?): Builder {
             mContext = context
             return this
         }
@@ -376,7 +375,7 @@ object PrefsController {
          * @return the [com.pixplicity.easyprefs.library.Prefs.Builder] object.
          * @see Context.getSharedPreferences
          */
-        fun setMode(mode: Int): Builder? {
+        fun setMode(mode: Int): Builder {
             mMode = if (mode == ContextWrapper.MODE_PRIVATE || mode == ContextWrapper.MODE_WORLD_READABLE || mode == ContextWrapper.MODE_WORLD_WRITEABLE || mode == ContextWrapper.MODE_MULTI_PROCESS) {
                 mode
             } else {
@@ -391,7 +390,7 @@ object PrefsController {
          * @param defaultSharedPreference true if default sharedpreference thumbnailName should used.
          * @return the [com.pixplicity.easyprefs.library.Prefs.Builder] object.
          */
-        fun setUseDefaultSharedPreference(defaultSharedPreference: Boolean): Builder? {
+        fun setUseDefaultSharedPreference(defaultSharedPreference: Boolean): Builder {
             mUseDefault = defaultSharedPreference
             return this
         }
