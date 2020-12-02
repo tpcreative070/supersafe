@@ -1179,6 +1179,17 @@ object Utils {
         return false
     }
 
+    fun checkingExistingSaver(){
+        if (!getSaverSpace()){
+            val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true,isSaver = true,isFakePin = false)
+            mList?.let {
+                if (it.size>0){
+                    stopSaverSpace()
+                }
+            }
+        }
+    }
+
     fun isVertical() : Boolean {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_vertical_adapter), false)
     }

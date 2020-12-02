@@ -126,6 +126,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                 if (Utils.checkingServicesToStopPremiumFeatures()){
                     Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                 }
+                Utils.checkingExistingSaver()
                 Utils.setCheckoutItems(CheckoutItems())
             }
         }
