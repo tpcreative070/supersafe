@@ -13,7 +13,7 @@ import co.tpcreative.supersafe.model.ItemEntityModel
 import co.tpcreative.supersafe.model.MainCategoryEntityModel
 import java.util.*
 
-@Database(entities = [ItemEntity::class, MainCategoryEntity::class, BreakInAlertsEntity::class], version = 6, exportSchema = false)
+@Database(entities = [ItemEntity::class, MainCategoryEntity::class, BreakInAlertsEntity::class], version = 7, exportSchema = false)
 abstract class InstanceGenerator : RoomDatabase() {
     @Ignore
     abstract fun itemsDao(): ItemsDao?
@@ -803,7 +803,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             if (instance == null) {
                 instance = Room.databaseBuilder(context,
                         InstanceGenerator::class.java, SuperSafeApplication.getInstance().getString(R.string.key_database))
-                        .addMigrations(SuperSafeApplication.getInstance().migrationFrom4To5,SuperSafeApplication.getInstance().migrationFrom5To6)
+                        .addMigrations(SuperSafeApplication.getInstance().migrationFrom4To5,SuperSafeApplication.getInstance().migrationFrom5To6,SuperSafeApplication.getInstance().migrationFrom6To7)
                         .allowMainThreadQueries()
                         .fallbackToDestructiveMigration()
                         .build()

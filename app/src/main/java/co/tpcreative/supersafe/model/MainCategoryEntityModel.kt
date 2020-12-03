@@ -22,6 +22,11 @@ class MainCategoryEntityModel : Serializable {
     var mainCategories_Local_Id: String?
     var unique_id: String?
 
+    /*Added more fields*/
+    var created_date : String? = null
+    var updated_date : String? = null
+    var date_time  : String? = null
+
     /*Fetch data from local db*/
     constructor(entity: MainCategoryEntity) {
         id = entity.id
@@ -41,6 +46,9 @@ class MainCategoryEntityModel : Serializable {
         items_id = entity.items_id
         mainCategories_Local_Id = entity.mainCategories_Local_Id
         unique_id = Utils.getUUId()
+        created_date = entity.created_date
+        updated_date = entity.updated_date
+        date_time = entity.date_time
     }
 
     /*push data to local db*/
@@ -65,5 +73,8 @@ class MainCategoryEntityModel : Serializable {
         items_id = entity.items_id
         mainCategories_Local_Id = entity.mainCategories_Local_Id
         unique_id = entity.unique_id
+        created_date = entity.created_date
+        updated_date = entity.updated_date
+        date_time = entity.date_time
     }
 }

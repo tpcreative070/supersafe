@@ -26,8 +26,10 @@ class MainCategoryEntity : Serializable {
     var items_id: String?
     var mainCategories_Local_Id: String?
 
-    @Ignore
-    var date: Date? = null
+    /*Added more fields*/
+    var created_date : String? = null
+    var updated_date : String? = null
+    var date_time  : String? = null
 
     @Ignore
     var isChecked = false
@@ -88,6 +90,9 @@ class MainCategoryEntity : Serializable {
         isCustom_Cover = entityModel.isCustom_Cover
         items_id = entityModel.items_id
         mainCategories_Local_Id = entityModel.mainCategories_Local_Id
+        created_date = entityModel.created_date
+        updated_date = entityModel.updated_date
+        date_time = entityModel.date_time
     }
 
     companion object {

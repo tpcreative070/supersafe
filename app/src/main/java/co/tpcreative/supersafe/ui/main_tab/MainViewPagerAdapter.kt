@@ -10,18 +10,17 @@ import java.util.*
 /**
  *
  */
-class MainViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-    private val fragments: ArrayList<Fragment>? = ArrayList()
-    private val arrayList: ArrayList<String>? = ArrayList()
+class MainViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private val fragments: ArrayList<Fragment> = ArrayList()
+    private val arrayList: ArrayList<String> = ArrayList()
     private var currentFragment: Fragment? = null
     override fun getItem(position: Int): Fragment {
         Utils.Log(TAG, "position :$position")
-        return fragments?.get(position)!!
-        //return fragments.get(position);
+        return fragments.get(position)
     }
 
     override fun getCount(): Int {
-        return fragments?.size!!
+        return fragments.size
     }
 
     override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
@@ -30,18 +29,18 @@ class MainViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
             if (currentFragment is PrivateFragment) {
                 Utils.Log(TAG, "history")
                 currentFragment?.onResume()
-                fragments?.get(0)?.onPause()
+                fragments.get(0).onPause()
             } else if (currentFragment is MeFragment) {
                 Utils.Log(TAG, "generate")
                 currentFragment?.onResume()
-                fragments?.get(1)?.onPause()
+                fragments.get(1).onPause()
             }
         }
         super.setPrimaryItem(container, position, `object`)
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
-        return arrayList?.get(position)
+    override fun getPageTitle(position: Int): CharSequence {
+        return arrayList.get(position)
     }
 
     /**
@@ -56,11 +55,11 @@ class MainViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     }
 
     init {
-        fragments?.clear()
-        arrayList?.clear()
-        arrayList?.add("PRIVATE")
-        arrayList?.add("ME")
-        PrivateFragment.newInstance(0)?.let { fragments?.add(it) }
-        MeFragment.newInstance(1)?.let { fragments?.add(it) }
+        fragments.clear()
+        arrayList.clear()
+        arrayList.add("PRIVATE")
+        arrayList.add("ME")
+        PrivateFragment.newInstance(0).let { fragments.add(it) }
+        MeFragment.newInstance(1)?.let { fragments.add(it) }
     }
 }

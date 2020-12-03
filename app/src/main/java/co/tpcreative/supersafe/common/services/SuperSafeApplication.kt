@@ -77,10 +77,10 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         //ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
                 .setContext(applicationContext)
-                ?.setMode(ContextWrapper.MODE_PRIVATE)
-                ?.setPrefsName(packageName)
-                ?.setUseDefaultSharedPreference(true)
-                ?.build()
+                .setMode(ContextWrapper.MODE_PRIVATE)
+                .setPrefsName(packageName)
+                .setUseDefaultSharedPreference(true)
+                .build()
         Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
         PrefsController.putLong(getString(R.string.key_seek_to), 0)
         PrefsController.putInt(getString(R.string.key_lastWindowIndex), 0)
@@ -349,6 +349,14 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     val migrationFrom5To6: Migration = object : Migration(5, 6) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isRequestChecking' INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+
+    val migrationFrom6To7: Migration = object : Migration(6, 7) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("ALTER TABLE 'maincategories' ADD COLUMN  'created_date' TEXT DEFAULT '0'")
+            database.execSQL("ALTER TABLE 'maincategories' ADD COLUMN  'updated_date' TEXT DEFAULT '0'")
+            database.execSQL("ALTER TABLE 'maincategories' ADD COLUMN  'date_time' TEXT  DEFAULT '0'")
         }
     }
 

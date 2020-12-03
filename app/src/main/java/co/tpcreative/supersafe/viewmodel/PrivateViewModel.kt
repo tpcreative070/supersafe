@@ -12,12 +12,20 @@ import co.tpcreative.supersafe.model.MainCategoryModel
 import kotlinx.coroutines.Dispatchers
 
 class PrivateViewModel : BaseViewModel<MainCategoryModel>(){
-
     val TAG = this::class.java.simpleName
     fun getData() = liveData(Dispatchers.Main) {
         dataList.clear()
         SQLHelper.getList()?.let {
-            dataList.addAll(it)
+            it.sortByDescending {sorted ->
+                sorted.updated_date
+            }
+            for (index in it){
+                if (index.categories_hex_name == SQLHelper.main_hex){
+                    dataList.add(0,index)
+                }else{
+                    dataList.add(index)
+                }
+            }
         }
         emit(dataList)
     }

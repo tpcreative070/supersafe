@@ -39,6 +39,7 @@ class AlbumSettingsAct : BaseActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_settings)
+        albumSettings = this
         initUI()
     }
 
@@ -48,6 +49,7 @@ class AlbumSettingsAct : BaseActivity(){
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -282,7 +284,9 @@ class AlbumSettingsAct : BaseActivity(){
                                     val response: Boolean = SQLHelper.onChangeCategories(mainCategory)
                                     if (response) {
                                         Utils.onBasicAlertNotify(activity!!,"Alert","Changed album successful")
+                                        albumSettings.title = mainCategory.categories_name
                                         mName?.summary = mainCategory.categories_name
+
                                         if (!mainCategory.isFakePin) {
                                             ServiceManager.getInstance()?.onPreparingSyncCategoryData()
                                         }
@@ -347,6 +351,7 @@ class AlbumSettingsAct : BaseActivity(){
     companion object {
         private val TAG = AlbumSettingsAct::class.java.simpleName
         lateinit var viewModel: AlbumSettingsViewModel
+        lateinit var albumSettings : AlbumSettingsAct
         val mainCategory : MainCategoryModel
             get() {
                 return viewModel.mainCategoryModel

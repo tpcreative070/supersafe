@@ -22,8 +22,12 @@ class MainCategoryModel : Serializable {
     var unique_id: String? = null
 
     /*Custom field to show to view*/
-    var date: Date? = null
     var isChecked = false
+
+    /*Added more fields*/
+    var created_date : String? = null
+    var updated_date : String? = null
+    var date_time  : String? = null
 
     /*Fetch item from local db*/
     constructor(entity: MainCategoryEntityModel) {
@@ -47,6 +51,9 @@ class MainCategoryModel : Serializable {
         items_id = entity.items_id
         mainCategories_Local_Id = entity.mainCategories_Local_Id
         unique_id = entity.unique_id
+        created_date = entity.created_date
+        updated_date = entity.updated_date
+        date_time = entity.date_time
     }
 
     /*Added category*/

@@ -96,6 +96,9 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
                    if (!main.isChange && !main.isDelete) {
                        main.isSyncOwnServer = true
                        main.categories_name = index.categories_name
+                       main.created_date = index.created_date
+                       main.updated_date = index.updated_date
+                       main.date_time = index.date_time
                        SQLHelper.updateCategory(main)
                        Utils.Log(TAG, "Updating new main categories => ^^")
                    }
@@ -107,6 +110,9 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
                            mMain.isChange = false
                            mMain.isDelete = false
                            mMain.categories_id = index.categories_id
+                           mMain.created_date = index.created_date
+                           mMain.updated_date = index.updated_date
+                           mMain.date_time = index.date_time
                            SQLHelper.updateCategory(mMain)
                            Utils.Log(TAG, "Updating new main categories => **")
                        }

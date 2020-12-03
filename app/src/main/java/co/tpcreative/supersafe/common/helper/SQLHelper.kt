@@ -16,6 +16,7 @@ import java.util.*
 
 object SQLHelper {
     private val TAG = SQLHelper::class.java.simpleName
+    var main_hex = "TUFJTiBBTEJVTQ=="
     fun getAllItemList(): MutableList<ItemModel>? {
         val list: MutableList<ItemEntityModel>? = getInstance()?.getAllListItems()
         val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
