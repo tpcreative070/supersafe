@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.model
 import java.io.Serializable
-import java.util.*
 class MainCategoryModel : Serializable {
     var id = 0
     var image: String? = null
