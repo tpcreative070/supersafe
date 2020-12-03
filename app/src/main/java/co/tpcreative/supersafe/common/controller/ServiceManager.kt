@@ -303,10 +303,9 @@ class ServiceManager() : BaseServiceView<Any?> {
                 val mUpdatedCategory = categoryViewModel.updateCategoryData()
                 when (mUpdatedCategory.status){
                     Status.SUCCESS -> {
-                        Utils.Log(TAG,"Category updated completely")
                         val mDeletedCategory = categoryViewModel.dateCategoryData()
                         when(mDeletedCategory.status){
-                            Status.SUCCESS -> Utils.Log(TAG,"Category deleted completely")
+                            Status.SUCCESS -> Utils.Log(TAG,"Category updated completely")
                             else -> Utils.Log(TAG,mDeletedCategory.message)
                         }
                     }
