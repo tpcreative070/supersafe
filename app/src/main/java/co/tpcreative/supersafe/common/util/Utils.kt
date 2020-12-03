@@ -66,8 +66,10 @@ import java.util.*
 object Utils {
     val GOOGLE_CONSOLE_KEY: String = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+6HXAFTNx3LbODafbpgsLqkdyMqMEvIYt55lqTjLIh0PkoAX7oSAD0fY7BXW0Czuys13hNNdyzmDjQe76xmUWTNfXM1vp0JQtStl7tRqNaFuaRje59HKRLpRTW1MGmgKw/19/18EalWTjbGOW7C2qZ5eGIOvGfQvvlraAso9lCTeEwze3bmGTc7B8MOfDqZHETdavSVgVjGJx/K10pzAauZFGvZ+ryZtU0u+9ZSyGx1CgHysmtfcZFKqZLbtOxUQHpBMeJf2M1LReqbR1kvJiAeLYqdOMWzmmNcsEoG6g/e+F9ZgjZjoQzqhWsrTE2IQZAaiwU4EezdqqruNXx6uwIDAQAB"
     // utility function
-    var FORMAT_TIME: String? = "yyyy-MM-dd HH:mm:ss"
-    var FORMAT_TIME_FILE_NAME: String? = "yyyyMMdd_HHmmss"
+    const val FORMAT_TIME: String = "yyyy-MM-dd HH:mm:ss"
+    const val FORMAT_TIME_FILE_NAME: String = "yyyyMMdd_HHmmss"
+    const val FORMAT_SERVER_DATE_TIME = "MM/dd/yyyy HH:mm:ss a"
+
     const val COUNT_RATE = 9
     const val CODE_EXCEPTION = 1111
     const val MAX_LENGTH = 100
@@ -396,6 +398,20 @@ object Utils {
                 file.absolutePath.deleteFile()
             }
         }
+    }
+
+    fun getMilliseconds(value: String?,format : String): Long {
+        if (value.isNullOrEmpty()) {
+            return System.currentTimeMillis()
+        }
+        try {
+            val dateFormat = SimpleDateFormat(format, Locale.getDefault())
+            val date = dateFormat.parse(value)
+            return date?.time ?: System.currentTimeMillis()
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return System.currentTimeMillis()
     }
 
     fun shareMultiple(files: MutableList<File>, context: Activity) {
@@ -1159,7 +1175,7 @@ object Utils {
 
     fun checkingExistingSaver(){
         if (!getSaverSpace()){
-            val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true,isSaver = true,isFakePin = false)
+            val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isSaver = true, isFakePin = false)
             mList?.let {
                 if (it.size>0){
                     stopSaverSpace()

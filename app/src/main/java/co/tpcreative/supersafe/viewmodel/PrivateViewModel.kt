@@ -17,7 +17,7 @@ class PrivateViewModel : BaseViewModel<MainCategoryModel>(){
         dataList.clear()
         SQLHelper.getList()?.let {
             it.sortByDescending {sorted ->
-                sorted.updated_date
+                Utils.getMilliseconds(sorted.updated_date,Utils.FORMAT_SERVER_DATE_TIME)
             }
             for (index in it){
                 if (index.categories_hex_name == SQLHelper.main_hex){

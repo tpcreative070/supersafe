@@ -55,7 +55,7 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?,pri
         override fun bind(data: MainCategoryModel, position: Int) {
             super.bind(data, position)
             this.data = data
-            Utils.Log(TAG,"updated time ${data.categories_hex_name}")
+            Utils.Log(TAG,"updated time ${data.updated_date}")
             if (data.pin == "") {
                 val mList: MutableList<ItemModel>? = SQLHelper.getListItems(data.categories_local_id, data.isFakePin)
                 val items: ItemModel? = SQLHelper.getItemId(data.items_id)
