@@ -144,7 +144,7 @@ fun MainTabAct.onShowDialog() {
             .title(text = getString(R.string.create_album))
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
-            .input(hint = null, hintRes = R.string.enter_name, inputType = InputType.TYPE_CLASS_TEXT) { dialog, input ->
+            .input(maxLength = Utils.MAX_LENGTH,hint = null, hintRes = R.string.enter_name, inputType = InputType.TYPE_CLASS_TEXT) { dialog, input ->
                 Utils.Log(TAG, "Value")
                 val value = input.toString()
                 val base64Code: String = Utils.getHexCode(value)

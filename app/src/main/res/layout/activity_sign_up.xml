@@ -68,6 +68,7 @@
                     android:inputType="textEmailAddress"
                     android:imeOptions="actionDone"
                     style="@style/RegularTextView"
+                    android:maxLength="100"
                     app:met_floatingLabel="highlight"
                     app:met_baseColor="@color/white"
                     app:met_primaryColor="@color/colorButton"

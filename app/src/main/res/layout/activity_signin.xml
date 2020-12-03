@@ -67,6 +67,7 @@
                     android:textSize="@dimen/text_size_normal"
                     android:hint="Email"
                     android:singleLine="true"
+                    android:maxLength="100"
                     android:inputType="textEmailAddress"
                     android:imeOptions="actionNext"
                     style="@style/RegularTextView"

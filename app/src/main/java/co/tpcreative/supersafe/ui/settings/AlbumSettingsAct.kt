@@ -264,7 +264,7 @@ class AlbumSettingsAct : BaseActivity(){
                     .negativeButton(text =  getString(R.string.cancel))
                     .positiveButton(text = positiveAction!!)
                     .negativeButton { it.dismiss() }
-                    .input(inputType = inputType,hint = null, prefill = name,allowEmpty = false){ dialog,input ->
+                    .input(maxLength = Utils.MAX_LENGTH,inputType = inputType,hint = null, prefill = name,allowEmpty = false){ dialog,input ->
                         when (enumStatus) {
                             EnumStatus.CHANGE -> {
                                 Utils.Log(TAG, "Value")

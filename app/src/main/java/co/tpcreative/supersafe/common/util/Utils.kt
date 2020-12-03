@@ -70,6 +70,7 @@ object Utils {
     var FORMAT_TIME_FILE_NAME: String? = "yyyyMMdd_HHmmss"
     const val COUNT_RATE = 9
     const val CODE_EXCEPTION = 1111
+    const val MAX_LENGTH = 100
     private val TAG = Utils::class.java.simpleName
     fun isValidEmail(target: CharSequence?): Boolean {
         return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target ?: "").matches()

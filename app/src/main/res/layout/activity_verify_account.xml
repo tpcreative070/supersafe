@@ -162,6 +162,7 @@
                         android:inputType="textEmailAddress"
                         android:singleLine="true"
                         android:textSize="@dimen/text_size_normal"
+                        android:maxLength="100"
                         app:met_floatingLabel="highlight"
                         app:met_baseColor="?attr/colorAccent"
                         app:met_primaryColor="?attr/colorAccent"
