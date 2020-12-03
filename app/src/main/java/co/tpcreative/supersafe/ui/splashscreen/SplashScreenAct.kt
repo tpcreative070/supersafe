@@ -33,6 +33,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+        Utils.setRequestSyncData(true)
         /*Black list*/
         if (SuperSafeApplication.getInstance().getDeviceId() == "66801ac00252fe84") {
             finish()
