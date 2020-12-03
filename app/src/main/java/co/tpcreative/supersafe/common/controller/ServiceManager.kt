@@ -217,37 +217,31 @@ class ServiceManager() : BaseServiceView<Any?> {
                                         val mResultDownloadedFiles = driveViewModel.downLoadData(false,mResultItemList.data)
                                         when(mResultDownloadedFiles.status){
                                             Status.SUCCESS -> {
-                                                if (!Utils.isCheckingAllowUpload()){
-                                                    Utils.Log(TAG,"onPreparingUploadData ==> Left 0. Please wait for next month or upgrade to premium version");
-                                                    Utils.onPushEventBus(EnumStatus.DONE);
-                                                    Utils.onPushEventBus(EnumStatus.REFRESH);
-                                                }else{
-                                                    Utils.onPushEventBus(EnumStatus.UPLOAD)
-                                                    actionProgressing = EnumStatus.UPLOAD
-                                                    val mResultUploadedFiles = driveViewModel.uploadData()
-                                                    when(mResultUploadedFiles.status){
-                                                        Status.SUCCESS -> {
-                                                            Utils.onPushEventBus(EnumStatus.DONE)
-                                                            val mResultUpdatedItem = itemViewModel.updateItemToSystem()
-                                                            when(mResultUpdatedItem.status){
-                                                                Status.SUCCESS -> {
-                                                                    Utils.onPushEventBus(EnumStatus.DONE)
-                                                                    val mResultDeletedItem = driveViewModel.deleteItemFromCloud()
-                                                                    when(mResultDeletedItem.status){
-                                                                        Status.SUCCESS -> {
-                                                                            Utils.onPushEventBus(EnumStatus.DONE)
-                                                                            Utils.Log(TAG,"Sync completed")
-                                                                        }
-                                                                        else -> Utils.Log(TAG,mResultDeletedItem.message)
+                                                Utils.onPushEventBus(EnumStatus.UPLOAD)
+                                                actionProgressing = EnumStatus.UPLOAD
+                                                val mResultUploadedFiles = driveViewModel.uploadData()
+                                                when(mResultUploadedFiles.status){
+                                                    Status.SUCCESS -> {
+                                                        Utils.onPushEventBus(EnumStatus.DONE)
+                                                        val mResultUpdatedItem = itemViewModel.updateItemToSystem()
+                                                        when(mResultUpdatedItem.status){
+                                                            Status.SUCCESS -> {
+                                                                Utils.onPushEventBus(EnumStatus.DONE)
+                                                                val mResultDeletedItem = driveViewModel.deleteItemFromCloud()
+                                                                when(mResultDeletedItem.status){
+                                                                    Status.SUCCESS -> {
+                                                                        Utils.onPushEventBus(EnumStatus.DONE)
+                                                                        Utils.Log(TAG,"Sync completed")
                                                                     }
+                                                                    else -> Utils.Log(TAG,mResultDeletedItem.message)
                                                                 }
-                                                                else -> Utils.Log(TAG,mResultUpdatedItem.message)
                                                             }
+                                                            else -> Utils.Log(TAG,mResultUpdatedItem.message)
                                                         }
-                                                        else -> Utils.Log(TAG,mResultUploadedFiles.message)
                                                     }
-                                                    Utils.onPushEventBus(EnumStatus.DONE)
+                                                    else -> Utils.Log(TAG,mResultUploadedFiles.message)
                                                 }
+                                                Utils.onPushEventBus(EnumStatus.DONE)
                                             }
                                             else -> Utils.Log(TAG,mResultDownloadedFiles.message)
                                         }

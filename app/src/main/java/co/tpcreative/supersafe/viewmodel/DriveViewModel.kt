@@ -3,6 +3,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
 import co.tpcreative.supersafe.common.api.requester.DriveService
 import co.tpcreative.supersafe.common.api.requester.ItemService
+import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.helper.SQLHelper
@@ -63,22 +64,26 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
     suspend fun uploadData() : Resource<Boolean>{
         return withContext(Dispatchers.IO){
             try {
-                val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
-                val listUpload: MutableList<ItemModel> = Utils.getMergedOriginalThumbnailList(true, mResult!!)
-                for (index in listUpload){
-                    val mResultUpload = driveService.uploadFile(index,onGetContentOfUpload(index),mProgressUploading,onGetFilePath(index))
-                    when(mResultUpload.status){
-                        Status.SUCCESS ->{
-                            val mResultInserted = mResultUpload.data?.id?.let { itemViewModel.insertItemToSystem(index, it) }
-                            when(mResultInserted?.status){
-                                Status.SUCCESS -> Utils.Log(TAG,mResultInserted.data?.responseMessage)
-                                else -> Utils.Log(TAG,mResultInserted?.message)
+                if (Utils.isCheckingAllowUpload()){
+                    val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
+                    val listUpload: MutableList<ItemModel> = Utils.getMergedOriginalThumbnailList(true, mResult!!)
+                    for (index in listUpload){
+                        val mResultUpload = driveService.uploadFile(index,onGetContentOfUpload(index),mProgressUploading,onGetFilePath(index))
+                        when(mResultUpload.status){
+                            Status.SUCCESS ->{
+                                val mResultInserted = mResultUpload.data?.id?.let { itemViewModel.insertItemToSystem(index, it) }
+                                when(mResultInserted?.status){
+                                    Status.SUCCESS -> Utils.Log(TAG,mResultInserted.data?.responseMessage)
+                                    else -> Utils.Log(TAG,mResultInserted?.message)
+                                }
+                            }
+                            else -> {
+                                Utils.Log(TAG,mResultUpload.message)
                             }
                         }
-                        else -> {
-                            Utils.Log(TAG,mResultUpload.message)
-                        }
                     }
+                }else{
+                    Utils.Log(TAG,"onPreparingUploadData ==> Left 0. Please wait for next month or upgrade to premium version");
                 }
                 Resource.success(true)
             }catch (e : Exception){
