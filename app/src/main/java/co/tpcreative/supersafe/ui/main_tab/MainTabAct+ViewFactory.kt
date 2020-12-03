@@ -22,7 +22,7 @@ import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.common.utilimport.NetworkUtil
+import co.tpcreative.supersafe.common.util.NetworkUtil
 import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog

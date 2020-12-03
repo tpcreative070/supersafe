@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.util
-
 import androidx.annotation.IntDef
 
 /**

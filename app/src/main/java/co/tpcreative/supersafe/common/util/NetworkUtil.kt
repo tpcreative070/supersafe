@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.common.utilimport
+package co.tpcreative.supersafe.common.util
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities

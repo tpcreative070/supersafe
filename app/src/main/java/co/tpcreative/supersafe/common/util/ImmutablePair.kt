@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.util
-
 import java.io.Serializable
 
 class ImmutablePair<T, S> : Serializable {

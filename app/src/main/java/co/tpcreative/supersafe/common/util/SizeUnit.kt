@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.util
-
 import java.text.DecimalFormat
 
 enum class SizeUnit(private val inBytes: Long) {

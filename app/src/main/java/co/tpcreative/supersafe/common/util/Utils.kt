@@ -225,29 +225,6 @@ object Utils {
         return String(Base64.encodeBase64(value.toUpperCase(Locale.ROOT).toByteArray(Charsets.UTF_8)));
     }
 
-    fun onExportAndImportFile(input: String, output: String, ls: ServiceManager.ServiceManagerSyncDataListener) {
-//        val storage = Storage(SuperSafeApplication.getInstance())
-//        val mFile = storage.getFiles(input)
-//        try {
-//            for (index in mFile) {
-//                if (storage.isFileExist(index.absolutePath)) {
-//                    storage.createFile(File(output + index.name), File(index.absolutePath), object : OnStorageListener {
-//                        override fun onSuccessful() {}
-//                        override fun onFailed() {
-//                            ls.onError()
-//                        }
-//                        override fun onSuccessful(path: String?) {}
-//                        override fun onSuccessful(position: Int) {}
-//                    })
-//                }
-//            }
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        } finally {
-//            ls.onCompleted()
-//        }
-    }
-
     // To animate view slide out from top to bottom
     fun slideToBottomHeader(view: View) {
         val animate = TranslateAnimation(0F, 0F, (-view.height).toFloat(), 0F)
@@ -627,7 +604,7 @@ object Utils {
         return null
     }
 
-    fun getDeviceId() : String? {
+    fun getDeviceId() : String {
         return SuperSafeApplication.getInstance().getDeviceId()
     }
 
@@ -746,7 +723,7 @@ object Utils {
         val mListResult: MutableList<ItemModel> = ArrayList<ItemModel>()
         val mListLocal: List<ItemModel>? = SQLHelper.getListItemId(true, false)
         /*Convert list to hash-map*/
-        val mMap: Map<String?, ItemModel>? = mSyncedList.associateBy({ it.items_id }, { it })
+        val mMap: Map<String?, ItemModel> = mSyncedList.associateBy({ it.items_id }, { it })
         Log(TAG, "checking item ${mListLocal?.size}")
         mListLocal?.let {
             for (index in it) {
@@ -765,7 +742,7 @@ object Utils {
         val mListResult: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
         val mListLocal: List<MainCategoryModel>? = SQLHelper.requestSyncCategories(isSyncOwnServer = true, isFakePin = false)
         /*Convert list to hash-map*/
-        val mMap: Map<String?, MainCategoryModel>? = mSyncedList.associateBy({ it.categories_id }, { it })
+        val mMap: Map<String?, MainCategoryModel> = mSyncedList.associateBy({ it.categories_id }, { it })
         mListLocal?.let {
             for (index in it) {
                 val mValue: MainCategoryModel? = mMap?.get(index.categories_id)
