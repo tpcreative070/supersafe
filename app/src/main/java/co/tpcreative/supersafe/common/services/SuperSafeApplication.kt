@@ -67,7 +67,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         super.onCreate()
         initData()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this);
-        test()
+//        test()
     }
 
     fun initData(){
