@@ -44,7 +44,12 @@ fun TwoFactoryAuthenticationAct.initUI(){
         else if (status ==EnumTwoFactoryAuthentication.REQUEST_CHANGE){
            changeTwoFactoryAuthentication()
             Utils.hideSoftKeyboard(this)
-        }else {
+        }
+        else if (status == EnumTwoFactoryAuthentication.ENABLE || status ==EnumTwoFactoryAuthentication.DISABLE){
+            status = EnumTwoFactoryAuthentication.CHANGE
+            alertAskInputSecretPin()
+        }
+        else {
             edtSecretPin.visibility = View.VISIBLE
             btnChange.text =  getString(R.string.change)
         }
