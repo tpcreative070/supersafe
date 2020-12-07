@@ -78,4 +78,9 @@ class TwoFactoryAuthenticationAct : BaseActivity(), CompoundButton.OnCheckedChan
         override fun afterTextChanged(s: android.text.Editable?) {}
     }
 
+    override fun onResume() {
+        super.onResume()
+        Utils.Log(TAG,"onResume!!!")
+    }
+
 }

@@ -313,7 +313,8 @@ fun TwoFactoryAuthenticationAct.disableTwoFactoryAuthentication() {
             }
             .negativeButton {
                 Utils.Log(TAG,"clicked negative button")
-                getTwoFactoryAuthentication()
+                //getTwoFactoryAuthentication()
+                btnSwitch.isChecked = !btnSwitch.isChecked
             }
     builder.show()
 }
@@ -339,7 +340,7 @@ fun TwoFactoryAuthenticationAct.alertAskInputSecretPin() {
             .cancelable(true)
             .cancelOnTouchOutside(false)
             .negativeButton {
-               getTwoFactoryAuthentication()
+                btnSwitch.isChecked = !btnSwitch.isChecked
             }
             .positiveButton(R.string.verify)
             .input(hintRes = R.string.enter_secret_pin, inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_TEXT_VARIATION_PASSWORD),maxLength = 6, allowEmpty = false){ dialog, text->
