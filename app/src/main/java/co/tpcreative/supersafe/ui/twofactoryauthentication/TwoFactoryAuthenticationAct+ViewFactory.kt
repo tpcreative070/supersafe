@@ -34,16 +34,20 @@ fun TwoFactoryAuthenticationAct.initUI(){
             onShowUI()
         }
         else if (status==EnumTwoFactoryAuthentication.REQUEST_GENERATE){
-            viewModel.isEnabled = true
-            addTwoFactoryAuthentication()
-            Utils.hideSoftKeyboard(this)
+            if (isNext){
+                viewModel.isEnabled = true
+                addTwoFactoryAuthentication()
+                Utils.hideSoftKeyboard(this)
+            }
         }
         else if (status== EnumTwoFactoryAuthentication.CHANGE){
             alertAskInputSecretPin()
         }
         else if (status ==EnumTwoFactoryAuthentication.REQUEST_CHANGE){
-           changeTwoFactoryAuthentication()
-            Utils.hideSoftKeyboard(this)
+            if (isNext){
+                changeTwoFactoryAuthentication()
+                Utils.hideSoftKeyboard(this)
+            }
         }
         else if (status == EnumTwoFactoryAuthentication.ENABLE || status ==EnumTwoFactoryAuthentication.DISABLE){
             status = EnumTwoFactoryAuthentication.CHANGE
@@ -253,10 +257,10 @@ fun TwoFactoryAuthenticationAct.addTwoFactoryAuthentication() {
             Status.SUCCESS-> {
                 val mResult = it.data?.data?.twoFactoryAuthentication
                 btnSwitch.isChecked = mResult?.isEnabled ?: false
-                Utils.onBasicAlertNotify(this,"Alert",String.format(getString(R.string.secret_pin_was_created),viewModel.secretPin))
+                Utils.onBasicAlertNotify(this,"Alert",String.format(getString(R.string.secret_pin_was_created),viewModel.newSecretPin))
                 status = EnumTwoFactoryAuthentication.CHANGE
-                edtSecretPin?.text = null
                 onShowUI()
+                disableUI()
             }
             else -> {
                 Utils.Log(TAG,it.message)
@@ -274,13 +278,13 @@ fun TwoFactoryAuthenticationAct.changeTwoFactoryAuthentication() {
                 btnSwitch.isChecked = viewModel.isEnabled
                 Utils.onBasicAlertNotify(this,"Alert",String.format(getString(R.string.secret_pin_was_changed),viewModel.newSecretPin))
                 status = EnumTwoFactoryAuthentication.CHANGE
-                edtSecretPin?.text = null
-                onShowUI()
                 if (viewModel.isEnabled){
                     tvStatus.text = getString(R.string.enabled)
                 }else{
                     tvStatus.text = getString(R.string.disabled)
                 }
+                onShowUI()
+                disableUI()
             }
             else -> {
                 Utils.Log(TAG,it.message)
@@ -290,6 +294,13 @@ fun TwoFactoryAuthenticationAct.changeTwoFactoryAuthentication() {
     })
 }
 
+fun TwoFactoryAuthenticationAct.disableUI(){
+    edtSecretPin.removeTextChangedListener(mTextWatcher)
+    edtSecretPin.text?.clear()
+    btnChange?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
+    btnChange?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
+    edtSecretPin?.addTextChangedListener(mTextWatcher)
+}
 
 fun TwoFactoryAuthenticationAct.disableTwoFactoryAuthentication() {
     val builder: MaterialDialog = MaterialDialog(this)
