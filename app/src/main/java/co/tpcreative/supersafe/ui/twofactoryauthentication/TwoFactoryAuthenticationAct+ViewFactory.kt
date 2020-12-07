@@ -174,6 +174,11 @@ fun TwoFactoryAuthenticationAct.getTwoFactoryAuthentication() {
                     status = EnumTwoFactoryAuthentication.CHANGE
                     val mResult = it.data?.data?.twoFactoryAuthentication
                     btnSwitch.isChecked = mResult?.isEnabled ?: false
+                    if (mResult?.isEnabled==true){
+                        tvStatus.text = getString(R.string.enabled)
+                    }else{
+                        tvStatus.text = getString(R.string.disabled)
+                    }
                 }
                 onShowUI()
             }
@@ -266,6 +271,11 @@ fun TwoFactoryAuthenticationAct.changeTwoFactoryAuthentication() {
                 status = EnumTwoFactoryAuthentication.CHANGE
                 edtSecretPin?.text = null
                 onShowUI()
+                if (viewModel.isEnabled){
+                    tvStatus.text = getString(R.string.enabled)
+                }else{
+                    tvStatus.text = getString(R.string.disabled)
+                }
             }
             else -> {
                 Utils.Log(TAG,it.message)
