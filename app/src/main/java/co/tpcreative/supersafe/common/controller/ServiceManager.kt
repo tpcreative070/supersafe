@@ -226,6 +226,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                                         val mResultUpdatedItem = itemViewModel.updateItemToSystem()
                                                         when(mResultUpdatedItem.status){
                                                             Status.SUCCESS -> {
+                                                                actionProgressing = EnumStatus.DONE
                                                                 Utils.onPushEventBus(EnumStatus.DONE)
                                                                 val mResultDeletedItem = driveViewModel.deleteItemFromCloud()
                                                                 when(mResultDeletedItem.status){
