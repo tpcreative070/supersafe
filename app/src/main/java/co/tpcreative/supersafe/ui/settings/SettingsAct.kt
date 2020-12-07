@@ -69,6 +69,7 @@ class SettingsAct : BaseActivity() {
                     setResult(Activity.RESULT_OK, intent)
                 }
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
