@@ -68,7 +68,6 @@ fun TwoFactoryAuthenticationAct.initUI(){
             status = EnumTwoFactoryAuthentication.ENABLE
             alertAskInputSecretPin()
         }else{
-            btnSwitch.isChecked = true
             status = EnumTwoFactoryAuthentication.DISABLE
             disableTwoFactoryAuthentication()
         }
@@ -314,6 +313,7 @@ fun TwoFactoryAuthenticationAct.disableTwoFactoryAuthentication() {
             }
             .negativeButton {
                 Utils.Log(TAG,"clicked negative button")
+                getTwoFactoryAuthentication()
             }
     builder.show()
 }
