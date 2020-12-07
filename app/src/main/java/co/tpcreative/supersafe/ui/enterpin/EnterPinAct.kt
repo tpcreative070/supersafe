@@ -51,7 +51,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
         initUI()
     }
 
-    val pinLockListener: PinLockListener? = object : PinLockListener {
+    val pinLockListener: PinLockListener = object : PinLockListener {
         override fun onComplete(pin: String?) {
             Utils.Log(TAG, "Complete button " + mPinAction?.name)
             when (mPinAction) {
@@ -343,7 +343,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
         }
         when (mPinAction) {
             EnumPinAction.VERIFY -> {
-                changeStatus(EnumStatus.VERIFY, EnumPinAction.DONE)
+                changeStatus(EnumStatus.VERIFY, EnumPinAction.DONE,null,true,false)
             }
             else -> Utils.Log(TAG, "Nothing")
         }
@@ -377,20 +377,24 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
         private var mChangePin: MyPreference? = null
         private var mFaceDown: MySwitchPreference? = null
         private var mFingerPrint: MySwitchPreference? = null
-        private fun createChangeListener(): Preference.OnPreferenceChangeListener? {
+        private var mTwoFactoryAuthentication : MyPreference? = null
+        private fun createChangeListener(): Preference.OnPreferenceChangeListener {
             return Preference.OnPreferenceChangeListener { preference, newValue ->
                 Utils.Log(TAG, "change $newValue")
                 true
             }
         }
 
-        private fun createActionPreferenceClickListener(): Preference.OnPreferenceClickListener? {
+        private fun createActionPreferenceClickListener(): Preference.OnPreferenceClickListener {
             return Preference.OnPreferenceClickListener { preference ->
                 if (preference is Preference) {
                     if (preference.key == getString(R.string.key_change_pin)) {
                         Utils.Log(TAG, "Action here!!!")
                         enumPinPreviousAction = EnumPinAction.VERIFY_TO_CHANGE
-                        enterPinAct.changeStatus(EnumStatus.VERIFY, EnumPinAction.VERIFY_TO_CHANGE)
+                        enterPinAct.changeStatus(EnumStatus.VERIFY, EnumPinAction.VERIFY_TO_CHANGE,null,true,false)
+                    }
+                    if (preference.key == getString(R.string.key_enable_two_factor_authentication)){
+                        Navigator.onMoveTwoFactoryAuthentication(activity!!)
                     }
                 }
                 true
@@ -414,6 +418,10 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
             mFingerPrint?.onPreferenceClickListener = createActionPreferenceClickListener()
             mFingerPrint?.setDefaultValue(switchFingerPrint)
             mFingerPrint?.isVisible = Utils.isSensorAvailable()
+
+            mTwoFactoryAuthentication = findPreference(getString(R.string.key_enable_two_factor_authentication)) as MyPreference?
+            mTwoFactoryAuthentication?.onPreferenceChangeListener = createChangeListener()
+            mTwoFactoryAuthentication?.onPreferenceClickListener = createActionPreferenceClickListener()
         }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

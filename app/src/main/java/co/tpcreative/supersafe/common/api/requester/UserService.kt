@@ -96,6 +96,54 @@ class UserService (){
         }
     }
 
+    suspend fun addTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val mResult = ApiHelper.getInstance()?.onAddTwoFactoryAuthenticationCor(request)
+                ResponseHandler.handleSuccess(mResult as RootResponse)
+            }
+            catch (throwable : Exception){
+                ResponseHandler.handleException(throwable)
+            }
+        }
+    }
+
+    suspend fun changeTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val mResult = ApiHelper.getInstance()?.onChangeTwoFactoryAuthenticationCor(request)
+                ResponseHandler.handleSuccess(mResult as RootResponse)
+            }
+            catch (throwable : Exception){
+                ResponseHandler.handleException(throwable)
+            }
+        }
+    }
+
+    suspend fun verifyTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val mResult = ApiHelper.getInstance()?.onVerifyTwoFactoryAuthenticationCor(request)
+                ResponseHandler.handleSuccess(mResult as RootResponse)
+            }
+            catch (throwable : Exception){
+                ResponseHandler.handleException(throwable)
+            }
+        }
+    }
+
+    suspend fun getTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val mResult = ApiHelper.getInstance()?.onGetTwoFactoryAuthenticationCor(request)
+                ResponseHandler.handleSuccess(mResult as RootResponse)
+            }
+            catch (throwable : Exception){
+                ResponseHandler.handleException(throwable)
+            }
+        }
+    }
+
     suspend fun updateToken(request : UserRequest) : Resource<RootResponse> {
         return withContext(Dispatchers.IO) {
             try {

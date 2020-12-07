@@ -3,6 +3,7 @@ import android.content.Context
 import android.os.Environment
 import co.tpcreative.supersafe.common.encypt.EncryptConfiguration
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
+import co.tpcreative.supersafe.common.extension.toBase64
 import co.tpcreative.supersafe.common.util.ImmutablePair
 import co.tpcreative.supersafe.common.util.SizeUnit
 import co.tpcreative.supersafe.common.util.Utils
@@ -14,13 +15,18 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class EncryptDecryptPinHelper {
+    fun encryptTextPKCS7(value : String, mode : Int) : String? {
+        return encryptPKCS7(value.toByteArray(),mode)?.let {
+            String(it)
+        }
+    }
 
     fun createFile(path: String?, content: String?): Boolean {
         return createFile(path, content?.toByteArray())
     }
     fun readTextFile(path: String?): String? {
         val bytes = readFile(path)
-        return String(bytes!!)
+        return bytes?.let { String(it)}
     }
 
     private fun getConfigurationFile(): EncryptConfiguration? {
@@ -246,6 +252,13 @@ class EncryptDecryptPinHelper {
         val secretKey: ByteArray = configurationFile?.secretKey!!
         val ivx: ByteArray = configurationFile?.ivParameter!!
         return SecurityUtil.encrypt(content, encryptionMode, secretKey, ivx)
+    }
+
+    @Synchronized
+    private fun encryptPKCS7(content: ByteArray, encryptionMode: Int): ByteArray? {
+        val secretKey: ByteArray = configurationFile?.secretKey!!
+        val ivx: ByteArray = configurationFile?.ivParameter!!
+        return SecurityUtil.encryptPKCS7(content, encryptionMode, secretKey, ivx)
     }
 
     fun deleteDirectoryImpl(path: String): Boolean {

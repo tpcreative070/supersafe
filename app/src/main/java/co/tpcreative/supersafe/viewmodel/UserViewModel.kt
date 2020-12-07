@@ -1,4 +1,6 @@
 package co.tpcreative.supersafe.viewmodel
+import android.app.Activity
+import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import co.tpcreative.supersafe.R
@@ -19,6 +21,7 @@ import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.ui.signup.SignUpAct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -42,6 +45,14 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
             validationEmail(value)
         }
 
+    var secretPin  = ""
+
+    var pinValue : String? = null
+
+    fun getIntent(activity : Activity){
+        val bundle: Bundle? = activity.intent?.extras
+        pinValue = bundle?.get(SignUpAct::class.java.simpleName) as String
+    }
 
     fun signUp() = liveData(Dispatchers.IO){
         try {
@@ -83,16 +94,36 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                         emit(Resource.error(mResultSignIn.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignIn.data.responseMessage ?:"",null))
                     }else{
                         /*Clean up cache before enter up app*/
-                        //Utils.clearAppDataAndReCreateData()
-                        Utils.Log(TAG,"clearAppDataAndReCreateData")
                         val mData: DataResponse? = mResultSignIn.data.data
                         Utils.setUserPreShare(mData?.user)
-                        val mResultSentEmail = emailViewModel.sendEmail(EnumStatus.SIGN_IN)
-                        when(mResultSentEmail.status){
-                            Status.SUCCESS ->{
-                                emit(mResultSignIn)
+                        val mResultTwoFactoryAuthentication = getTwoFactoryAuthenticationCor(TwoFactoryAuthenticationRequest())
+                        when(mResultTwoFactoryAuthentication.status){
+                            Status.SUCCESS -> {
+                                if (mResultTwoFactoryAuthentication.data?.error==true){
+                                    val mResultSentEmail = emailViewModel.sendEmail(EnumStatus.SIGN_IN)
+                                    when(mResultSentEmail.status){
+                                        Status.SUCCESS ->{
+                                            emit(mResultSignIn)
+                                        }
+                                        else -> emit(Resource.error(mResultSentEmail.code?:Utils.CODE_EXCEPTION, mResultSentEmail.message ?:"",null))
+                                    }
+                                }else{
+                                    if (mResultTwoFactoryAuthentication.data?.data?.twoFactoryAuthentication?.isEnabled ==true){
+                                        /*Checking is enable is == true*/
+                                        emit(mResultTwoFactoryAuthentication)
+                                    }else{
+                                        val mResultSentEmail = emailViewModel.sendEmail(EnumStatus.SIGN_IN)
+                                        when(mResultSentEmail.status){
+                                            Status.SUCCESS ->{
+                                                emit(mResultSignIn)
+                                            }
+                                            else -> emit(Resource.error(mResultSentEmail.code?:Utils.CODE_EXCEPTION, mResultSentEmail.message ?:"",null))
+                                        }
+                                    }
+                                }
+                            }else ->{
+                                 emit(Resource.error(mResultTwoFactoryAuthentication.code?:Utils.CODE_EXCEPTION, mResultTwoFactoryAuthentication.message ?:"",null))
                             }
-                            else -> emit(Resource.error(mResultSentEmail.code?:Utils.CODE_EXCEPTION, mResultSentEmail.message ?:"",null))
                         }
                     }
                 }
@@ -107,6 +138,49 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         finally {
             isLoading.postValue(false)
         }
+    }
+
+    fun sendEmail() = liveData(Dispatchers.Main){
+        val mResultSentEmail = emailViewModel.sendEmail(EnumStatus.SIGN_IN)
+        when(mResultSentEmail.status){
+            Status.SUCCESS ->{
+                emit(mResultSentEmail)
+            }
+            else -> emit(Resource.error(mResultSentEmail.code?:Utils.CODE_EXCEPTION, mResultSentEmail.message ?:"",null))
+        }
+    }
+
+    fun verifyTwoFactoryAuthentication() = liveData(Dispatchers.Main){
+        try {
+            isLoading.postValue(true)
+            val mRequest = TwoFactoryAuthenticationRequest(secret_pin = secretPin)
+            Utils.Log(TAG,mRequest.toJson())
+            val mResult =  verifyTwoFactoryAuthenticationCor(mRequest)
+            when(mResult.status){
+                Status.SUCCESS -> {
+                    if (mResult.data?.error ==true){
+                        emit(Resource.error(mResult.data.responseCode?: Utils.CODE_EXCEPTION, getErrorMessage(mResult.data?.responseMessage ?:""),null))
+                    }else{
+                        emit(mResult)
+                    }
+                }else ->{
+                emit(Resource.error(mResult.data?.responseCode?: Utils.CODE_EXCEPTION, getErrorMessage(mResult.data?.responseMessage ?:""),null))
+            }
+            }
+        }catch (e : Exception){
+            e.printStackTrace()
+            emit(Resource.error(Utils.CODE_EXCEPTION,getErrorMessage(e.message ?:""),null))
+        }
+        finally {
+            isLoading.postValue(false)
+        }
+    }
+
+    private fun getErrorMessage(message : String) : String{
+        if (message == "invalid_secret_in_request"){
+            return SuperSafeApplication.getInstance().getString(R.string.wrong_secret_pin)
+        }
+        return getString(R.string.server_error_occurred)
     }
 
     suspend fun updatedUserToken() : Resource<RootResponse>{
@@ -245,6 +319,47 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         return withContext(Dispatchers.IO){
             try {
                 service.updateUser(request)
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+    suspend fun addTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse>{
+        return withContext(Dispatchers.IO){
+            try {
+                service.addTwoFactoryAuthenticationCor(request)
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+    suspend fun changeTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse>{
+        return withContext(Dispatchers.IO){
+            try {
+                service.changeTwoFactoryAuthenticationCor(request)
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+
+    suspend fun verifyTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse>{
+        return withContext(Dispatchers.IO){
+            try {
+                service.verifyTwoFactoryAuthenticationCor(request)
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+    suspend fun getTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse>{
+        return withContext(Dispatchers.IO){
+            try {
+                service.getTwoFactoryAuthenticationCor(request)
             }catch (e : Exception){
                 Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
             }

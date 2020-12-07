@@ -10,6 +10,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonScreenLock
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.CalculatorImpl
 import co.tpcreative.supersafe.common.util.Constants
 import co.tpcreative.supersafe.common.util.Utils
@@ -213,9 +214,10 @@ fun EnterPinAct.initUI() {
 fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(Dispatchers.Main).launch{
     when (EnterPinAct.mPinAction) {
         EnumPinAction.VERIFY -> {
+            /*Existing fake instance*/
             if (SingletonManager.getInstance().isVisitFakePin()) {
                 if (pin == mFakePin && isFakePinEnabled) {
-                    changeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE)
+                    changeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE,pin,false,false)
                 } else {
                     if (isCompleted) {
                         onTakePicture(pin)
@@ -224,9 +226,11 @@ fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(D
                 }
             } else {
                 if (pin == mRealPin) {
-                    changeStatus(EnumStatus.VERIFY, EnumPinAction.DONE)
+                    /*Noted code here*/
+                    changeStatus(EnumStatus.VERIFY, EnumPinAction.DONE,pin,true,false)
                 } else if (pin == mFakePin && isFakePinEnabled) {
-                    changeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE)
+                    /*New instance app*/
+                    changeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE,pin,false,false)
                 } else {
                     if (isCompleted) {
                         onTakePicture(pin)
@@ -237,7 +241,7 @@ fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(D
         }
         EnumPinAction.VERIFY_TO_CHANGE -> {
             if (pin == mRealPin) {
-                changeStatus(EnumStatus.VERIFY, EnumPinAction.CHANGE)
+                changeStatus(EnumStatus.VERIFY, EnumPinAction.CHANGE,pin,true,false)
             } else {
                 if (isCompleted) {
                     onTakePicture(pin)
@@ -246,8 +250,9 @@ fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(D
             }
         }
         EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
+            /*This is special for this case*/
             if (pin == mRealPin) {
-                changeStatus(EnumStatus.VERIFY, EnumPinAction.FAKE_PIN)
+                changeStatus(EnumStatus.VERIFY, EnumPinAction.FAKE_PIN,pin,true,false)
             } else {
                 if (isCompleted) {
                     onTakePicture(pin)
@@ -483,18 +488,21 @@ fun EnterPinAct.setPin(pin: String?) {
         EnumPinAction.SET -> {
             if (mFirstPin == "") {
                 mFirstPin = pin
-                tvTitle.setText(getString(R.string.pinlock_secondPin))
+                tvTitle.text = getString(R.string.pinlock_secondPin)
                 pinlockView.resetPinLockView()
             } else {
                 if (pin == mFirstPin) {
-                    Utils.writePinToSharedPreferences(pin)
+                    /*Close for old version*/
+                    //Utils.writePinToSharedPreferences(pin)
                     when (EnterPinAct.mPinActionNext) {
                         EnumPinAction.SIGN_UP -> {
-                            Navigator.onMoveToSignUp(this)
+                            pin?.let {
+                                Navigator.onMoveToSignUp(this,it)
+                            }
                         }
                         else -> {
                             Navigator.onMoveToMainTab(this,true)
-                            changeStatus(EnumStatus.SET, EnumPinAction.DONE)
+                            changeStatus(EnumStatus.SET, EnumPinAction.DONE,pin,true,true)
                         }
                     }
                 } else {
@@ -512,8 +520,7 @@ fun EnterPinAct.setPin(pin: String?) {
                     if (Utils.isExistingFakePin(pin, mFakePin)) {
                         onAlertWarning(getString(R.string.pin_lock_replace))
                     } else {
-                        Utils.writePinToSharedPreferences(pin)
-                        changeStatus(EnumStatus.CHANGE, EnumPinAction.DONE)
+                        changeStatus(EnumStatus.CHANGE, EnumPinAction.DONE,pin,true,true)
                     }
                 } else {
                     onAlertWarning(getString(R.string.pinlock_tryagain))
@@ -530,8 +537,7 @@ fun EnterPinAct.setPin(pin: String?) {
                     if (Utils.isExistingRealPin(pin, mRealPin)) {
                         onAlertWarning(getString(R.string.pin_lock_replace))
                     } else {
-                        Utils.writeFakePinToSharedPreferences(pin)
-                        changeStatus(EnumStatus.CREATE_FAKE_PIN, EnumPinAction.DONE)
+                        changeStatus(EnumStatus.CREATE_FAKE_PIN, EnumPinAction.DONE,pin,false,true)
                     }
                 } else {
                     onAlertWarning(getString(R.string.pinlock_tryagain))
@@ -548,9 +554,8 @@ fun EnterPinAct.setPin(pin: String?) {
                     if (Utils.isExistingFakePin(pin, mFakePin)) {
                         onAlertWarning(getString(R.string.pin_lock_replace))
                     } else {
-                        Utils.writePinToSharedPreferences(pin)
                         Navigator.onMoveToMainTab(this,true)
-                        changeStatus(EnumStatus.RESET, EnumPinAction.DONE)
+                        changeStatus(EnumStatus.RESET, EnumPinAction.DONE,pin,true,true)
                     }
                 } else {
                     onAlertWarning(getString(R.string.pinlock_tryagain))
@@ -595,7 +600,10 @@ private fun EnterPinAct.setupViewModel() {
     ).get(LockScreenViewModel::class.java)
 }
 
-fun EnterPinAct.changeStatus(status: EnumStatus?, action: EnumPinAction?){
+fun EnterPinAct.changeStatus(status: EnumStatus?, action: EnumPinAction?, value : String?,isRealPin: Boolean,isWrite : Boolean){
+    value?.let {
+        SuperSafeApplication.getInstance().checkingMigrationAfterVerifiedPin(value,isRealPin,isWrite)
+    }
     viewModel.changeStatus(status,action).observe(this, Observer {
         CoroutineScope(Dispatchers.Main).launch {
             onSuccessful(it.status,it.action)

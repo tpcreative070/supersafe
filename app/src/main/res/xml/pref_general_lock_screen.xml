@@ -16,6 +16,13 @@
             android:summary="@string/key_face_down_lock_detail"
             android:title="@string/key_face_down_lock"/>
 
+        <co.tpcreative.supersafe.common.preference.MyPreference
+            android:icon="@drawable/baseline_security_white_24"
+            android:layout="@layout/custom_preferences_item"
+            android:key="@string/key_enable_two_factor_authentication"
+            android:title="@string/enable_two_factor_secret"
+            android:summary="@string/enable_two_factor_secret_detail"/>
+
         <co.tpcreative.supersafe.common.preference.MySwitchPreference
             android:icon="@drawable/baseline_fingerprint_white_48"
             android:layout="@layout/custom_preferences_item"

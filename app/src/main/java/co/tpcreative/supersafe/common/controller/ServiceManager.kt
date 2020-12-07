@@ -340,7 +340,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                Utils.Log(TAG, "start compress")
                                val createdThumbnail = file.createFile(File(thumbnailPath), file, Cipher.ENCRYPT_MODE)
                                val createdOriginal = file.createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
-                               if (createdThumbnail!! && createdOriginal!!) {
+                               if (createdThumbnail && createdOriginal) {
                                    handleResponseImport(itemsPhoto,mMainCategories,mPath)
                                    Utils.Log(TAG, "CreatedFile successful")
                                } else {
@@ -391,7 +391,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                val createdThumbnail: Boolean = thumbnail?.toByteArray()?.createFile(thumbnailPath)!!
                                val createdOriginal = File(originalPath).createCipherFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
                                Utils.Log(TAG, "Call original")
-                               if (createdThumbnail && createdOriginal!!) {
+                               if (createdThumbnail && createdOriginal) {
                                    handleResponseImport(itemsVideo,mMainCategories,mPath)
                                    Utils.Log(TAG, "CreatedFile successful")
                                } else {
@@ -412,7 +412,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                val originalPath = pathContent + currentTime
                                val itemsAudio = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.AUDIO, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
                                val createdOriginal = File(originalPath).createCipherFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
-                               if (createdOriginal!!) {
+                               if (createdOriginal) {
                                    handleResponseImport(itemsAudio,mMainCategories,mPath)
                                    Utils.Log(TAG, "CreatedFile successful")
                                } else {
@@ -433,7 +433,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                val originalPath = pathContent + currentTime
                                val itemsFile = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.FILES, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
                                val createdOriginal = File(originalPath).createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
-                               if (createdOriginal!!) {
+                               if (createdOriginal) {
                                    Utils.Log(TAG, "CreatedFile successful")
                                    handleResponseImport(itemsFile,mMainCategories,mPath)
                                } else {
@@ -624,8 +624,8 @@ class ServiceManager() : BaseServiceView<Any?> {
             val items = ItemModel(getString(R.string.key_jpg), originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype(), uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, currentTime + getString(R.string.key_jpg), "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, isSaver, false, false, 0, false, false, false, EnumStatus.UPLOAD)
             val mFileOriginal = mData?.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance())
             val mFileThumbnail = getThumbnail(mFileOriginal?.absolutePath!!)
-            val createdThumbnail = mFileThumbnail.createFile(File(thumbnailPath), mFileThumbnail, Cipher.ENCRYPT_MODE)!!
-            val createdOriginal = mFileOriginal.createFile(File(originalPath), mFileOriginal, Cipher.ENCRYPT_MODE)!!
+            val createdThumbnail = mFileThumbnail.createFile(File(thumbnailPath), mFileThumbnail, Cipher.ENCRYPT_MODE)
+            val createdOriginal = mFileOriginal.createFile(File(originalPath), mFileOriginal, Cipher.ENCRYPT_MODE)
             if (createdThumbnail && createdOriginal) {
                 Utils.Log(TAG, "CreatedFile successful")
             } else {
@@ -682,8 +682,8 @@ class ServiceManager() : BaseServiceView<Any?> {
             EnumStatus.SCREEN_OFF -> {
                 when (EnumPinAction.values()[Utils.getScreenStatus()]) {
                     EnumPinAction.NONE -> {
-                        val key: String = SuperSafeApplication.getInstance().readKey() as String
-                        if (key.isNotEmpty()) {
+                        val key: String? = SuperSafeApplication.getInstance().readKey()
+                        if (key?.isNotEmpty() == true) {
                             Utils.putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
                         }
                     }

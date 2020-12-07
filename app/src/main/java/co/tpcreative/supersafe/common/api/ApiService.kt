@@ -38,6 +38,18 @@ interface ApiService {
     @POST(UPDATE)
     suspend fun onUpdateUserCor(@Body request: ChangeUserIdRequest): RootResponse?
 
+    @POST(ADD_TWO_FACTORY_AUTHENTICATION)
+    suspend fun onAddTwoFactoryAuthenticationCor(@Body request: TwoFactoryAuthenticationRequest): RootResponse?
+
+    @POST(CHANGE_TWO_FACTORY_AUTHENTICATION)
+    suspend fun onChangeTwoFactoryAuthenticationCor(@Body request: TwoFactoryAuthenticationRequest): RootResponse?
+
+    @POST(VERIFY_TWO_FACTORY_AUTHENTICATION)
+    suspend fun onVerifyTwoFactoryAuthenticationCor(@Body request: TwoFactoryAuthenticationRequest): RootResponse?
+
+    @POST(GET_TWO_FACTORY_AUTHENTICATION)
+    suspend fun onGetTwoFactoryAuthenticationCor(@Body request: TwoFactoryAuthenticationRequest): RootResponse?
+
     @POST(REFRESH_USER_TOKEN)
     suspend fun onUpdateTokenCor(@Body request: UserRequest): RootResponse?
 
@@ -151,5 +163,9 @@ interface ApiService {
         const val TRACKING: String = "/api/supersafe/track/tracking"
         const val TRACKING_SYNC: String = "/api/supersafe/items/trackingSync"
         const val CHECK_VERSION: String = "/api/track/version"
+        const val ADD_TWO_FACTORY_AUTHENTICATION: String = "/api/supersafe/user/addTwoFactoryAuthentication"
+        const val CHANGE_TWO_FACTORY_AUTHENTICATION: String = "/api/supersafe/user/changeTwoFactoryAuthentication"
+        const val VERIFY_TWO_FACTORY_AUTHENTICATION: String = "/api/supersafe/user/verifyTwoFactoryAuthentication"
+        const val GET_TWO_FACTORY_AUTHENTICATION: String = "/api/supersafe/user/getTwoFactoryAuthentication"
     }
 }

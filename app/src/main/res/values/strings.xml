@@ -109,6 +109,8 @@
     <string name="login">SIGN IN with your Super Safe account email</string>
     <string name="email">Email</string>
     <string name="next">NEXT</string>
+    <string name="change">Change</string>
+    <string name="generate_secret_pin">Generate secret pin</string>
     <string name="confirm">Confirm</string>
     <string name="internet">Please check your connections</string>
     <string name="yes">YES</string>
@@ -123,7 +125,7 @@
     <string name="key_sign_in">Sign In</string>
     <string name="welcome">Welcome to SuperSafe</string>
     <string name="safe_detail">A safe place for your photos or videos</string>
-    <string name="title_forget">Add an email in the case you forget</string>
+    <string name="title_forget">Add an email in the case you forget PIN</string>
     <string name="name">Name</string>
     <string name="finish">Finish</string>
     <string name="camera_permission_confirmation">This app demonstrates the usage of CameraView. In order to do that, it needs permission to access camera.</string>
@@ -135,6 +137,10 @@
     <string name="flash_auto">Flash auto</string>
     <string name="flash_off">Flash off</string>
     <string name="flash_on">Flash on</string>
+    <string name="secret_pin">Secret Pin</string>
+    <string name="change_secret_pin">Change Secret Pin</string>
+    <string name="wrong_secret_pin">Wrong secret pin</string>
+    <string name="server_error_occurred">Server error occurred</string>
 
 
     /*Clock Screen*/
@@ -223,6 +229,7 @@
     <string name="choose_an_account">Please select %1$s to link to Google Drive</string>
     <string name="choose_an_new_account">Please select or add your Google account to sign in with SuperSafe</string>
     <string name="not_the_same_account">Not the same account</string>
+    <string name="are_you_sure_you_want_disable_two_factory_authentication">Are you sure. You want to disable TWO FACTORY AUTHENTICATION.</string>
     <string name="choose_the_same_account">Please select %1$s</string>
     <string name="select_again">SELECT AGAIN</string>
     <string name="user_another">USER ANOTHER</string>
@@ -274,6 +281,8 @@
     <string name="restore_now">Restore Now</string>
     <string name="tvPrimacyPolicy">https://sites.google.com/view/tpcreative/home</string>
     <string name="no_internet_connection">No Internet Connection</string>
+    <string name="secret_pin_was_created">Secret PIN was generated is %1$s.</string>
+    <string name="secret_pin_was_changed">Secret PIN was changed is %1$s.</string>
 
     <string name="pin_was_wrong">PIN was incorrect</string>
     <string name="forgot_your_pin">Forgot your pin? No problem. Here\'s how to reset it</string>
@@ -409,9 +418,18 @@
     <string name="key_album_cover">Album Cover</string>
     <string name="key_custom">Custom</string>
     <string name="key_switch_to_basic">switch_to_basic</string>
-
+    <string name="enable_two_factor_secret">Two-Factor SECRET PIN</string>
+    <string name="enable_two_factor_secret_detail">Increase your account\'s security by enabling Two-Factor SECRET PIN</string>
+    <string name="enter_new_secret_pin">Enter new secret pin</string>
+    <string name="enter_secret_pin">Enter secret pin</string>
+    <string name="verify_secret_pin_to_disable_two_factory_authentication">Verify secret pin to disable TWO FACTORY AUTHENTICATION</string>
+    <string name="verify_secret_pin_to_enable_two_factory_authentication">Verify secret pin to enable TWO FACTORY AUTHENTICATION</string>
+    <string name="verify_secret_pin">Verify secret pin</string>
+    <string name="generate_two_factory_authentication">Generate two factory authentication</string>
+    <string name="send_request">Send request</string>
 
     /*Preference keys*/
+    <string name="key_enable_two_factor_authentication">key_enable_two_factor_authentication</string>
     <string name="key_request_sync_data">request_sync_data</string>
     <string name="key_last_time_sync_data">last_time_sync_data</string>
     <string name="key_grant_access">grant_access</string>
@@ -700,8 +718,6 @@
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
     </style>
-
-
 
 
 </resources>

@@ -105,10 +105,10 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveAlbumFragment.OnGa
         Utils.onScanFile(this,"scan.log")
         when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
             EnumPinAction.SCREEN_LOCK -> {
-                if (!SingletonManager.Companion.getInstance().isVisitLockScreen()) {
+                if (!SingletonManager.getInstance().isVisitLockScreen()) {
                     SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
                     Utils.Log(TAG, "Pressed home button")
-                    SingletonManager.Companion.getInstance().setVisitLockScreen(true)
+                    SingletonManager.getInstance().setVisitLockScreen(true)
                     Utils.Log(TAG, "Verify pin")
                 } else {
                     Utils.Log(TAG, "Verify pin already")

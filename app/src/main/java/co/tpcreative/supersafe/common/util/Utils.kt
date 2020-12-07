@@ -58,6 +58,7 @@ import java.io.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.crypto.Cipher
 
 
 /**
@@ -166,7 +167,7 @@ object Utils {
         return type
     }
 
-    fun getFileExtension(url: String?): String? {
+    fun getFileExtension(url: String?): String{
         return FilenameUtils.getExtension(url).toLowerCase(Locale.ROOT)
     }
 
@@ -582,21 +583,6 @@ object Utils {
         }
     }
 
-    fun getUserInfo(): User? {
-        try {
-            val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
-            if (value != null) {
-                val mUser: User? = Gson().fromJson(value, User::class.java)
-                if (mUser != null) {
-                    return mUser
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
     fun getUserId(): String? {
         try {
             val mUser = getUserInfo()
@@ -840,10 +826,25 @@ object Utils {
         }
     }
 
+    fun getUserInfo(): User? {
+        try {
+            val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
+            if (value != null) {
+                val mUser: User? = Gson().fromJson(value, User::class.java)
+                if (mUser != null) {
+                    return mUser
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
     fun setUserPreShare(user: User?) {
         Log(TAG, "User id ====================> ${user?.email}")
         Log(TAG, "Cloud id ===================> ${user?.cloud_id}")
-        PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), Gson().toJson(user))
+        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user), Gson().toJson(user))
     }
 
     fun isRequestGoogleDriveSignOut() : Boolean{
@@ -1327,6 +1328,10 @@ object Utils {
             return true
         }
         return false
+    }
+
+    fun isEnabledTwoFactoryAuthentication() : Boolean{
+        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_enable_two_factor_authentication),false)
     }
 }
 

@@ -3,6 +3,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -15,9 +16,12 @@ import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
+import co.tpcreative.supersafe.common.util.NetworkUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.ResetPinViewModel
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import kotlinx.android.synthetic.main.activity_reset_pin.*
 import kotlinx.android.synthetic.main.activity_reset_pin.btnSendRequest
@@ -48,7 +52,11 @@ fun ResetPinAct.initUI(){
     }
 
     btnSendRequest.setOnClickListener {
-        sendRequestCode()
+        if (NetworkUtil.pingIpAddress(this)){
+            Utils.onBasicAlertNotify(this,"Alert","No Internet.Please check network connection")
+        }else{
+            getTwoFactoryAuthentication()
+        }
     }
 
     llSupport.setOnClickListener {
@@ -70,7 +78,7 @@ fun ResetPinAct.initUI(){
                 progressbar_circular_reset_pin.visibility = View.VISIBLE
             }
         }else{
-            if (progressing == EnumStepProgressing.REQUEST_CODE){
+            if (progressing == EnumStepProgressing.VERIFY_CODE){
                 progressbar_circular_request_code?.visibility = View.INVISIBLE
             }else{
                 progressbar_circular_reset_pin.visibility = View.INVISIBLE
@@ -169,6 +177,7 @@ fun ResetPinAct.onShowDialogWaitingCode() {
                 SingletonResetPin.getInstance()?.onStartTimer(300000)
                 btnSendRequest.isEnabled = false
                 btnReset.isEnabled = false
+                edtCode.isEnabled = false
             }
             .onNegative { finish() }
             .show()
@@ -179,6 +188,56 @@ private fun ResetPinAct.setupViewModel() {
             this,
             ViewModelFactory()
     ).get(ResetPinViewModel::class.java)
+}
+
+fun ResetPinAct.verifyTwoFactoryAuthentication() {
+    viewModel.verifyTwoFactoryAuthentication().observe(this, Observer {
+        when(it.status){
+            Status.SUCCESS-> {
+                sendRequestCode()
+            }
+            else ->{
+                Utils.Log(TAG,it.message)
+                Utils.onBasicAlertNotify(this,"Alert",it.message ?:"")
+                alertAskInputSecretPin()
+            }
+        }
+    })
+}
+
+fun ResetPinAct.getTwoFactoryAuthentication() {
+    viewModel.getTwoFactoryInfo().observe(this, Observer {
+        when(it.status){
+            Status.SUCCESS-> {
+                if (it.data?.data?.twoFactoryAuthentication?.isEnabled==true){
+                    alertAskInputSecretPin()
+                }else{
+                    sendRequestCode()
+                }
+            }
+            else -> {
+                Utils.Log(TAG,it.message)
+            }
+        }
+    })
+}
+
+fun ResetPinAct.alertAskInputSecretPin() {
+    val builder: MaterialDialog = MaterialDialog(this)
+            .title(R.string.key_alert)
+            .message(text = getString(R.string.verify_secret_pin))
+            .negativeButton(R.string.cancel)
+            .cancelable(true)
+            .cancelOnTouchOutside(false)
+            .negativeButton {
+
+            }
+            .positiveButton(R.string.verify)
+            .input(hintRes = R.string.enter_secret_pin, inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD), allowEmpty = false){ dialog, text->
+                viewModel.secretPin = text.toString()
+                verifyTwoFactoryAuthentication()
+            }
+    builder.show()
 }
 
 

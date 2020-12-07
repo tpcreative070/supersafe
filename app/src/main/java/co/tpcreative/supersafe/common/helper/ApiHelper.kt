@@ -41,6 +41,12 @@ class ApiHelper() {
     suspend fun onCheckUserCloudCor(request: UserCloudRequest) = getApiCor()?.onCheckUserCloudCor(request)
     suspend fun onAddUserCloudCor(request: UserCloudRequest) = getApiCor()?.onAddUserCloudCor(request)
     suspend fun onUpdateUserCor(request: ChangeUserIdRequest) = getApiCor()?.onUpdateUserCor(request)
+
+    suspend fun onAddTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) = getApiCor()?.onAddTwoFactoryAuthenticationCor(request)
+    suspend fun onChangeTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) = getApiCor()?.onChangeTwoFactoryAuthenticationCor(request)
+    suspend fun onVerifyTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) = getApiCor()?.onVerifyTwoFactoryAuthenticationCor(request)
+    suspend fun onGetTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) = getApiCor()?.onGetTwoFactoryAuthenticationCor(request)
+
     suspend fun onDeleteOldAccessTokenCor(request: UserRequest) = getApiCor()?.onDeleteOldAccessTokenCor(request)
     suspend fun updateTokenCor(request: UserRequest) = getApiCor()?.onUpdateTokenCor(request)
     suspend fun trackingCor(request: TrackingRequest) = getApiCor()?.onTrackingCor(request)

@@ -6,6 +6,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumValidationKey
@@ -19,6 +20,7 @@ fun SignUpAct.initUI(){
     TAG = this::class.java.simpleName
     setSupportActionBar(toolbar)
     setupViewModel()
+    viewModel.getIntent(this)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     edtEmail?.addTextChangedListener(mTextWatcher)
     edtEmail?.setOnEditorActionListener(this)
@@ -84,6 +86,7 @@ fun SignUpAct.onSignUp() {
     viewModel.signUp().observe(this,{
         when(it.status){
             Status.SUCCESS -> {
+                SuperSafeApplication.getInstance().checkingMigrationAfterVerifiedPin(viewModel.pinValue,true,true)
                 Navigator.onMoveToMainTab(this,true)
                 finish()
             }

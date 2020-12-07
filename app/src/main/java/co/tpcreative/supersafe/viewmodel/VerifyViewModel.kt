@@ -40,7 +40,7 @@ open class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewM
         }else if (!Utils.isValid(mValue)){
             putError(EnumValidationKey.EDIT_TEXT_CODE, "Code invalid")
         }else if(mValue.length< 6 || mValue.length>6){
-            putError(EnumValidationKey.EDIT_TEXT_CODE, "Must be 6 character")
+            putError(EnumValidationKey.EDIT_TEXT_CODE, "Must be 6 digit numbers")
         }
         else{
             putError(EnumValidationKey.EDIT_TEXT_CODE)

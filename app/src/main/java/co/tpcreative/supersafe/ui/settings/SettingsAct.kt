@@ -101,17 +101,17 @@ class SettingsAct : BaseActivity() {
             }
             Navigator.ENABLE_CLOUD -> {
                 Utils.Log(TAG, "onResultResponse :$resultCode")
-                if (resultCode == Activity.RESULT_OK) {
-                    if (Utils.isVerifiedAccount()) {
-                        if (Utils.isConnectedToGoogleDrive()) {
-                            Navigator.onManagerCloud(this)
-                        } else {
-                            Navigator.onCheckSystem(this, null)
-                        }
-                    } else {
-                        Navigator.onVerifyAccount(this)
-                    }
-                }
+//                if (resultCode == Activity.RESULT_OK) {
+//                    if (Utils.isVerifiedAccount()) {
+//                        if (Utils.isConnectedToGoogleDrive()) {
+//                            Navigator.onManagerCloud(this)
+//                        } else {
+//                            Navigator.onCheckSystem(this, null)
+//                        }
+//                    } else {
+//                        Navigator.onVerifyAccount(this)
+//                    }
+//                }
             }
         }
     }

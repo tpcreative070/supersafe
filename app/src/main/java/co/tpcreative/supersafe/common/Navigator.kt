@@ -5,9 +5,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.controller.SingletonManager
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerAct
@@ -41,6 +38,7 @@ import co.tpcreative.supersafe.ui.signin.SignInAct
 import co.tpcreative.supersafe.ui.signup.SignUpAct
 import co.tpcreative.supersafe.ui.theme.ThemeSettingsAct
 import co.tpcreative.supersafe.ui.trash.TrashAct
+import co.tpcreative.supersafe.ui.twofactoryauthentication.TwoFactoryAuthenticationAct
 import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumAct
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountAct
 import co.tpcreative.supersafe.ui.verify.VerifyAct
@@ -55,6 +53,7 @@ object Navigator {
     const val VERIFY_PIN = 1004
     const val SECRET_DOOR_SUET_UP = 1005
     const val ENABLE_CLOUD = 1006
+    const val REQUEST_TWO_FACTORY_AUTHENTICATION = 7777
     const val REQUEST_CODE_EMAIL = 1007
     const val REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 1008
     const val SHARE = 1009
@@ -150,8 +149,11 @@ object Navigator {
         context.startActivity(intent)
     }
 
-    fun onMoveToSignUp(context: Context) {
+    fun onMoveToSignUp(context: Context,pin : String){
         val intent = Intent(context, SignUpAct::class.java)
+        val bundle = Bundle()
+        bundle.putSerializable(SignUpAct::class.java.simpleName,pin)
+        intent.putExtras(bundle)
         context.startActivity(intent)
     }
 
@@ -305,6 +307,11 @@ object Navigator {
         context.startActivity(intent)
     }
 
+    fun onMoveTwoFactoryAuthentication(context: Context) {
+        val intent = Intent(context, TwoFactoryAuthenticationAct::class.java)
+        context.startActivity(intent)
+    }
+
     fun onMoveUnlockAllAlbums(context: Context) {
         val intent = Intent(context, UnlockAllAlbumAct::class.java)
         context.startActivity(intent)
@@ -332,7 +339,6 @@ object Navigator {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
-
 
     fun onMoveAlbumCover(context: Activity, categories: MainCategoryModel) {
         val intent = Intent(context, AlbumCoverAct::class.java)

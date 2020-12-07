@@ -19,6 +19,9 @@ class DataResponse : Serializable {
     /*RequestCode*/
     var requestCode: RequestCodeResponse? = null
 
+    /*two factory authentication*/
+    var twoFactoryAuthentication : TwoFactoryAuthenticationResponse? = null
+
     /*Tracking sync*/
     var trackingSync : TrackingSyncResponse? = null
 

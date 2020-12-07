@@ -40,6 +40,7 @@ class ResetPinAct : BaseVerifyPinActivity(),TextView.OnEditorActionListener {
             EnumStatus.WAITING_DONE -> {
                 runOnUiThread(Runnable {
                     edtCode?.hint = getString(R.string.code)
+                    edtCode.isEnabled = true
                     btnReset.isEnabled = true
                     btnSendRequest.isEnabled = true
                 })

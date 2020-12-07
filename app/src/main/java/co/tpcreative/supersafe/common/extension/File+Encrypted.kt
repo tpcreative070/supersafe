@@ -5,10 +5,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-suspend fun File.createFile(output: File, input: File, mode: Int) : Boolean?{
+/*This is for key pin*/
+fun File.createPin(content : String?) : Boolean?{
+    return EncryptDecryptFilesHelper.getInstance()?.createFile(this.absolutePath,content = content)
+}
+
+fun File.readPin() : String? {
+    return EncryptDecryptFilesHelper.getInstance()?.readTextFile(this.absolutePath)
+}
+
+suspend fun File.createFile(output: File, input: File, mode: Int) : Boolean{
    return withContext(Dispatchers.IO){
         try {
-           EncryptDecryptFilesHelper.getInstance()?.createFile(output, input, mode)
+           EncryptDecryptFilesHelper.getInstance()?.createFile(output, input, mode) ?: false
        }catch (e: Exception){
            false
        }
@@ -16,10 +25,10 @@ suspend fun File.createFile(output: File, input: File, mode: Int) : Boolean?{
 }
 
 /*Create this files to play audio and video*/
-suspend fun File.createCipherFile(output: File, input: File, mode: Int) : Boolean?{
+suspend fun File.createCipherFile(output: File, input: File, mode: Int) : Boolean{
     return withContext(Dispatchers.IO){
         try {
-            EncryptDecryptFilesHelper.getInstance()?.createCipherFile(output, input, mode)
+            EncryptDecryptFilesHelper.getInstance()?.createCipherFile(output, input, mode) ?: false
         }catch (e: Exception){
             false
         }

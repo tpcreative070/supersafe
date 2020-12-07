@@ -3,7 +3,6 @@ import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.extension.toObjectMayBeNull
-import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.DriveAbout
 import okhttp3.ResponseBody
@@ -30,15 +29,23 @@ open class ResponseHandler {
                     Utils.Log(TAG,mMessage)
                     mObject?.let {
                         getErrorCode(mCode!!)
+                        /*Code = 401 request to refresh user token*/
+                        if (mCode==401){
+                            if (!ServiceManager.getInstance()?.isRequestingUpdatedUserToken()!!){
+                                ServiceManager.getInstance()?.updatedUserToken()
+                            }
+                        }
                         Resource.error(mCode,it.toJson(), null)
                     } ?: run{
                         val mDriveObject = mMessage?.toObjectMayBeNull(DriveAbout::class.java)
                         mDriveObject?.let {
-                            Utils.setDriveConnect(false)
-                            ServiceManager.getInstance()?.updatedDriveAccessToken()
-                            Utils.Log(TAG,"ServiceManager.getInstance()?.updatedDriveAccessToken()")
+                            /*Code = 401 request to refresh access token*/
+                            if (mCode==401){
+                                Utils.setDriveConnect(false)
+                                ServiceManager.getInstance()?.updatedDriveAccessToken()
+                                Utils.Log(TAG,"ServiceManager.getInstance()?.updatedDriveAccessToken()")
+                            }
                         }
-                        Utils.Log(TAG,"ServiceManager.getInstance()?.updatedDriveAccessToken() ?????????")
                         Resource.error(mCode!!,mMessage ?: "Unknown", null)
                     }
                 } catch (e: IOException) {
@@ -68,12 +75,7 @@ open class ResponseHandler {
         private fun getErrorCode(code: Int){
              when (code) {
                 400 -> Utils.Log(TAG ,"Bad request")
-                401 -> {
-                    Utils.Log(TAG ,"Unauthorised")
-                    if (!ServiceManager.getInstance()?.isRequestingUpdatedUserToken()!!){
-                        ServiceManager.getInstance()?.updatedUserToken()
-                    }
-                }
+                401 -> Utils.Log(TAG ,"Unauthorised")
                 403 -> Utils.Log(TAG,"Forbidden")
                 404 -> Utils.Log(TAG ,"Not found")
                 405 -> Utils.Log(TAG ,"Method not allowed")

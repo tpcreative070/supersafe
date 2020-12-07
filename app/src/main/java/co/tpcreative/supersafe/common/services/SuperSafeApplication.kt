@@ -25,6 +25,7 @@ import co.tpcreative.supersafe.common.api.RetrofitBuilder
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.*
+import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.util.Utils
@@ -37,11 +38,14 @@ import com.bumptech.glide.request.target.ImageViewTarget
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
+import com.google.common.io.BaseEncoding.base64
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
+import javax.crypto.Cipher
+
 
 class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycleCallbacks, LifecycleObserver {
     private lateinit var superSafe: String
@@ -64,11 +68,12 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         super.onCreate()
         initData()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this);
+        test()
     }
 
     fun initData(){
         mInstance = this
-        isLive = true
+        isLive = false
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
         serverApiCor = RetrofitBuilder.getService(typeService = EnumTypeServices.SYSTEM)
@@ -93,8 +98,14 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             superSafeOldPath = "".getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/"
         }
 
-        key = ".encrypt_key"
-        fakeKey = ".encrypt_fake_key"
+        if (isLiveMigration()){
+            key = superSafe + SecurityUtil.new_encrypt_key
+            fakeKey = superSafe +SecurityUtil.new_encrypt_fake_Key
+        }else{
+            key = superSafe + SecurityUtil.old_encrypt_key
+            fakeKey = superSafe +SecurityUtil.old_encrypt_fake_Key
+        }
+
         superSafePrivate = superSafe + "private/"
         superSafeLog = superSafe + "log/"
         superSafeBreakInAlerts = superSafe + "break_in_alerts/"
@@ -111,6 +122,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         requiredScopesString.add(DriveScopes.DRIVE_FILE)
         Utils.onCheckNewVersion()
         ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionThemeMode()))
+        Utils.Log(TAG, getDeviceId())
     }
 
     fun getGoogleSignInOptions(account: Account?): GoogleSignInOptions? {
@@ -234,25 +246,36 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             Utils.Log(TAG, "Please grant access permission")
             return
         }
-        EncryptDecryptPinHelper.getInstance()?.createFile(getSuperSafe() + key, value)
+        if (isLiveMigration()){
+            val oldPath = getSuperSafe() + SecurityUtil.old_encrypt_key
+            if (oldPath.isFileExist()){
+                if ( EncryptDecryptFilesHelper.getInstance()?.createFile(key, value)==true){
+                    oldPath.deleteFile()
+                }
+            }else{
+                EncryptDecryptFilesHelper.getInstance()?.createFile(key, value)
+            }
+        }else{
+            EncryptDecryptPinHelper.getInstance()?.createFile(key, value)
+        }
         Utils.Log(TAG, "Created key :$value")
     }
 
     fun readKey(): String? {
-        try {
-            if (!isPermissionRead()) {
-                Utils.Log(TAG, "Please grant access permission")
-                return ""
-            }
-            val isFile = (getSuperSafe() + key).isFileExist()
-            if (isFile) {
-                return EncryptDecryptPinHelper.getInstance()?.readTextFile((getSuperSafe() + key))
-            }
-        } catch (e: Exception) {
-            e.message
-            deleteFolder()
+        if (!isPermissionRead()) {
+            Utils.Log(TAG, "Please grant access permission")
+            return ""
         }
-        return ""
+        if (isLiveMigration()){
+            /*Checking old version*/
+            val oldPath = getSuperSafe() + SecurityUtil.old_encrypt_key
+            if (oldPath.isFileExist()){
+                return EncryptDecryptPinHelper.getInstance()?.readTextFile(oldPath)
+            }
+            return EncryptDecryptFilesHelper.getInstance()?.readTextFile(key)
+        }else{
+            return EncryptDecryptPinHelper.getInstance()?.readTextFile(key)
+        }
     }
 
     fun writeFakeKey(value: String?) {
@@ -260,22 +283,37 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             Utils.Log(TAG, "Please grant access permission")
             return
         }
-        EncryptDecryptPinHelper.getInstance()?.createFile(getSuperSafe() + fakeKey, value)
+        if (isLiveMigration()){
+            val oldPath = getSuperSafe() + SecurityUtil.old_encrypt_fake_Key
+            if (oldPath.isFileExist()){
+                Utils.Log(TAG, "Deleted file")
+                if (EncryptDecryptFilesHelper.getInstance()?.createFile(fakeKey, value) == true){
+                    oldPath.deleteFile()
+                }
+            }else{
+                EncryptDecryptFilesHelper.getInstance()?.createFile(fakeKey, value)
+            }
+        }else{
+            EncryptDecryptPinHelper.getInstance()?.createFile(fakeKey, value)
+        }
         Utils.Log(TAG, "Created key :$value")
     }
 
-    fun readFakeKey(): String? {
+    fun readFakeKey() : String? {
         if (!isPermissionRead()) {
             Utils.Log(TAG, "Please grant access permission")
             return ""
         }
-        val isFile = (getSuperSafe() + fakeKey).isFileExist()
-        if (isFile) {
-            val value = EncryptDecryptPinHelper.getInstance()?.readTextFile(getSuperSafe() + fakeKey)
-            Utils.Log(TAG, "Key value is : $value")
-            return value
+        if (isLiveMigration()){
+            /*Checking old version*/
+            val oldPath = getSuperSafe() + SecurityUtil.old_encrypt_fake_Key
+            if (oldPath.isFileExist()){
+                return EncryptDecryptPinHelper.getInstance()?.readTextFile(oldPath)
+            }
+            return EncryptDecryptFilesHelper.getInstance()?.readTextFile(fakeKey)
+        }else{
+            return EncryptDecryptPinHelper.getInstance()?.readTextFile(fakeKey)
         }
-        return ""
     }
 
     private fun isPermissionRead(): Boolean {
@@ -424,7 +462,36 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isLiveMigration(): Boolean {
-        return true
+        return false
+    }
+
+    fun checkingMigrationAfterVerifiedPin(value: String?, isReal: Boolean, isWrite: Boolean){
+        if (isReal){
+            if (checkingToWrite(isReal, isWrite)){
+                writeKey(value)
+            }
+        }else{
+            if (checkingToWrite(isReal, isWrite)){
+                writeFakeKey(value)
+            }
+        }
+    }
+
+    private fun checkingToWrite(isReal: Boolean, isWrite: Boolean) : Boolean{
+        if (isReal){
+            val oldPath = getSuperSafe() + SecurityUtil.old_encrypt_key
+            if (oldPath.isFileExist()){
+                return true
+            }
+            return isWrite
+        }
+        else{
+            val oldPath = getSuperSafe() + SecurityUtil.old_encrypt_fake_Key
+            if (oldPath.isFileExist()){
+                return true
+            }
+            return isWrite
+        }
     }
 
     fun isDebugPremium(): Boolean {
@@ -432,5 +499,20 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             return false
         }
         return false
+    }
+
+    fun test(){
+        if (Utils.getUserId()==null){
+            return
+        }
+        Utils.Log(TAG, Utils.getId())
+        "123456".encryptTextByDefaultPKCS7(Cipher.ENCRYPT_MODE)?.let {
+            Utils.Log(TAG, "encrypted result")
+            Utils.Log(TAG, it)
+            it.encryptTextByDefaultPKCS7(Cipher.DECRYPT_MODE)?.let { decrypted ->
+                Utils.Log(TAG, "decrypted result")
+                Utils.Log(TAG, decrypted)
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ import android.content.Context
 import android.os.Environment
 import co.tpcreative.supersafe.common.encypt.EncryptConfiguration
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
+import co.tpcreative.supersafe.common.extension.toBase64
 import co.tpcreative.supersafe.common.util.ImmutablePair
 import co.tpcreative.supersafe.common.util.SizeUnit
 import co.tpcreative.supersafe.common.util.Utils
@@ -15,6 +16,28 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class EncryptDecryptFilesHelper {
+    fun encryptTextPKCS7(value : String, mode : Int) : String? {
+        if (checkConfig()){
+            return null
+        }
+        return encryptPKCS7(value.toByteArray(),mode)?.let {
+            Utils.Log("SuperSafeApplication",it.toBase64())
+            it.toBase64()
+        }
+    }
+
+    fun createFile(path: String?, content: String?): Boolean {
+        return createFile(path, content?.toByteArray())
+    }
+
+    fun readTextFile(path: String?): String? {
+        if (checkConfig()){
+            return null
+        }
+        val bytes = readFile(path)
+        return bytes?.let { String(it) }
+    }
+
     private fun getSecretKey(): String? {
         val user: User? = Utils.getUserInfo()
         if (user != null) {
@@ -42,14 +65,20 @@ class EncryptDecryptFilesHelper {
         return configurationFile
     }
 
-    private fun checkConfig(){
+    private fun checkConfig() : Boolean{
         if (configurationFile==null){
             configurationFile = getConfigurationFile()
         }
+        if (configurationFile==null){
+            return true
+        }
+        return false
     }
 
     fun createFile(output: File?, input: File?, mode: Int): Boolean{
-        checkConfig()
+        if (checkConfig()){
+            return false
+        }
         try {
             val fis = FileInputStream(input)
             val bufferLength = 1024*1024
@@ -74,8 +103,10 @@ class EncryptDecryptFilesHelper {
     }
 
     fun createCipherFile(output: File?, input: File?, cipher: Int): Boolean {
-        checkConfig()
-        if (configurationFile == null || configurationFile?.isEncrypted != true) {
+        if (checkConfig()){
+            return false
+        }
+        if (configurationFile?.isEncrypted != true) {
             return false
         }
         var inputStream: FileInputStream? = null
@@ -108,8 +139,8 @@ class EncryptDecryptFilesHelper {
         return true
     }
 
+    /*Create temporary file*/
     fun createFileByteDataNoEncrypt(context: Context, data: ByteArray?)  : File{
-        checkConfig()
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                 "picture.jpg")
         var os: OutputStream? = null
@@ -131,7 +162,9 @@ class EncryptDecryptFilesHelper {
     }
 
     fun getCipher(mode: Int): Cipher? {
-        checkConfig()
+        if (checkConfig()){
+            return null
+        }
         try {
             return if (Cipher.ENCRYPT_MODE == mode){
                 val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
@@ -169,7 +202,9 @@ class EncryptDecryptFilesHelper {
     }
 
     fun createFile(path: String?, content: ByteArray?): Boolean {
-        checkConfig()
+        if (checkConfig()){
+            return false
+        }
         var mContent = content
         var stream: OutputStream? = null
         try {
@@ -195,7 +230,9 @@ class EncryptDecryptFilesHelper {
     }
 
     fun readFile(stream: FileInputStream): ByteArray? {
-        checkConfig()
+        if (checkConfig()){
+            return null
+        }
         open class Reader : Thread() {
             var array: ByteArray? = null
         }
@@ -255,6 +292,13 @@ class EncryptDecryptFilesHelper {
         val secretKey: ByteArray = configurationFile?.secretKey!!
         val ivx: ByteArray = configurationFile?.ivParameter!!
         return SecurityUtil.encrypt(content, encryptionMode, secretKey, ivx)
+    }
+
+    @Synchronized
+    private fun encryptPKCS7(content: ByteArray, encryptionMode: Int): ByteArray? {
+        val secretKey: ByteArray = configurationFile?.secretKey!!
+        val ivx: ByteArray = configurationFile?.ivParameter!!
+        return SecurityUtil.encryptPKCS7(content, encryptionMode, secretKey, ivx)
     }
 
     fun deleteDirectoryImpl(path: String): Boolean {

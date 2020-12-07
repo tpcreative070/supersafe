@@ -15,7 +15,6 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
-import co.tpcreative.supersafe.model.User
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -75,7 +74,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         }else {
             if (grantAccess) {
                 if (isRunning) {
-                    if ("" != value) {
+                    if (value?.isNotEmpty() == true) {
                         Utils.putScreenStatus(EnumPinAction.SPLASH_SCREEN.ordinal)
                         Navigator.onMoveToMainTab(this@SplashScreenAct, false)
                     } else {
