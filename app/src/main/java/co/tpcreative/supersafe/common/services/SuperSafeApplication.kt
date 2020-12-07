@@ -38,7 +38,6 @@ import com.bumptech.glide.request.target.ImageViewTarget
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
-import com.google.common.io.BaseEncoding.base64
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -462,7 +461,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isLiveMigration(): Boolean {
-        return false
+        return true
     }
 
     fun checkingMigrationAfterVerifiedPin(value: String?, isReal: Boolean, isWrite: Boolean){
@@ -506,10 +505,10 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             return
         }
         Utils.Log(TAG, Utils.getId())
-        "123456".encryptTextByDefaultPKCS7(Cipher.ENCRYPT_MODE)?.let {
+        "123456@12345".createdTextByDefaultPKCS7(Cipher.ENCRYPT_MODE)?.let {
             Utils.Log(TAG, "encrypted result")
             Utils.Log(TAG, it)
-            it.encryptTextByDefaultPKCS7(Cipher.DECRYPT_MODE)?.let { decrypted ->
+            it.createdTextByDefaultPKCS7(Cipher.DECRYPT_MODE)?.let { decrypted ->
                 Utils.Log(TAG, "decrypted result")
                 Utils.Log(TAG, decrypted)
             }

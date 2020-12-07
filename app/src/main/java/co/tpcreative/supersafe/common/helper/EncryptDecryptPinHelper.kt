@@ -1,9 +1,11 @@
 package co.tpcreative.supersafe.common.helper
 import android.content.Context
 import android.os.Environment
+import android.util.Base64
 import co.tpcreative.supersafe.common.encypt.EncryptConfiguration
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
-import co.tpcreative.supersafe.common.extension.toBase64
+import co.tpcreative.supersafe.common.extension.decodeBase64
+import co.tpcreative.supersafe.common.extension.encodeBase64
 import co.tpcreative.supersafe.common.util.ImmutablePair
 import co.tpcreative.supersafe.common.util.SizeUnit
 import co.tpcreative.supersafe.common.util.Utils
@@ -15,9 +17,13 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class EncryptDecryptPinHelper {
-    fun encryptTextPKCS7(value : String, mode : Int) : String? {
-        return encryptPKCS7(value.toByteArray(),mode)?.let {
-            String(it)
+    fun createdTextPKCS7(value: String, mode: Int) : String? {
+        return if (mode==Cipher.ENCRYPT_MODE){
+            encryptPKCS7(value.toByteArray(), mode)?.encodeBase64()
+        }else{
+            encryptPKCS7(value.toByteArray().decodeBase64(), mode)?.let {
+                String(it)
+            }
         }
     }
 
@@ -137,7 +143,7 @@ class EncryptDecryptPinHelper {
         checkConfig()
         if (configurationFile != null && configurationFile?.isEncrypted!!) {
             try {
-                val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey,SecurityUtil.AES_ALGORITHM)
+                val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey, SecurityUtil.AES_ALGORITHM)
                 val mIvParameterSpec = IvParameterSpec(configurationFile?.ivParameter)
                 mCipher = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION)
                 mCipher?.init(mode, mSecretKeySpec, mIvParameterSpec)

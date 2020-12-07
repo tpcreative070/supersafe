@@ -829,10 +829,18 @@ object Utils {
     fun getUserInfo(): User? {
         try {
             val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
-            if (value != null) {
-                val mUser: User? = Gson().fromJson(value, User::class.java)
+            val mDecrypted = value?.createdTextByDefaultPKCS7(Cipher.DECRYPT_MODE)
+            if (mDecrypted!=null){
+                val mUser: User? = Gson().fromJson(mDecrypted, User::class.java)
                 if (mUser != null) {
                     return mUser
+                }
+            }else{
+                if (value != null) {
+                    val mUser: User? = Gson().fromJson(value, User::class.java)
+                    if (mUser != null) {
+                        return mUser
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -844,7 +852,10 @@ object Utils {
     fun setUserPreShare(user: User?) {
         Log(TAG, "User id ====================> ${user?.email}")
         Log(TAG, "Cloud id ===================> ${user?.cloud_id}")
-        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user), Gson().toJson(user))
+        val mJson = Gson().toJson(user)
+        val mEncrypted = mJson.createdTextByDefaultPKCS7(Cipher.ENCRYPT_MODE)
+        Log(TAG,"user object encrypted length ${mEncrypted?.length}")
+        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mEncrypted)
     }
 
     fun isRequestGoogleDriveSignOut() : Boolean{

@@ -10,7 +10,7 @@ class DriveEvent : Serializable {
         try {
             return value?.let { Utils.stringToHex(it) }
         } catch (e: Exception) {
-            Utils.Log(DriveEvent.Companion.TAG, "Error :" + e.message)
+            Utils.Log(TAG, "Error :" + e.message)
             Utils.onWriteLog(DriveEvent.Companion.TAG + "-" + e.message, EnumStatus.WRITE_FILE)
             e.printStackTrace()
         }

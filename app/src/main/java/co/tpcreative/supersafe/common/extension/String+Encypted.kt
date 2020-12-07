@@ -15,8 +15,8 @@ fun String.encryptTextByIdPKCS7(mode : Int) : String?{
     return EncryptDecryptFilesHelper.getInstance()?.encryptTextPKCS7(this,mode)
 }
 
-fun String.encryptTextByDefaultPKCS7(mode : Int) : String?{
-    return EncryptDecryptPinHelper.getInstance()?.encryptTextPKCS7(this,mode)
+fun String.createdTextByDefaultPKCS7(mode : Int) : String?{
+    return EncryptDecryptPinHelper.getInstance()?.createdTextPKCS7(this,mode)
 }
 
 fun String.readPin() : String? {
