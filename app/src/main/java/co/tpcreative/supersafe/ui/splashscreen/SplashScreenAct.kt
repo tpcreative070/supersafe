@@ -45,12 +45,9 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         } catch (e: Exception) {
             PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),0)
         }
-        value = SuperSafeApplication.getInstance().readKey()
-        grantAccess = PrefsController.getBoolean(getString(R.string.key_grant_access), false)
         isRunning = PrefsController.getBoolean(getString(R.string.key_running), false)
         grantAccess = SuperSafeApplication.getInstance().isGrantAccess()
         SuperSafeApplication.getInstance().initFolder()
-        Utils.Log(TAG, "Key $value")
         var mCount = 0
         SQLHelper.getList()
         SuperSafeApplication.getInstance().responseMigration = {
@@ -72,6 +69,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                 onMessageEvent(EnumStatus.MIGRATION_DONE)
             }
         }else {
+            value = SuperSafeApplication.getInstance().readKey()
             if (grantAccess) {
                 if (isRunning) {
                     if (value?.isNotEmpty() == true) {
@@ -79,7 +77,6 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                         Navigator.onMoveToMainTab(this@SplashScreenAct, false)
                     } else {
                         Utils.clearAppDataAndReCreateData()
-                        Utils.Log(TAG,"clearAppDataAndReCreateData")
                         Navigator.onMoveToDashBoard(this@SplashScreenAct)
                     }
                 } else {

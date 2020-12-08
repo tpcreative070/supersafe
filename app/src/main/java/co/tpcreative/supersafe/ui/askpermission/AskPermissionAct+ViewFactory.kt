@@ -9,9 +9,7 @@ import co.tpcreative.supersafe.model.User
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.DexterError
 import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.PermissionRequestErrorListener
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_ask_permission.*
 
@@ -39,14 +37,13 @@ fun AskPermissionAct.onAddPermission() {
                             it.driveConnected = false
                             Utils.setUserPreShare(mUSer)
                         }
-                        PrefsController.putBoolean(getString(R.string.key_grant_access), true)
                         SuperSafeApplication.getInstance().initFolder()
                         finish()
                     } else {
                         Utils.Log(TAG, "Permission is denied")
                     }
                     // check for permanent denial of any permission
-                    if (report.isAnyPermissionPermanentlyDenied()) {
+                    if (report.isAnyPermissionPermanentlyDenied) {
                         /*Miss add permission in manifest*/
                         Utils.Log(TAG, "request permission is failed")
                     }
@@ -57,9 +54,5 @@ fun AskPermissionAct.onAddPermission() {
                     token?.continuePermissionRequest()
                 }
             })
-            .withErrorListener(object : PermissionRequestErrorListener {
-                override fun onError(error: DexterError?) {
-                    Utils.Log(TAG, "error ask permission")
-                }
-            }).onSameThread().check()
+            .withErrorListener { Utils.Log(TAG, "error ask permission") }.onSameThread().check()
 }
