@@ -15,7 +15,7 @@ class PrivateViewModel : BaseViewModel<MainCategoryModel>(){
     val TAG = this::class.java.simpleName
     fun getData() = liveData(Dispatchers.Main) {
         dataList.clear()
-        SQLHelper.getList()?.let {
+        SQLHelper.getList().let {
             it.sortByDescending {sorted ->
                 Utils.getMilliseconds(sorted.updated_date,Utils.FORMAT_SERVER_DATE_TIME)
             }

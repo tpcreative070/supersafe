@@ -727,11 +727,9 @@ object Utils {
         val mListLocal: List<ItemModel>? = SQLHelper.getListItemId(true, false)
         /*Convert list to hash-map*/
         val mMap: Map<String?, ItemModel> = mSyncedList.associateBy({ it.items_id }, { it })
-        Log(TAG, "checking item ${mListLocal?.size}")
         mListLocal?.let {
             for (index in it) {
-                val mValue: ItemModel? = mMap?.get(index.items_id)
-                Log(TAG, "checking item delete...")
+                val mValue: ItemModel? = mMap[index.items_id]
                 if (mValue == null) {
                     mListResult.add(index)
                 }
@@ -748,7 +746,7 @@ object Utils {
         val mMap: Map<String?, MainCategoryModel> = mSyncedList.associateBy({ it.categories_id }, { it })
         mListLocal?.let {
             for (index in it) {
-                val mValue: MainCategoryModel? = mMap?.get(index.categories_id)
+                val mValue: MainCategoryModel? = mMap[index.categories_id]
                 val mObject = SQLHelper.getItemsList(index.categories_id)
                 if (mValue == null && mObject?.size == 0) {
                     mListResult.add(index)

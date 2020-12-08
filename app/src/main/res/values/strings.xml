@@ -141,6 +141,7 @@
     <string name="change_secret_pin">Change Secret Pin</string>
     <string name="wrong_secret_pin">Wrong secret pin</string>
     <string name="server_error_occurred">Server error occurred</string>
+    <string name="no_connection">No connection. Please check your internet connection</string>
 
 
     /*Clock Screen*/

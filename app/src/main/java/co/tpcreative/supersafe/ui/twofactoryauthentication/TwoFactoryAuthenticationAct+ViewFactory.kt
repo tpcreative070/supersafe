@@ -29,6 +29,10 @@ fun TwoFactoryAuthenticationAct.initUI(){
     title = getString(R.string.secret_pin)
     btnSwitch?.isChecked = Utils.isEnabledTwoFactoryAuthentication()
     btnChange.setOnClickListener {
+        if (NetworkUtil.pingIpAddress(this)){
+            Utils.onBasicAlertNotify(this,"Alert",getString(R.string.no_connection))
+            return@setOnClickListener
+        }
         if (status==EnumTwoFactoryAuthentication.GENERATE){
             status = EnumTwoFactoryAuthentication.REQUEST_GENERATE
             onShowUI()
@@ -59,11 +63,15 @@ fun TwoFactoryAuthenticationAct.initUI(){
         }
     }
     if (NetworkUtil.pingIpAddress(this)){
-        Utils.onBasicAlertNotify(this,"Alert","No Internet.Please check network connection")
+        Utils.onBasicAlertNotify(this,"Alert",getString(R.string.no_connection))
     }else{
         getTwoFactoryAuthentication()
     }
     btnSwitch.setOnClickListener {
+        if (NetworkUtil.pingIpAddress(this)){
+            Utils.onBasicAlertNotify(this,"Alert",getString(R.string.no_connection))
+            return@setOnClickListener
+        }
         if (btnSwitch.isChecked){
             status = EnumTwoFactoryAuthentication.ENABLE
             alertAskInputSecretPin()
@@ -75,6 +83,10 @@ fun TwoFactoryAuthenticationAct.initUI(){
     }
 
     rlSwitch.setOnClickListener {
+        if (NetworkUtil.pingIpAddress(this)){
+              Utils.onBasicAlertNotify(this,"Alert",getString(R.string.no_connection))
+            return@setOnClickListener
+        }
         btnSwitch.isChecked = !btnSwitch.isChecked
         if (btnSwitch.isChecked){
             status = EnumTwoFactoryAuthentication.ENABLE

@@ -43,8 +43,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
-import javax.crypto.Cipher
-
 
 class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycleCallbacks, LifecycleObserver {
     private lateinit var superSafe: String
@@ -67,12 +65,11 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         super.onCreate()
         initData()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this);
-//        test()
     }
 
     fun initData(){
         mInstance = this
-        isLive = false
+        isLive = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
         serverApiCor = RetrofitBuilder.getService(typeService = EnumTypeServices.SYSTEM)
@@ -464,7 +461,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         if (!BuildConfig.DEBUG){
             return true
         }
-        return false
+        return true
     }
 
     fun checkingMigrationAfterVerifiedPin(value: String?, isReal: Boolean, isWrite: Boolean){
@@ -498,23 +495,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
 
     fun isDebugPremium(): Boolean {
         if (BuildConfig.DEBUG){
-            return false
+            return true
         }
         return false
-    }
-
-    fun test(){
-        if (Utils.getUserId()==null){
-            return
-        }
-        Utils.Log(TAG, Utils.getId())
-        "123456@12345".createdTextByDefaultPKCS7(Cipher.ENCRYPT_MODE)?.let {
-            Utils.Log(TAG, "encrypted result")
-            Utils.Log(TAG, it)
-            it.createdTextByDefaultPKCS7(Cipher.DECRYPT_MODE)?.let { decrypted ->
-                Utils.Log(TAG, "decrypted result")
-                Utils.Log(TAG, decrypted)
-            }
-        }
     }
 }

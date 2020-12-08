@@ -5,7 +5,6 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.text.InputType
 import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -140,13 +139,13 @@ fun FakePinComponentAct.onShowDialog() {
                 val item: MainCategoryModel? = SQLHelper.getTrashItem()
                 val result: String? = item?.categories_hex_name
                 if (base64Code == result) {
-                    Toast.makeText(this@onShowDialog, "This name already existing", Toast.LENGTH_SHORT).show()
+                    Utils.onBasicAlertNotify(this,"Alert","This name already existing")
                 } else {
                     val response: Boolean = SQLHelper.onAddFakePinCategories(base64Code, value, true)
                     if (response) {
-                        Toast.makeText(this@onShowDialog, "Created album successful", Toast.LENGTH_SHORT).show()
+                        Utils.onBasicAlertNotify(this,"Alert","Created album successful")
                     } else {
-                        Toast.makeText(this@onShowDialog, "Album name already existing", Toast.LENGTH_SHORT).show()
+                        Utils.onBasicAlertNotify(this,"Alert","Album name already existing")
                     }
                     getData()
                 }

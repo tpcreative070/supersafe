@@ -294,7 +294,7 @@ object SQLHelper {
         return null
     }
 
-    fun getList(): MutableList<MainCategoryModel>? {
+    fun getList(): MutableList<MainCategoryModel> {
         val mList: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
         val list: MutableList<MainCategoryModel>? = getListCategories(false, false)
         if (list != null && list.size > 0) {
@@ -309,12 +309,10 @@ object SQLHelper {
         val listDelete: MutableList<ItemModel>? = getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
         if (listDelete != null) {
             if (listDelete.size > 0) {
-                val items: MainCategoryModel? = getTrashItem()
+                val items: MainCategoryModel = getTrashItem()
                 val count: Int? = getInstance()?.getLatestItem()
-                items?.categories_max = count!!.toLong()
-                if (items != null) {
-                    mList.add(items)
-                }
+                items.categories_max = count!!.toLong()
+                mList.add(items)
             }
         }
         Collections.sort(mList, Comparator { lhs, rhs ->
@@ -354,7 +352,7 @@ object SQLHelper {
     fun getListFakePin(): MutableList<MainCategoryModel>? {
         val list: MutableList<MainCategoryModel>? = getListCategories(true)
         if (list!=null){
-            getMainItemFakePin()?.let { list.add(it) }
+            getMainItemFakePin().let { list.add(it) }
             Collections.sort(list, Comparator { lhs, rhs ->
                 val count_1 = lhs?.categories_max!!.toInt()
                 val count_2 = rhs?.categories_max!!.toInt()
@@ -366,7 +364,7 @@ object SQLHelper {
     }
 
     @Transient
-    val ListIcon: Array<String?>? = arrayOf(
+    val ListIcon: Array<String?> = arrayOf(
             "baseline_photo_white_48",
             "baseline_how_to_vote_white_48",
             "baseline_local_movies_white_48",
@@ -376,7 +374,7 @@ object SQLHelper {
             "baseline_school_white_48")
 
     @Transient
-    val ListColor: Array<String?>? = arrayOf(
+    val ListColor: Array<String?> = arrayOf(
             "#34bdb7",
             "#03A9F4",
             "#9E9D24",
@@ -405,12 +403,12 @@ object SQLHelper {
         return list
     }
 
-    fun getTrashItem(): MainCategoryModel? {
-        return MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_trash)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_trash), ListColor?.get(4), ListIcon?.get(4), System.currentTimeMillis(), false, false, false, false, "", null, null, false)
+    fun getTrashItem(): MainCategoryModel {
+        return MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_trash)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_trash), ListColor?.get(4), ListIcon?.get(4), System.currentTimeMillis(), false, false, false, false, "", null, null, false)
     }
 
-    fun getMainItemFakePin(): MainCategoryModel? {
-        return MainCategoryModel("null", Utils.getHexCode("1234"), Utils.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_main_album), ListColor?.get(0), ListIcon?.get(0), 0, false, false, false, true, "", null, null, false)
+    fun getMainItemFakePin(): MainCategoryModel {
+        return MainCategoryModel("null", Utils.getHexCode("1234"), Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_main_album), ListColor?.get(0), ListIcon?.get(0), 0, false, false, false, true, "", null, null, false)
     }
 
     fun onAddCategories(categories_hex_name: String?, name: String?, isFakePin: Boolean): Boolean {

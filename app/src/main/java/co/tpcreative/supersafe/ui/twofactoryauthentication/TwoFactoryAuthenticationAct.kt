@@ -31,7 +31,7 @@ class TwoFactoryAuthenticationAct : BaseActivity(), CompoundButton.OnCheckedChan
 
     override fun onCheckedChanged(compoundButton: CompoundButton?, b: Boolean) {
         if (NetworkUtil.pingIpAddress(this)){
-            Utils.onBasicAlertNotify(this,"Alert","No Internet.Please check network connection")
+            Utils.onBasicAlertNotify(this,"Alert",getString(R.string.no_connection))
             btnSwitch.isChecked = !b
         }
         if(b){
@@ -45,7 +45,7 @@ class TwoFactoryAuthenticationAct : BaseActivity(), CompoundButton.OnCheckedChan
     override fun onEditorAction(textView: TextView?, actionId: Int, keyEvent: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
             if (!SuperSafeReceiver.isConnected()) {
-                Utils.showDialog(this, getString(R.string.internet))
+                Utils.onBasicAlertNotify(this,"Alert",getString(R.string.no_connection))
                 return false
             }
             if (isNext) {
