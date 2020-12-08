@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.preference.Preference
@@ -270,8 +271,8 @@ class AlbumSettingsAct : BaseActivity(){
                                 Utils.Log(TAG, "Value")
                                 val value = input.toString()
                                 val base64Code: String = Utils.getHexCode(value)
-                                val item: MainCategoryModel? = SQLHelper.getTrashItem()
-                                val result: String? = item?.categories_hex_name
+                                val item: MainCategoryModel = SQLHelper.getTrashItem()
+                                val result: String? = item.categories_hex_name
                                 val main: String = Utils.getHexCode(getString(R.string.key_main_album))
                                 if (base64Code == result) {
                                     Utils.onBasicAlertNotify(activity!!,"Alert","This name already existing")
@@ -324,6 +325,8 @@ class AlbumSettingsAct : BaseActivity(){
                             else -> Utils.Log(TAG,"Nothing")
                         }
                     }
+            val input: EditText = builder.getInputField()
+            input.setBackgroundColor( ContextCompat.getColor(activity!!,R.color.transparent))
             builder.show()
         }
     }

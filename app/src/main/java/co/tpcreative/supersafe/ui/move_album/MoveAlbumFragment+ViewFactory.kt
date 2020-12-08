@@ -3,8 +3,9 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -20,18 +21,16 @@ import co.tpcreative.supersafe.common.util.Configuration
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.common.views.VerticalSpaceItemDecoration
-import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.MainCategoryModel
+import co.tpcreative.supersafe.ui.main_tab.onShowDialog
 import co.tpcreative.supersafe.viewmodel.MoveAlbumViewModel
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.layout_gallery.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 fun MoveAlbumFragment.iniUI(){
     setupViewModel()
@@ -92,7 +91,7 @@ fun MoveAlbumFragment.onShowDialog() {
             .title(text = getString(R.string.create_album))
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text =  getString(R.string.ok))
-            .input(inputType = InputType.TYPE_CLASS_TEXT,allowEmpty = false) { dialog ,input ->
+            .input(inputType = InputType.TYPE_CLASS_TEXT,allowEmpty = false,hintRes = R.string.enter_name) { dialog ,input ->
                 val value = input.toString()
                 val base64Code: String = Utils.getHexCode(value)
                 val item: MainCategoryModel = SQLHelper.getTrashItem()
@@ -117,6 +116,8 @@ fun MoveAlbumFragment.onShowDialog() {
                     }
                 }
             }
+    val input: EditText = builder.getInputField()
+    input.setBackgroundColor( ContextCompat.getColor(activity!!,R.color.transparent))
     builder.show()
 }
 
@@ -141,6 +142,7 @@ fun MoveAlbumFragment.moveAlbum(position : Int){
 
 fun MoveAlbumFragment.getData(categories_local_id: String?, isFakePIN: Boolean){
     viewModel.getData(categories_local_id,isFakePIN).observe(this, Observer {
+        dataSource.clear()
         dataSource.addAll(it)
     })
 }

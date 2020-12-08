@@ -14,8 +14,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.NetworkUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import co.tpcreative.supersafe.ui.albumdetail.exportingFiles
-import co.tpcreative.supersafe.ui.twofactoryauthentication.initUI
 import co.tpcreative.supersafe.viewmodel.PhotoSlideShowViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.activity_photos_slideshow.*

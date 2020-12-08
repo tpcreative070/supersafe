@@ -9,10 +9,12 @@ import android.net.Uri
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginEnd
 import androidx.viewpager.widget.ViewPager
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -21,12 +23,13 @@ import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Status
-import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.util.NetworkUtil
+import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
@@ -144,25 +147,27 @@ fun MainTabAct.onShowDialog() {
             .title(text = getString(R.string.create_album))
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
-            .input(maxLength = Utils.MAX_LENGTH,hint = null, hintRes = R.string.enter_name, inputType = InputType.TYPE_CLASS_TEXT) { dialog, input ->
+            .input(maxLength = Utils.MAX_LENGTH, hint = null, hintRes = R.string.enter_name, inputType = InputType.TYPE_CLASS_TEXT) { dialog, input ->
                 Utils.Log(TAG, "Value")
                 val value = input.toString()
                 val base64Code: String = Utils.getHexCode(value)
-                val item: MainCategoryModel? = SQLHelper.getTrashItem()
-                val result: String? = item?.categories_hex_name
+                val item: MainCategoryModel = SQLHelper.getTrashItem()
+                val result: String? = item.categories_hex_name
                 if (base64Code == result) {
-                    Utils.onBasicAlertNotify(this,"Alert","This name already existing")
+                    Utils.onBasicAlertNotify(this, "Alert", "This name already existing")
                 } else {
                     val response: Boolean = SQLHelper.onAddCategories(base64Code, value, false)
                     if (response) {
-                        Utils.onBasicAlertNotify(this,"Alert","Created album successful")
+                        Utils.onBasicAlertNotify(this, "Alert", "Created album successful")
                         ServiceManager.getInstance()?.onPreparingSyncCategoryData()
                     } else {
-                        Utils.onBasicAlertNotify(this,"Alert","Album name already existing")
+                        Utils.onBasicAlertNotify(this, "Alert", "Album name already existing")
                     }
                     SingletonPrivateFragment.getInstance()?.onUpdateView()
                 }
             }
+    val input: EditText = builder.getInputField()
+    input.setBackgroundColor( ContextCompat.getColor(this,R.color.transparent))
     builder.show()
 }
 
@@ -173,10 +178,8 @@ fun MainTabAct.onAddPermissionCamera() {
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     if (report?.areAllPermissionsGranted()!!) {
-                        val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
-                        if (list != null) {
-                            Navigator.onMoveCamera(this@onAddPermissionCamera, list[0])
-                        }
+                        val list: MutableList<MainCategoryModel> = SQLHelper.getList()
+                        Navigator.onMoveCamera(this@onAddPermissionCamera, list[0])
                     } else {
                         Utils.Log(TAG, "Permission is denied")
                     }
@@ -229,7 +232,7 @@ fun MainTabAct.onShowSuggestion() {
 
 
 fun MainTabAct.onAskingRateApp() {
-    val view: View = LayoutInflater.from(this).inflate(R.layout.custom_view_rate_app_dialog,null)
+    val view: View = LayoutInflater.from(this).inflate(R.layout.custom_view_rate_app_dialog, null)
     val builder: MaterialDialog = MaterialDialog(this)
             .title(text = getString(R.string.how_are_we_doing))
             .customView(view = view, scrollable = true)
@@ -354,12 +357,12 @@ fun MainTabAct.onAnimationIcon(status: EnumStatus?) {
     animation?.start()
 }
 
-fun MainTabAct.importingData(mData : MutableList<ImportFilesModel>) = CoroutineScope(Dispatchers.Main).launch{
+fun MainTabAct.importingData(mData: MutableList<ImportFilesModel>) = CoroutineScope(Dispatchers.Main).launch{
     val mResult = ServiceManager.getInstance()?.onImportData(mData)
     when(mResult?.status){
         Status.SUCCESS -> {
             SingletonPrivateFragment.getInstance()?.onUpdateView()
         }
-        else -> Utils.Log(TAG,mResult?.message)
+        else -> Utils.Log(TAG, mResult?.message)
     }
 }

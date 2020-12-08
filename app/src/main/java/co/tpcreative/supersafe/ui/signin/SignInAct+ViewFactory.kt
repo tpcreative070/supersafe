@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.signin
 import android.text.InputType
 import android.view.View
+import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -14,10 +15,12 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumValidationKey
 import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.ui.main_tab.onShowDialog
 import co.tpcreative.supersafe.ui.twofactoryauthentication.*
 import co.tpcreative.supersafe.viewmodel.EnumTwoFactoryAuthentication
 import co.tpcreative.supersafe.viewmodel.UserViewModel
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import kotlinx.android.synthetic.main.activity_signin.*
 import kotlinx.android.synthetic.main.activity_signin.edtEmail
@@ -154,6 +157,8 @@ fun SignInAct.alertAskInputSecretPin() {
                 viewModel.secretPin = text.toString()
                 verifyTwoFactoryAuthentication()
             }
+    val input: EditText = builder.getInputField()
+    input.setBackgroundColor( ContextCompat.getColor(this,R.color.transparent))
     builder.show()
 }
 

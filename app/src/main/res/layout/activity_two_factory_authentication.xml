@@ -87,16 +87,17 @@
             android:layout_height="wrap_content">
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/edtSecretPin"
+                style="@style/RegularTextView"
                 android:textSize="@dimen/text_size_normal"
                 android:hint="@string/enter_new_secret_pin"
                 android:singleLine="true"
                 android:maxLength="6"
                 android:inputType="number"
                 android:imeOptions="actionNext"
-                style="@style/RegularTextView"
                 app:met_floatingLabel="highlight"
                 app:met_primaryColor="?attr/colorAccent"
                 app:met_textColorHint="?attr/colorAccent"
+                app:met_textColor="@color/material_gray_700"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <RelativeLayout

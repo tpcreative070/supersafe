@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.text.InputType
 import android.view.LayoutInflater
+import android.widget.EditText
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -25,8 +26,10 @@ import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.model.ImportFilesModel
 import co.tpcreative.supersafe.model.MainCategoryModel
 import co.tpcreative.supersafe.model.ThemeApp
+import co.tpcreative.supersafe.ui.main_tab.onShowDialog
 import co.tpcreative.supersafe.viewmodel.FakePinComponentViewModel
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -150,6 +153,8 @@ fun FakePinComponentAct.onShowDialog() {
                     getData()
                 }
             }
+    val input: EditText = builder.getInputField()
+    input.setBackgroundColor( ContextCompat.getColor(this,R.color.transparent))
     builder.show()
 }
 

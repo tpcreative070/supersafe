@@ -9,7 +9,6 @@ import co.tpcreative.supersafe.common.util.CalculatorImpl
 import co.tpcreative.supersafe.common.util.Constants
 import co.tpcreative.supersafe.common.util.Utils
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.input
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import kotlinx.android.synthetic.main.activity_secret_door_set_up.*

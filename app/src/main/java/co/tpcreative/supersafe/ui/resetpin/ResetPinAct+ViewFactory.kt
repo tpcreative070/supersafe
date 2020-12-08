@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -19,8 +20,10 @@ import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.NetworkUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.ui.main_tab.onShowDialog
 import co.tpcreative.supersafe.viewmodel.ResetPinViewModel
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import kotlinx.android.synthetic.main.activity_reset_pin.*
@@ -237,6 +240,8 @@ fun ResetPinAct.alertAskInputSecretPin() {
                 viewModel.secretPin = text.toString()
                 verifyTwoFactoryAuthentication()
             }
+    val input: EditText = builder.getInputField()
+    input.setBackgroundColor( ContextCompat.getColor(this,R.color.transparent))
     builder.show()
 }
 

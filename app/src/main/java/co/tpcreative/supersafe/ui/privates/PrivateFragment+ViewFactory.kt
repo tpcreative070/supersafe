@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.ui.privates
 import android.text.InputType
 import android.view.LayoutInflater
+import android.widget.EditText
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -13,6 +15,7 @@ import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.MainCategoryModel
+import co.tpcreative.supersafe.ui.main_tab.onShowDialog
 import co.tpcreative.supersafe.viewmodel.PrivateViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
@@ -76,6 +79,8 @@ fun PrivateFragment.onShowChangeCategoriesNameDialog(mainCategories: MainCategor
                     dialog.getInputField().setText("")
                 }
             }
+    val input: EditText = builder.getInputField()
+    input.setBackgroundColor( ContextCompat.getColor(activity!!,R.color.transparent))
     builder.show()
 }
 
