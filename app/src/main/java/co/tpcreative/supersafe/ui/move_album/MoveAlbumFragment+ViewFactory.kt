@@ -130,13 +130,12 @@ fun MoveAlbumFragment.getGallerWidth(container: ViewGroup?): Int {
 
 fun MoveAlbumFragment.moveAlbum(position : Int){
     viewModel.onMoveItemsToAlbum(position,itemDataList).observe(this, Observer {
-        ServiceManager.getInstance()?.onPreparingSyncData()
-        SingletonPrivateFragment.getInstance()?.onUpdateView()
-        dialog?.dismiss()
-        Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
         if (mListener != null) {
             mListener?.onMoveAlbumSuccessful()
         }
+        SingletonPrivateFragment.getInstance()?.onUpdateView()
+        ServiceManager.getInstance()?.onPreparingSyncData()
+        dialog?.dismiss()
     })
 }
 

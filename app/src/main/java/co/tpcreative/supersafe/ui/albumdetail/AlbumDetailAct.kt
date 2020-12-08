@@ -343,6 +343,7 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
 
     override fun onMoveAlbumSuccessful() {
         actionMode?.finish()
+        getData()
     }
     override fun getListItems(): MutableList<ItemModel> {
         return dataSource
