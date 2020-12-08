@@ -64,6 +64,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     override fun onCreate() {
         super.onCreate()
         initData()
+        EncryptDecryptFilesHelper.getInstance()
+        EncryptDecryptPinHelper.getInstance()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this);
     }
 
@@ -245,7 +247,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         if (isLiveMigration()){
             val oldPath = getSuperSafe() + SecurityUtil.old_encrypt_key
             if (oldPath.isFileExist()){
-                if ( EncryptDecryptFilesHelper.getInstance()?.createFile(key, value)==true){
+                if (EncryptDecryptFilesHelper.getInstance()?.createFile(key, value)==true){
                     oldPath.deleteFile()
                 }
             }else{
@@ -461,7 +463,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         if (!BuildConfig.DEBUG){
             return true
         }
-        return true
+        return false
     }
 
     fun checkingMigrationAfterVerifiedPin(value: String?, isReal: Boolean, isWrite: Boolean){

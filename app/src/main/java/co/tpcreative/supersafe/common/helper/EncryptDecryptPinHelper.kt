@@ -52,10 +52,10 @@ class EncryptDecryptPinHelper {
     }
 
     private fun checkConfig() : Boolean{
-        if (configurationFile ==null){
+        if (configurationFile==null){
             configurationFile = getConfigurationFile()
         }
-        if (configurationFile ==null){
+        if (configurationFile==null){
             return true
         }
         return false

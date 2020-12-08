@@ -856,7 +856,7 @@ object Utils {
             Log(TAG,"user object encrypted length ${mEncrypted.length}")
             PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mEncrypted)
         }else{
-             PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user), Gson().toJson(user))
+             PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mJson)
         }
     }
 
