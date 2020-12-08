@@ -223,7 +223,7 @@ class SettingsAct : BaseActivity() {
                     } else if (preference.key == getString(R.string.key_rate)) {
                         onRateApp()
                     }
-                    else if (preference.key == getString(R.string.key_light_mode)){
+                    else if (preference.key == getString(R.string.key_dark_mode)){
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
@@ -264,7 +264,7 @@ class SettingsAct : BaseActivity() {
             mSecretDoor?.onPreferenceChangeListener = createChangeListener()
 
             /*Light mode*/
-            mLightMode = findPreference(getString(R.string.key_light_mode))
+            mLightMode = findPreference(getString(R.string.key_dark_mode))
             mLightMode?.onPreferenceClickListener = createActionPreferenceClickListener()
             mLightMode?.onPreferenceChangeListener = createChangeListener()
 

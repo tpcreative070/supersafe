@@ -35,8 +35,8 @@
         <Preference
             android:layout="@layout/custom_preferences_item"
             android:icon="@drawable/baseline_settings_brightness_white_24"
-            android:key="@string/key_light_mode"
-            android:title="@string/key_light_mode"/>
+            android:key="@string/key_dark_mode"
+            android:title="@string/key_dark_mode"/>
 
     </androidx.preference.PreferenceCategory>
 

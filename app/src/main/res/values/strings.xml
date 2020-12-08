@@ -491,7 +491,7 @@
     <string name="key_lock_screen">Lock screen</string>
     <string name="key_private_cloud">Private Cloud</string>
     <string name="key_theme">Themes</string>
-    <string name="key_light_mode">Light mode</string>
+    <string name="key_dark_mode">Dark mode</string>
     <string name="key_break_in_alert">Break-In alerts</string>
     <string name="key_fake_pin">Fake PIN</string>
     <string name="key_secret_door">Secret Door</string>
