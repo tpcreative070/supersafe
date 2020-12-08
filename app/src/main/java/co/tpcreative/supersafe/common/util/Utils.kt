@@ -826,14 +826,24 @@ object Utils {
 
     fun getUserInfo(): User? {
         try {
-            val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
-            val mDecrypted = value?.createdTextByDefaultPKCS7(Cipher.DECRYPT_MODE)
-            if (mDecrypted!=null){
-                val mUser: User? = Gson().fromJson(mDecrypted, User::class.java)
-                if (mUser != null) {
-                    return mUser
+            if(SuperSafeApplication.getInstance().isLiveMigration()){
+                val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
+                val mDecrypted = value?.createdTextByDefaultPKCS7(Cipher.DECRYPT_MODE)
+                if (mDecrypted!=null){
+                    val mUser: User? = Gson().fromJson(mDecrypted, User::class.java)
+                    if (mUser != null) {
+                        return mUser
+                    }
+                }else{
+                    if (value != null) {
+                        val mUser: User? = Gson().fromJson(value, User::class.java)
+                        if (mUser != null) {
+                            return mUser
+                        }
+                    }
                 }
             }else{
+                val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
                 if (value != null) {
                     val mUser: User? = Gson().fromJson(value, User::class.java)
                     if (mUser != null) {
@@ -850,13 +860,17 @@ object Utils {
     fun setUserPreShare(user: User?) {
         Log(TAG, "User id ====================> ${user?.email}")
         Log(TAG, "Cloud id ===================> ${user?.cloud_id}")
-        val mJson = Gson().toJson(user)
-        val mEncrypted = mJson.createdTextByDefaultPKCS7(Cipher.ENCRYPT_MODE)
-        if (mEncrypted!=null){
-            Log(TAG,"user object encrypted length ${mEncrypted.length}")
-            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mEncrypted)
+        if (SuperSafeApplication.getInstance().isLiveMigration()){
+            val mJson = Gson().toJson(user)
+            val mEncrypted = mJson.createdTextByDefaultPKCS7(Cipher.ENCRYPT_MODE)
+            if (mEncrypted!=null){
+                Log(TAG,"user object encrypted length ${mEncrypted.length}")
+                PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mEncrypted)
+            }else{
+                PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mJson)
+            }
         }else{
-             PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mJson)
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user), Gson().toJson(user))
         }
     }
 
