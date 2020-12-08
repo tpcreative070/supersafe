@@ -64,8 +64,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     override fun onCreate() {
         super.onCreate()
         initData()
-        EncryptDecryptFilesHelper.getInstance()
-        EncryptDecryptPinHelper.getInstance()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this);
     }
 
@@ -463,7 +461,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         if (!BuildConfig.DEBUG){
             return true
         }
-        return false
+        return true
     }
 
     fun checkingMigrationAfterVerifiedPin(value: String?, isReal: Boolean, isWrite: Boolean){

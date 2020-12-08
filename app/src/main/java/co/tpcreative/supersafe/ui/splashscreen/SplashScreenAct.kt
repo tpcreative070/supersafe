@@ -9,6 +9,8 @@ import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.extension.deleteDirectory
+import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
+import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
@@ -25,9 +27,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class SplashScreenAct : BaseActivityNoneSlide() {
-    private var value: String? = ""
     private var grantAccess = false
-    private var isRunning = false
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +45,6 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         } catch (e: Exception) {
             PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),0)
         }
-        isRunning = PrefsController.getBoolean(getString(R.string.key_running), false)
         grantAccess = SuperSafeApplication.getInstance().isGrantAccess()
         SuperSafeApplication.getInstance().initFolder()
         var mCount = 0
@@ -69,10 +68,12 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                 onMessageEvent(EnumStatus.MIGRATION_DONE)
             }
         }else {
-            value = SuperSafeApplication.getInstance().readKey()
             if (grantAccess) {
-                if (isRunning) {
-                    if (value?.isNotEmpty() == true) {
+                val mCurrentPin = SuperSafeApplication.getInstance().readKey()
+                if (Utils.isRunning()) {
+                    if (mCurrentPin?.isNotEmpty() == true) {
+                        EncryptDecryptFilesHelper.getInstance()
+                        EncryptDecryptPinHelper.getInstance()
                         Utils.putScreenStatus(EnumPinAction.SPLASH_SCREEN.ordinal)
                         Navigator.onMoveToMainTab(this@SplashScreenAct, false)
                     } else {
@@ -93,6 +94,8 @@ class SplashScreenAct : BaseActivityNoneSlide() {
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
             EnumStatus.MIGRATION_DONE -> {
+                EncryptDecryptFilesHelper.getInstance()
+                EncryptDecryptPinHelper.getInstance()
                 SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
                 Utils.putScreenStatus(EnumPinAction.SPLASH_SCREEN.ordinal)
                 Navigator.onMoveToMainTab(this,false)
@@ -125,6 +128,5 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         menuInflater.inflate(R.menu.main_tab, menu)
         return true
     }
-
     override fun onOrientationChange(isFaceDown: Boolean) {}
 }

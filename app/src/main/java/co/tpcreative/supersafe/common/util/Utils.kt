@@ -1360,6 +1360,13 @@ object Utils {
     fun isEnabledTwoFactoryAuthentication() : Boolean{
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_enable_two_factor_authentication),false)
     }
+
+    fun isRunning() : Boolean {
+        return  PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_running), false)
+    }
+    fun putIsRunning(value : Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_running),value)
+    }
 }
 
 interface UtilsListener {

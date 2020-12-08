@@ -55,7 +55,7 @@ fun MainTabAct.initUI(){
     ab?.setDisplayHomeAsUpEnabled(true)
     setupViewPager(viewpager)
     tabs.setupWithViewPager(viewpager)
-    PrefsController.putBoolean(getString(R.string.key_running), true)
+    Utils.putIsRunning(true)
     onShowSuggestion()
     if (Utils.isCheckSyncSuggestion()) {
         onSuggestionSyncData()
