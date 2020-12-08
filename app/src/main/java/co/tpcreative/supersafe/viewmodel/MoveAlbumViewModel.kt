@@ -30,14 +30,12 @@ class MoveAlbumViewModel : BaseViewModel<GalleryAlbum>() {
         val list: MutableList<MainCategoryModel>? = SQLHelper.getListMoveGallery(categories_local_id, isFakePIN)
         list?.let {
             if (isFakePIN) {
-                val main: MainCategoryModel? = SQLHelper.getMainItemFakePin()
-                if (main != null) {
-                    if (main.categories_local_id != categories_local_id) {
-                        it.add(main)
-                        list.sortWith(Comparator { lhs, rhs ->
-                            lhs.categories_max.toInt() - rhs.categories_max.toInt()
-                        })
-                    }
+                val main: MainCategoryModel = SQLHelper.getMainItemFakePin()
+                if (main.categories_local_id != categories_local_id) {
+                    it.add(main)
+                    list.sortWith(Comparator { lhs, rhs ->
+                        lhs.categories_max.toInt() - rhs.categories_max.toInt()
+                    })
                 }
             }
             for (index in list) {

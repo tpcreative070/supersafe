@@ -95,8 +95,8 @@ fun MoveAlbumFragment.onShowDialog() {
             .input(inputType = InputType.TYPE_CLASS_TEXT,allowEmpty = false) { dialog ,input ->
                 val value = input.toString()
                 val base64Code: String = Utils.getHexCode(value)
-                val item: MainCategoryModel? = SQLHelper.getTrashItem()
-                val result: String? = item?.categories_hex_name
+                val item: MainCategoryModel = SQLHelper.getTrashItem()
+                val result: String? = item.categories_hex_name
                 if (base64Code == result) {
                     activity?.let {
                         Utils.onBasicAlertNotify(it,"Alert","This name already existing")
