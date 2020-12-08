@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.common.helper
 import android.content.Context
 import android.os.Environment
-import android.util.Base64
 import co.tpcreative.supersafe.common.encypt.EncryptConfiguration
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.decodeBase64
@@ -18,6 +17,10 @@ import javax.crypto.spec.SecretKeySpec
 
 class EncryptDecryptPinHelper {
     fun createdTextPKCS7(value: String, mode: Int) : String? {
+        if (checkConfig()){
+            return null
+        }
+        checkConfig()
         return if (mode==Cipher.ENCRYPT_MODE){
             encryptPKCS7(value.toByteArray(), mode)?.encodeBase64()
         }else{
@@ -28,9 +31,15 @@ class EncryptDecryptPinHelper {
     }
 
     fun createFile(path: String?, content: String?): Boolean {
+        if (checkConfig()){
+            return false
+        }
         return createFile(path, content?.toByteArray())
     }
     fun readTextFile(path: String?): String? {
+        if (checkConfig()){
+            return null
+        }
         val bytes = readFile(path)
         return bytes?.let { String(it)}
     }
@@ -43,10 +52,14 @@ class EncryptDecryptPinHelper {
         return configurationFile
     }
 
-    private fun checkConfig(){
-        if (configurationFile == null){
+    private fun checkConfig() : Boolean{
+        if (configurationFile ==null){
             configurationFile = getConfigurationFile()
         }
+        if (configurationFile ==null){
+            return true
+        }
+        return false
     }
 
     fun createFile(output: File?, input: File?, mode: Int): Boolean {

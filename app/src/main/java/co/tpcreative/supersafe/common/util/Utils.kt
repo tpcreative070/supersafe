@@ -852,8 +852,12 @@ object Utils {
         Log(TAG, "Cloud id ===================> ${user?.cloud_id}")
         val mJson = Gson().toJson(user)
         val mEncrypted = mJson.createdTextByDefaultPKCS7(Cipher.ENCRYPT_MODE)
-        Log(TAG,"user object encrypted length ${mEncrypted?.length}")
-        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mEncrypted)
+        if (mEncrypted!=null){
+            Log(TAG,"user object encrypted length ${mEncrypted.length}")
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mEncrypted)
+        }else{
+             PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user), Gson().toJson(user))
+        }
     }
 
     fun isRequestGoogleDriveSignOut() : Boolean{

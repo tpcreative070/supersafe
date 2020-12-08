@@ -27,6 +27,9 @@ class EncryptDecryptFilesHelper {
     }
 
     fun createFile(path: String?, content: String?): Boolean {
+        if (checkConfig()){
+            return false
+        }
         return createFile(path, content?.toByteArray())
     }
 
