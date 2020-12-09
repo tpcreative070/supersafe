@@ -464,7 +464,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         if (!BuildConfig.DEBUG){
             return true
         }
-        return true
+        return false
     }
 
     fun checkingMigrationAfterVerifiedPin(value: String?, isReal: Boolean, isWrite: Boolean){
