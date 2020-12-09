@@ -17,28 +17,45 @@ import javax.crypto.spec.SecretKeySpec
 
 class EncryptDecryptFilesHelper {
     fun encryptTextPKCS7(value : String, mode : Int) : String? {
-        if (checkConfig()){
-            return null
+        try {
+            if (checkConfig()){
+                return null
+            }
+            return encryptPKCS7(value.toByteArray(),mode)?.let {
+                Utils.Log("SuperSafeApplication",it.encodeBase64())
+                it.encodeBase64()
+            }
         }
-        return encryptPKCS7(value.toByteArray(),mode)?.let {
-            Utils.Log("SuperSafeApplication",it.encodeBase64())
-            it.encodeBase64()
+        catch (e : Exception){
+            e.printStackTrace()
+            return null
         }
     }
 
     fun createFile(path: String?, content: String?): Boolean {
-        if (checkConfig()){
+        try {
+            if (checkConfig()){
+                return false
+            }
+            return createFile(path, content?.toByteArray())
+        }catch (e : Exception){
+            e.printStackTrace()
             return false
         }
-        return createFile(path, content?.toByteArray())
     }
 
     fun readTextFile(path: String?): String? {
-        if (checkConfig()){
+        try {
+            if (checkConfig()){
+                return null
+            }
+            val bytes = readFile(path)
+            return bytes?.let { String(it) }
+        }
+        catch (e : Exception){
+            e.printStackTrace()
             return null
         }
-        val bytes = readFile(path)
-        return bytes?.let { String(it) }
     }
 
     private fun getSecretKey(): String? {
@@ -79,67 +96,77 @@ class EncryptDecryptFilesHelper {
     }
 
     fun createFile(output: File?, input: File?, mode: Int): Boolean{
-        if (checkConfig()){
-            return false
-        }
         try {
-            val fis = FileInputStream(input)
-            val bufferLength = 1024*1024
-            val buffer = ByteArray(bufferLength)
-            val fos = FileOutputStream(output)
-            val bos = BufferedOutputStream(fos, bufferLength)
-            var read = 0
-            read = fis.read(buffer, 0, read)
-            while (read != -1) {
-                val mData = encrypt(buffer, mode)
-                bos.write(mData, 0, read)
-                read = fis.read(buffer) // if read value is -1, it escapes loop.
+            if (checkConfig()){
+                return false
             }
-            fis.close()
-            bos.flush()
-            bos.close()
-            return true
-        } catch (exception: IOException) {
-            exception.printStackTrace()
+            try {
+                val fis = FileInputStream(input)
+                val bufferLength = 1024*1024
+                val buffer = ByteArray(bufferLength)
+                val fos = FileOutputStream(output)
+                val bos = BufferedOutputStream(fos, bufferLength)
+                var read = 0
+                read = fis.read(buffer, 0, read)
+                while (read != -1) {
+                    val mData = encrypt(buffer, mode)
+                    bos.write(mData, 0, read)
+                    read = fis.read(buffer) // if read value is -1, it escapes loop.
+                }
+                fis.close()
+                bos.flush()
+                bos.close()
+                return true
+            } catch (exception: IOException) {
+                exception.printStackTrace()
+                return false
+            }
+        }catch (e : Exception){
+            e.printStackTrace()
             return false
         }
     }
 
     fun createCipherFile(output: File?, input: File?, cipher: Int): Boolean {
-        if (checkConfig()){
-            return false
-        }
-        if (configurationFile?.isEncrypted != true) {
-            return false
-        }
-        var inputStream: FileInputStream? = null
-        val cipherOutputStream: CipherOutputStream
         try {
-            inputStream = FileInputStream(input)
-            val outputStream = FileOutputStream(output)
-            cipherOutputStream = CipherOutputStream(outputStream, getCipher(cipher))
-            //note the following line
-            val buffer = ByteArray(1024 * 1024)
-            var bytesRead: Int
-            while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-                cipherOutputStream.write(buffer, 0, bytesRead)
+            if (checkConfig()){
+                return false
             }
-            cipherOutputStream.close()
-            outputStream.flush()
-            outputStream.close()
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return false
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close()
-                } catch (ignored: IOException) {
-                    ignored.printStackTrace()
+            if (configurationFile?.isEncrypted != true) {
+                return false
+            }
+            var inputStream: FileInputStream? = null
+            val cipherOutputStream: CipherOutputStream
+            try {
+                inputStream = FileInputStream(input)
+                val outputStream = FileOutputStream(output)
+                cipherOutputStream = CipherOutputStream(outputStream, getCipher(cipher))
+                //note the following line
+                val buffer = ByteArray(1024 * 1024)
+                var bytesRead: Int
+                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                    cipherOutputStream.write(buffer, 0, bytesRead)
+                }
+                cipherOutputStream.close()
+                outputStream.flush()
+                outputStream.close()
+            } catch (ex: IOException) {
+                ex.printStackTrace()
+                return false
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close()
+                    } catch (ignored: IOException) {
+                        ignored.printStackTrace()
+                    }
                 }
             }
+            return true
+        }catch (e : Exception){
+            e.printStackTrace()
+            return false
         }
-        return true
     }
 
     /*Create temporary file*/

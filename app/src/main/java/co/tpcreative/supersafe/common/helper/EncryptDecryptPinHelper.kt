@@ -17,30 +17,45 @@ import javax.crypto.spec.SecretKeySpec
 
 class EncryptDecryptPinHelper {
     fun createdTextPKCS7(value: String, mode: Int) : String? {
-        if (checkConfig()){
-            return null
-        }
-        return if (mode==Cipher.ENCRYPT_MODE){
-            encryptPKCS7(value.toByteArray(), mode)?.encodeBase64()
-        }else{
-            encryptPKCS7(value.toByteArray().decodeBase64(), mode)?.let {
-                String(it)
+        try {
+            if (checkConfig()){
+                return null
             }
+            return if (mode==Cipher.ENCRYPT_MODE){
+                encryptPKCS7(value.toByteArray(), mode)?.encodeBase64()
+            }else{
+                encryptPKCS7(value.toByteArray().decodeBase64(), mode)?.let {
+                    String(it)
+                }
+            }
+        }catch (e : Exception){
+            e.printStackTrace()
+            return null
         }
     }
 
     fun createFile(path: String?, content: String?): Boolean {
-        if (checkConfig()){
+        try {
+            if (checkConfig()){
+                return false
+            }
+            return createFile(path, content?.toByteArray())
+        }catch (e : Exception){
+            e.printStackTrace()
             return false
         }
-        return createFile(path, content?.toByteArray())
     }
     fun readTextFile(path: String?): String? {
-        if (checkConfig()){
+        try {
+            if (checkConfig()){
+                return null
+            }
+            val bytes = readFile(path)
+            return bytes?.let { String(it)}
+        }catch (e : Exception){
+            e.printStackTrace()
             return null
         }
-        val bytes = readFile(path)
-        return bytes?.let { String(it)}
     }
 
     private fun getConfigurationFile(): EncryptConfiguration? {
@@ -61,122 +76,6 @@ class EncryptDecryptPinHelper {
         return false
     }
 
-    fun createFile(output: File?, input: File?, mode: Int): Boolean {
-        if (checkConfig()){
-            return false
-        }
-        var inputStream: FileInputStream? = null
-        try {
-            inputStream = FileInputStream(input)
-            var length = 0
-            val fOutputStream = FileOutputStream(
-                    output)
-            //note the following line
-            var buffer: ByteArray? = ByteArray(1024 * 1024)
-            while (inputStream.read(buffer).also { length = it } > 0) {
-                if (configurationFile != null && configurationFile?.isEncrypted!!) {
-                    buffer = encrypt(buffer!!, mode)
-                }
-                fOutputStream.write(buffer, 0, length)
-            }
-            fOutputStream.flush()
-            fOutputStream.close()
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return false
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close()
-                } catch (ignored: IOException) {
-                    ignored.printStackTrace()
-                }
-            }
-        }
-        return true
-    }
-
-    fun createLargeFile(output: File?, input: File?, cipher: Cipher): Boolean {
-        if (checkConfig()){
-            return false
-        }
-        if (configurationFile == null || !(configurationFile?.isEncrypted)!!) {
-            return false
-        }
-        var inputStream: FileInputStream? = null
-        val cipherOutputStream: CipherOutputStream
-        try {
-            inputStream = FileInputStream(input)
-            val outputStream = FileOutputStream(output)
-            cipherOutputStream = CipherOutputStream(outputStream, cipher)
-            //note the following line
-            val buffer = ByteArray(1024 * 1024)
-            var bytesRead: Int
-            while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-                cipherOutputStream.write(buffer, 0, bytesRead)
-            }
-            cipherOutputStream.close()
-            outputStream.flush()
-            outputStream.close()
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return false
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close()
-                } catch (ignored: IOException) {
-                    ignored.printStackTrace()
-                }
-            }
-        }
-        return true
-    }
-
-    fun createFileByteDataNoEncrypt(context: Context, data: ByteArray?)  : File {
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                "picture.jpg")
-        var os: OutputStream? = null
-        try {
-            os = FileOutputStream(file)
-            os.write(data)
-        } catch (e: IOException) {
-            Utils.Log(TAG, "Cannot write to $file")
-        } finally {
-            if (os != null) {
-                try {
-                    os.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-        return file
-    }
-
-    fun getCipher(mode: Int): Cipher? {
-        if (checkConfig()){
-            return null
-        }
-        if (configurationFile != null && configurationFile?.isEncrypted!!) {
-            try {
-                val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey, SecurityUtil.AES_ALGORITHM)
-                val mIvParameterSpec = IvParameterSpec(configurationFile?.ivParameter)
-                mCipher = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION)
-                mCipher?.init(mode, mSecretKeySpec, mIvParameterSpec)
-                return mCipher
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        return null
-    }
-
-    fun getSize(file: File, unit: SizeUnit): Double {
-        val length = file.length()
-        return length.toDouble() / unit.inBytes().toDouble()
-    }
-
     fun readFile(path: String?): ByteArray? {
         val stream: FileInputStream
         return try {
@@ -189,31 +88,36 @@ class EncryptDecryptPinHelper {
     }
 
     fun createFile(path: String?, content: ByteArray?): Boolean {
-        if (checkConfig()){
-            return false
-        }
-        var mContent = content
-        var stream: OutputStream? = null
         try {
-            stream = FileOutputStream(File(path))
-            if (configurationFile != null && configurationFile!!.isEncrypted) {
-                mContent = encrypt(mContent!!, Cipher.ENCRYPT_MODE)
+            if (checkConfig()){
+                return false
             }
-            stream.write(mContent)
-        } catch (e: IOException) {
-            Utils.Log(TAG, "Failed create file $e")
-            return false
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.flush()
-                    stream.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
+            var mContent = content
+            var stream: OutputStream? = null
+            try {
+                stream = FileOutputStream(File(path))
+                if (configurationFile != null && configurationFile!!.isEncrypted) {
+                    mContent = encrypt(mContent!!, Cipher.ENCRYPT_MODE)
+                }
+                stream.write(mContent)
+            } catch (e: IOException) {
+                Utils.Log(TAG, "Failed create file $e")
+                return false
+            } finally {
+                if (stream != null) {
+                    try {
+                        stream.flush()
+                        stream.close()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
                 }
             }
+            return true
+        }catch (e : Exception){
+            e.printStackTrace()
+            return false
         }
-        return true
     }
 
     fun readFile(stream: FileInputStream): ByteArray? {

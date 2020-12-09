@@ -222,8 +222,11 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         if (superSafe.isDirectoryExists() and superSafePrivate.isDirectoryExists() and  superSafeLog.isDirectoryExists() and superSafeBreakInAlerts.isDirectoryExists() and superSafeOldPath.isDirectoryExists() and superSafePicture.isDirectoryExists()) {
             Utils.Log(TAG, "SuperSafe is existing")
         } else {
-            superSafe.createDirectory()
-            superSafeOldPath.createDirectory()
+            if (isLiveMigration()){
+                superSafe.createDirectory()
+            }else{
+                superSafeOldPath.createDirectory()
+            }
             superSafePrivate.createDirectory()
             superSafeLog.createDirectory()
             superSafeBreakInAlerts.createDirectory()

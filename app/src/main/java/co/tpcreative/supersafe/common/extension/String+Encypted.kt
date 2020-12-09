@@ -3,6 +3,7 @@ import android.os.Environment
 import android.util.Base64
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
+import co.tpcreative.supersafe.common.util.Utils
 import java.io.File
 
 
@@ -39,8 +40,13 @@ fun String.isFileExist(): Boolean {
     return File(this).exists()
 }
 
-fun String.createDirectory(){
-    EncryptDecryptFilesHelper.getInstance()?.createDirectory(this)
+fun String.createDirectory() : Boolean{
+    val directory = File(this)
+    if (directory.exists()) {
+        Utils.Log("TAG", "Directory $this already exists")
+        return false
+    }
+    return directory.mkdirs()
 }
 
 fun String.deleteFile(){
