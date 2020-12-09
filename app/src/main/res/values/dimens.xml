@@ -41,6 +41,7 @@
     <dimen name="display_text_size">40sp</dimen>
     <dimen name="text_size_title">16.5sp</dimen>
     <dimen name="text_size_normal">15sp</dimen>
+    <dimen name="text_size_small">13sp</dimen>
     <dimen name="margin_right">40dp</dimen>
     <dimen name="margin_left">40dp</dimen>
     <dimen name="activity_margin">16dp</dimen>

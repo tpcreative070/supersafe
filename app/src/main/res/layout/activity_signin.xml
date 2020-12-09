@@ -100,6 +100,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/button_high"/>
             </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/llSupport"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/SmallRegularTextView"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_normal"
+                    android:text="@string/contact_us"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_marginTop="2dp"
+                    style="@style/SmallRegularTextView"
+                    android:textColor="@color/white"
+                    android:clickable="false"
+                    android:autoLink="web|email"
+                    android:textSize="@dimen/text_size_normal"
+                    android:id="@+id/tvSupport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

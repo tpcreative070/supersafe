@@ -554,6 +554,11 @@
         <item name="android:textSize">@dimen/text_size_normal</item>
     </style>
 
+    <style name="SmallRegularTextView" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
     <!--Floating button -->
     <style name="AppTheme.Purple" parent="AppTheme">
         <item name="colorPrimary">@color/material_purple_500</item>

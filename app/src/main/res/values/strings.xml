@@ -189,6 +189,7 @@
     <string name="enable_now">ENABLE NOW</string>
     <string name="continue_value">Continue</string>
     <string name="did_not_receive_code">Didn\'t receive your code?</string>
+    <string name="contact_us">Contact US</string>
     <string name="send_an_email_to">Send an email to %1$s</string>
     <string name="upgrade_to_pro">Upgrade To Pro</string>
     <string name="upgrade">UPGRADE</string>

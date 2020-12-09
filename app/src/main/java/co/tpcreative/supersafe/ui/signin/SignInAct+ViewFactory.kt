@@ -8,16 +8,16 @@ import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumValidationKey
 import co.tpcreative.supersafe.model.User
-import co.tpcreative.supersafe.ui.main_tab.onShowDialog
 import co.tpcreative.supersafe.ui.twofactoryauthentication.*
-import co.tpcreative.supersafe.viewmodel.EnumTwoFactoryAuthentication
 import co.tpcreative.supersafe.viewmodel.UserViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
@@ -26,6 +26,8 @@ import kotlinx.android.synthetic.main.activity_signin.*
 import kotlinx.android.synthetic.main.activity_signin.edtEmail
 import kotlinx.android.synthetic.main.activity_signin.progressBarCircularIndeterminate
 import kotlinx.android.synthetic.main.activity_signin.toolbar
+import kotlinx.android.synthetic.main.activity_signin.tvSupport
+import kotlinx.android.synthetic.main.activity_signin.view.*
 import kotlinx.android.synthetic.main.activity_two_factory_authentication.*
 
 fun SignInAct.initUI(){
@@ -36,6 +38,9 @@ fun SignInAct.initUI(){
     ServiceManager.getInstance()?.onStartService()
     edtEmail?.setOnEditorActionListener(this)
     edtEmail?.addTextChangedListener(mTextWatcher)
+    val support: String? = Utils.getFontString(R.string.send_an_email_to, SecurityUtil.MAIL)
+    tvSupport?.text = support?.toSpanned()
+    llSupport.visibility = View.INVISIBLE
     btnNext.setOnClickListener {
         if (!SuperSafeReceiver.isConnected()) {
             Utils.showDialog(this, getString(R.string.internet))
@@ -138,6 +143,7 @@ fun SignInAct.verifyTwoFactoryAuthentication() {
                 Utils.Log(TAG,it.message)
                 Utils.onBasicAlertNotify(this,"Alert",it.message ?:"")
                 alertAskInputSecretPin()
+                llSupport.visibility = View.VISIBLE
             }
         }
     })
