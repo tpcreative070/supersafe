@@ -1,19 +1,13 @@
 package co.tpcreative.supersafe.common.helper
-import android.content.Context
-import android.os.Environment
 import co.tpcreative.supersafe.common.encypt.EncryptConfiguration
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.decodeBase64
 import co.tpcreative.supersafe.common.extension.encodeBase64
 import co.tpcreative.supersafe.common.util.ImmutablePair
-import co.tpcreative.supersafe.common.util.SizeUnit
 import co.tpcreative.supersafe.common.util.Utils
 import java.io.*
 import java.util.*
 import javax.crypto.Cipher
-import javax.crypto.CipherOutputStream
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 class EncryptDecryptPinHelper {
     fun createdTextPKCS7(value: String, mode: Int) : String? {
@@ -192,50 +186,6 @@ class EncryptDecryptPinHelper {
         return SecurityUtil.encryptPKCS7(content, encryptionMode, secretKey, ivx)
     }
 
-    fun deleteDirectoryImpl(path: String): Boolean {
-        val directory = File(path)
-
-        // If the directory exists then delete
-        if (directory.exists()) {
-            val files = directory.listFiles() ?: return true
-            // Run on all sub files and folders and delete them
-            for (i in files.indices) {
-                if (files[i].isDirectory) {
-                    deleteDirectoryImpl(files[i].absolutePath)
-                } else {
-                    files[i].delete()
-                }
-            }
-        }
-        return directory.delete()
-    }
-
-    fun createDirectory(path: String): Boolean {
-        val directory = File(path)
-        if (directory.exists()) {
-            Utils.Log(TAG, "Directory $path already exists")
-            return false
-        }
-        return directory.mkdirs()
-    }
-
-    fun createDirectory(path: String, override: Boolean): Boolean {
-        // Check if directory exists. If yes, then delete all directory
-        if (override && isDirectoryExists(path)) {
-            deleteDirectory(path)
-        }
-        // Create new directory
-        return createDirectory(path)
-    }
-
-    fun deleteDirectory(path: String?): Boolean {
-        return deleteDirectoryImpl(path!!)
-    }
-
-    fun isDirectoryExists(path: String?): Boolean {
-        return File(path).exists()
-    }
-
     fun cleanUp(){
         configurationFile = null
     }
@@ -243,7 +193,6 @@ class EncryptDecryptPinHelper {
     companion object {
         private var instance: EncryptDecryptPinHelper? = null
         private val TAG = EncryptDecryptPinHelper::class.java.simpleName
-        private var mCipher: Cipher? = null
         var configurationFile : EncryptConfiguration? = null
         fun getInstance(): EncryptDecryptPinHelper? {
             if (instance == null) {

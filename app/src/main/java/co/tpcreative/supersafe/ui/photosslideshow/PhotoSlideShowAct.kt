@@ -16,6 +16,7 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
+import co.tpcreative.supersafe.common.extension.createDirectory
 import co.tpcreative.supersafe.common.extension.deleteFile
 import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
@@ -279,7 +280,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
                 if (!isHide) {
                     if (!isHide) {
                         dataSource[position].isChecked = true
-                        EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
+                        SuperSafeApplication.getInstance().getSuperSafeShare().createDirectory()
                         viewModel.getCheckedItems().observe(this, androidx.lifecycle.Observer {
                             onShowDialog(it, EnumStatus.SHARE, true)
                         })
@@ -297,7 +298,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
             R.id.imgExport -> {
                 if (!isHide) {
                     dataSource[position].isChecked = true
-                    EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
+                    SuperSafeApplication.getInstance().getSuperSafePicture().createDirectory()
                     viewModel.getCheckedItems().observe(this, androidx.lifecycle.Observer {
                         onShowDialog(it, EnumStatus.EXPORT, false)
                     })

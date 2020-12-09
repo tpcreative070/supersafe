@@ -54,9 +54,35 @@ fun String.deleteFile(){
     file.delete()
 }
 
-fun String.deleteDirectory() : Boolean? {
-    return EncryptDecryptFilesHelper.getInstance()?.deleteDirectory(this)
+fun String.deleteDirectory() : Boolean {
+    return deleteDirectoryImpl(this)
 }
+
+fun String.createDirectory(override: Boolean): Boolean {
+    if (override && this.isDirectoryExists()) {
+        this.deleteDirectory()
+    }
+    return this.createDirectory()
+}
+
+
+private fun String.deleteDirectoryImpl(path: String): Boolean {
+    val directory = File(path)
+    // If the directory exists then delete
+    if (directory.exists()) {
+        val files = directory.listFiles() ?: return true
+        // Run on all sub files and folders and delete them
+        for (i in files.indices) {
+            if (files[i].isDirectory) {
+                deleteDirectoryImpl(files[i].absolutePath)
+            } else {
+                files[i].delete()
+            }
+        }
+    }
+    return directory.delete()
+}
+
 
 fun String.getExternalStorageDirectory(): String? {
     return Environment.getExternalStorageDirectory().absolutePath

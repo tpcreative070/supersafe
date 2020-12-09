@@ -14,6 +14,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.extension.createDirectory
 import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
@@ -56,14 +57,14 @@ fun AlbumDetailAct.initUI(){
     llBottom?.visibility = View.GONE
     /*Root Fragment*/
     imgShare.setOnClickListener {
-        EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
+        SuperSafeApplication.getInstance().getSuperSafeShare().createDirectory()
         viewModel.getCheckedItems().observe(this, Observer {
             onShowDialog(it,EnumStatus.SHARE,true)
         })
     }
 
     imgExport.setOnClickListener {
-        EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
+        SuperSafeApplication.getInstance().getSuperSafePicture().createDirectory()
         viewModel.getCheckedItems().observe(this, Observer {
             onShowDialog(it,EnumStatus.EXPORT,false)
         })
