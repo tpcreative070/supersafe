@@ -37,7 +37,7 @@
     <color name="dark_grey_pressed_mask">#11000000</color>
     <color name="colorPremiumText">#7ED321</color>
     <color name="colorPremiumIcon">#ec407a</color>
-    <color name="dialogMaterialTitle">#80000000</color>
+    <color name="dialogMaterialTitle">#424242</color>
     <color name="dialogMaterialContent">#616161</color>
     <color name="dialogMaterialButton">#80000000</color>
 

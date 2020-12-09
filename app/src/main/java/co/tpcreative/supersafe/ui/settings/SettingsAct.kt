@@ -229,6 +229,7 @@ class SettingsAct : BaseActivity() {
                             return@OnPreferenceClickListener true
                         }
                         askDeviceMode {
+                            Utils.setRequestSyncData(true)
                             ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionThemeMode()))
                         }
                     }

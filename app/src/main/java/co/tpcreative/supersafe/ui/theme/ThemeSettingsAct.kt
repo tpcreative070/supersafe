@@ -25,6 +25,7 @@ class ThemeSettingsAct : BaseActivity(), ThemeSettingsAdapter.ItemSelectedListen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_theme_settings)
         initUI()
+        Utils.setRequestSyncData(true)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

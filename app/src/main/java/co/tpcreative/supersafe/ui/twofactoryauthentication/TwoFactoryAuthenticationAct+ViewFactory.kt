@@ -349,13 +349,14 @@ fun TwoFactoryAuthenticationAct.alertAskInputSecretPin() {
         Utils.Log(TAG,"Nothing")
     }
     val builder: MaterialDialog = MaterialDialog(this)
-            .title(R.string.key_alert)
-            .message(text = mMessage)
+            .title(text = mMessage)
             .negativeButton(R.string.cancel)
             .cancelable(true)
             .cancelOnTouchOutside(false)
             .negativeButton {
-                btnSwitch.isChecked = !btnSwitch.isChecked
+                if (status == EnumTwoFactoryAuthentication.DISABLE || status == EnumTwoFactoryAuthentication.ENABLE){
+                    btnSwitch.isChecked = !btnSwitch.isChecked
+                }
             }
             .positiveButton(R.string.verify)
             .input(hintRes = R.string.enter_secret_pin, inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_TEXT_VARIATION_PASSWORD),maxLength = 6, allowEmpty = false){ dialog, text->
@@ -371,6 +372,7 @@ fun TwoFactoryAuthenticationAct.alertAskInputSecretPin() {
                 verifyTwoFactoryAuthentication()
             }
     val input: EditText = builder.getInputField()
+    input.setPadding(0,50,0,20)
     input.setBackgroundColor( ContextCompat.getColor(this,R.color.transparent))
     builder.show()
 }

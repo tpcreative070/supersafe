@@ -139,8 +139,8 @@ fun FakePinComponentAct.onShowDialog() {
                 Utils.Log(TAG, "Value")
                 val value = input.toString()
                 val base64Code: String = Utils.getHexCode(value)
-                val item: MainCategoryModel? = SQLHelper.getTrashItem()
-                val result: String? = item?.categories_hex_name
+                val item: MainCategoryModel = SQLHelper.getTrashItem()
+                val result: String? = item.categories_hex_name
                 if (base64Code == result) {
                     Utils.onBasicAlertNotify(this,"Alert","This name already existing")
                 } else {
@@ -154,6 +154,7 @@ fun FakePinComponentAct.onShowDialog() {
                 }
             }
     val input: EditText = builder.getInputField()
+    input.setPadding(0,50,0,20)
     input.setBackgroundColor( ContextCompat.getColor(this,R.color.transparent))
     builder.show()
 }

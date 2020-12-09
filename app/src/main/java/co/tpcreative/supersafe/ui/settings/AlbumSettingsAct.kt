@@ -326,6 +326,7 @@ class AlbumSettingsAct : BaseActivity(){
                         }
                     }
             val input: EditText = builder.getInputField()
+            input.setPadding(0,50,0,20)
             input.setBackgroundColor( ContextCompat.getColor(activity!!,R.color.transparent))
             builder.show()
         }

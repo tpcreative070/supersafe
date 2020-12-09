@@ -227,8 +227,7 @@ fun ResetPinAct.getTwoFactoryAuthentication() {
 
 fun ResetPinAct.alertAskInputSecretPin() {
     val builder: MaterialDialog = MaterialDialog(this)
-            .title(R.string.key_alert)
-            .message(text = getString(R.string.verify_secret_pin))
+            .title(R.string.verify_secret_pin)
             .negativeButton(R.string.cancel)
             .cancelable(true)
             .cancelOnTouchOutside(false)
@@ -241,6 +240,7 @@ fun ResetPinAct.alertAskInputSecretPin() {
                 verifyTwoFactoryAuthentication()
             }
     val input: EditText = builder.getInputField()
+    input.setPadding(0,50,0,20)
     input.setBackgroundColor( ContextCompat.getColor(this,R.color.transparent))
     builder.show()
 }

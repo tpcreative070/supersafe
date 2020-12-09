@@ -167,6 +167,7 @@ fun MainTabAct.onShowDialog() {
                 }
             }
     val input: EditText = builder.getInputField()
+    input.setPadding(0,50,0,20)
     input.setBackgroundColor( ContextCompat.getColor(this,R.color.transparent))
     builder.show()
 }
