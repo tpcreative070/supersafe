@@ -81,7 +81,7 @@ fun ResetPinAct.initUI(){
                 progressbar_circular_reset_pin.visibility = View.VISIBLE
             }
         }else{
-            if (progressing == EnumStepProgressing.VERIFY_CODE){
+            if (progressing == EnumStepProgressing.REQUEST_CODE){
                 progressbar_circular_request_code?.visibility = View.INVISIBLE
             }else{
                 progressbar_circular_reset_pin.visibility = View.INVISIBLE
@@ -194,6 +194,7 @@ private fun ResetPinAct.setupViewModel() {
 }
 
 fun ResetPinAct.verifyTwoFactoryAuthentication() {
+    progressing = EnumStepProgressing.REQUEST_CODE
     viewModel.verifyTwoFactoryAuthentication().observe(this, Observer {
         when(it.status){
             Status.SUCCESS-> {
@@ -209,6 +210,7 @@ fun ResetPinAct.verifyTwoFactoryAuthentication() {
 }
 
 fun ResetPinAct.getTwoFactoryAuthentication() {
+    progressing = EnumStepProgressing.REQUEST_CODE
     viewModel.getTwoFactoryInfo().observe(this, Observer {
         when(it.status){
             Status.SUCCESS-> {
@@ -232,7 +234,6 @@ fun ResetPinAct.alertAskInputSecretPin() {
             .cancelable(true)
             .cancelOnTouchOutside(false)
             .negativeButton {
-
             }
             .positiveButton(R.string.verify)
             .input(hintRes = R.string.enter_secret_pin, inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD), allowEmpty = false){ dialog, text->
