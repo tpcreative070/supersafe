@@ -55,6 +55,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
     }
 
     fun signUp() = liveData(Dispatchers.IO){
+        Utils.clearAppDataAndReCreateData()
         try {
             isLoading.postValue(true)
             val mResultSignUp = service.signUp(getSignUpRequest())
@@ -84,6 +85,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
     }
 
     fun signIn() = liveData(Dispatchers.IO){
+        Utils.clearAppDataAndReCreateData()
         try {
             isLoading.postValue(true)
             val mResultSignIn = service.signIn(getSignInRequest())
@@ -141,6 +143,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
     }
 
     fun sendEmail() = liveData(Dispatchers.Main){
+        isLoading.postValue(true)
         val mResultSentEmail = emailViewModel.sendEmail(EnumStatus.SIGN_IN)
         when(mResultSentEmail.status){
             Status.SUCCESS ->{
@@ -148,6 +151,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
             }
             else -> emit(Resource.error(mResultSentEmail.code?:Utils.CODE_EXCEPTION, mResultSentEmail.message ?:"",null))
         }
+        isLoading.postValue(false)
     }
 
     fun verifyTwoFactoryAuthentication() = liveData(Dispatchers.Main){
@@ -159,7 +163,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
             when(mResult.status){
                 Status.SUCCESS -> {
                     if (mResult.data?.error ==true){
-                        emit(Resource.error(mResult.data.responseCode?: Utils.CODE_EXCEPTION, getErrorMessage(mResult.data?.responseMessage ?:""),null))
+                        emit(Resource.error(mResult.data.responseCode?: Utils.CODE_EXCEPTION, getErrorMessage(mResult.data.responseMessage ?:""),null))
                     }else{
                         emit(mResult)
                     }

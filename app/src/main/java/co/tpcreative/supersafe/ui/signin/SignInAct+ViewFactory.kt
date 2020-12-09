@@ -87,6 +87,18 @@ fun SignInAct.initUI(){
     })
 }
 
+private fun SignInAct.showEnableView(mNext : Boolean){
+    if (mNext){
+        btnNext?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
+        btnNext?.setTextColor(ContextCompat.getColor(this,R.color.white))
+        isNext = true
+    }else{
+        btnNext?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
+        btnNext?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
+        isNext = false
+    }
+}
+
 private fun SignInAct.setupViewModel() {
     viewModel = ViewModelProviders.of(
             this,
@@ -99,6 +111,7 @@ fun SignInAct.onSignIn() {
         when(it.status){
             Status.SUCCESS -> {
                 if (it.data?.data?.twoFactoryAuthentication?.isEnabled ==true){
+                    showEnableView(false)
                     alertAskInputSecretPin()
                 }else{
                     val mUser: User? = Utils.getUserInfo()
@@ -137,7 +150,10 @@ fun SignInAct.sendEmail(){
                 val mUser: User? = Utils.getUserInfo()
                 Navigator.onMoveToVerify(this, mUser)
                 Utils.Log(TAG,"Success ${it.toJson()}")
-            }else  -> Utils.Log(TAG,it.message)
+            }else  ->{
+                  Utils.Log(TAG,it.message)
+                  showEnableView(true)
+            }
         }
     })
 }
@@ -149,7 +165,7 @@ fun SignInAct.alertAskInputSecretPin() {
             .cancelable(true)
             .cancelOnTouchOutside(false)
             .negativeButton {
-
+                showEnableView(true)
             }
             .positiveButton(R.string.verify)
             .input(hintRes = R.string.enter_secret_pin, inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD), allowEmpty = false){ dialog, text->

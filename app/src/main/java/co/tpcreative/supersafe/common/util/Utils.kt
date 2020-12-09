@@ -830,6 +830,7 @@ object Utils {
                 val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
                 val mDecrypted = value?.createdTextByDefaultPKCS7(Cipher.DECRYPT_MODE)
                 if (mDecrypted!=null){
+                    Log(TAG,"user object decrypted length ${mDecrypted.length}")
                     val mUser: User? = Gson().fromJson(mDecrypted, User::class.java)
                     if (mUser != null) {
                         return mUser
