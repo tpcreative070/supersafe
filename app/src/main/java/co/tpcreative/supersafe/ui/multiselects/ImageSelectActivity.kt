@@ -202,10 +202,7 @@ class ImageSelectActivity : HelperActivity() {
 
     private fun toggleSelection(position: Int) {
         if (!images?.get(position)?.isSelected!! && countSelected >= Navigator.limit) {
-            Toast.makeText(
-                    applicationContext, String.format(getString(R.string.limit_exceeded), Navigator.limit),
-                    Toast.LENGTH_SHORT)
-                    .show()
+            Utils.onBasicAlertNotify(this,"Alert",String.format(getString(R.string.limit_exceeded), Navigator.limit))
             return
         }
         images?.get(position)?.isSelected = !(images?.get(position)?.isSelected)!!
