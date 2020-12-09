@@ -120,7 +120,7 @@ fun PhotoSlideShowAct.onHideView() {
 
 fun PhotoSlideShowAct.onRotateBitmap(items: ItemModel) = CoroutineScope(Dispatchers.Main).launch{
     isProgressing = true
-    var mDegrees: Int = items.degrees!!
+    var mDegrees: Int = items.degrees
     mDegrees = if (mDegrees >= 360) {
         90
     } else {
