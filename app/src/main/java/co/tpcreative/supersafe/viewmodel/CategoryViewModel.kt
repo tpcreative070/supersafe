@@ -100,7 +100,7 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
                        main.updated_date = index.updated_date
                        main.date_time = index.date_time
                        SQLHelper.updateCategory(main)
-                       Utils.Log(TAG, "Updating new main categories => ^^")
+                       Utils.Log(TAG, "Updating new main categories => ^^ ${index.updated_date}")
                    }
                } else {
                    var mMain: MainCategoryModel? = SQLHelper.getCategoriesItemId(index.categories_hex_name, false)

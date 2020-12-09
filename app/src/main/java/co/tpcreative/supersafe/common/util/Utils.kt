@@ -69,7 +69,11 @@ object Utils {
     // utility function
     const val FORMAT_TIME: String = "yyyy-MM-dd HH:mm:ss"
     const val FORMAT_TIME_FILE_NAME: String = "yyyyMMdd_HHmmss"
-    const val FORMAT_SERVER_DATE_TIME = "MM/dd/yyyy HH:mm:ss a"
+    const val FORMAT_SERVER_DATE_TIME = "MM/dd/yyyy hh:mm:ss a"
+    /*Note
+    * hh for 12h
+    * HH for 24h
+    * */
 
     const val COUNT_RATE = 9
     const val CODE_EXCEPTION = 1111

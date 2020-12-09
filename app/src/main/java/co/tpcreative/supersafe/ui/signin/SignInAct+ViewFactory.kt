@@ -174,7 +174,7 @@ fun SignInAct.alertAskInputSecretPin() {
                 showEnableView(true)
             }
             .positiveButton(R.string.verify)
-            .input(hintRes = R.string.enter_secret_pin, inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD), allowEmpty = false){ dialog, text->
+            .input(hintRes = R.string.enter_secret_pin, inputType = (InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD), allowEmpty = false,maxLength = 30){ dialog, text->
                 viewModel.secretPin = text.toString()
                 verifyTwoFactoryAuthentication()
             }
