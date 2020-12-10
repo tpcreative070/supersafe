@@ -8,7 +8,6 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.isSaverSpace
-import co.tpcreative.supersafe.common.extension.pauseSync
 import co.tpcreative.supersafe.common.extension.putSaverSpace
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
@@ -48,10 +47,6 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
 
     override fun onCheckedChanged(compoundButton: CompoundButton?, b: Boolean) {
         when (compoundButton?.id) {
-            R.id.btnSwitchPauseSync -> {
-                isPauseCloudSync = b
-                Utils.pauseSync(b)
-            }
             R.id.switch_SaveSpace -> {
                 if (!Utils.isPremium()) {
                     onShowPremium()

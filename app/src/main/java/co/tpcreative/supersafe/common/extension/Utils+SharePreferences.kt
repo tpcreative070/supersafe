@@ -274,14 +274,6 @@ fun Utils.onUpdatedCountRate() {
     }
 }
 
-fun Utils.isPauseSync(): Boolean {
-    return PrefsController.getBoolean(getString(R.string.key_pause_cloud_sync), false)
-}
-
-fun Utils.pauseSync(isPaused: Boolean){
-    PrefsController.putBoolean(getString(R.string.key_pause_cloud_sync), isPaused)
-}
-
 fun Utils.isCheckSyncSuggestion(): Boolean {
     val name: String = SuperSafeApplication.getInstance().getString(R.string.key_count_sync)
     val mCount: Int = PrefsController.getInt(name, 0)

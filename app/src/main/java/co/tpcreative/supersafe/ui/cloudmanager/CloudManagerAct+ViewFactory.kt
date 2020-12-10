@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
-import co.tpcreative.supersafe.common.extension.isPauseSync
 import co.tpcreative.supersafe.common.extension.isSaverSpace
 import co.tpcreative.supersafe.common.extension.putSaverSpace
 import co.tpcreative.supersafe.common.network.Status
@@ -32,12 +31,6 @@ fun CloudManagerAct.initUI(){
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     onUpdatedView()
-    btnSwitchPauseSync?.setOnCheckedChangeListener(this)
-    switch_SaveSpace?.setOnCheckedChangeListener(this)
-    llPause.setOnClickListener {
-        btnSwitchPauseSync?.isChecked = !btnSwitchPauseSync!!.isChecked
-    }
-
     rlSaveSpace.setOnClickListener {
         switch_SaveSpace?.isChecked = !switch_SaveSpace!!.isChecked
     }
@@ -65,8 +58,6 @@ fun CloudManagerAct.initUI(){
         }
     })
 
-    val pauseCloudSync: Boolean = Utils.isPauseSync()
-    btnSwitchPauseSync?.isChecked = pauseCloudSync
     val savingSpace: Boolean = Utils.isSaverSpace()
     switch_SaveSpace?.isChecked = savingSpace
 

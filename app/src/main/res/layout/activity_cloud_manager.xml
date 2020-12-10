@@ -272,35 +272,6 @@
                             android:visibility="invisible" />
                     </LinearLayout>
                 </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/llPause"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:background="@drawable/bg_item_lists_rounded"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp">
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerInParent="true"
-                            android:text="@string/pause_cloud_sync"
-                            android:textSize="@dimen/text_size_normal" />
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/btnSwitchPauseSync"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerInParent="true" />
-                    </RelativeLayout>
-                </LinearLayout>
                 <!--Space saver -->
                 <LinearLayout
                     android:layout_width="match_parent"

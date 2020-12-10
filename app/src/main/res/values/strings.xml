@@ -516,7 +516,6 @@
     <string name="key_update_theme">Update Theme</string>
     <string name="key_theme_object">theme_object</string>
     <string name="key_theme_list">theme_list</string>
-    <string name="key_pause_cloud_sync">pause_cloud_sync</string>
     <string name="key_saving_space">saving_space</string>
     <string name="key_count_to_rate">count_to_rate</string>
     <string name="download_private_cloud_files">Download Private Cloud Files</string>

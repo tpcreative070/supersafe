@@ -831,7 +831,7 @@ object Utils {
         mUser?.let { mUserResult ->
             if (mUserResult.driveConnected) {
                 if (mUserResult.access_token != null && mUserResult.access_token != "") {
-                    if (mUserResult.cloud_id != null && mUserResult.cloud_id != "" && !isPauseSync()) {
+                    if (mUserResult.cloud_id != null && mUserResult.cloud_id != "") {
                         return true
                     } else {
                         mUserResult.driveConnected = false
