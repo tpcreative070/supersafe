@@ -22,7 +22,6 @@ import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.RetrofitBuilder
-import co.tpcreative.supersafe.common.controller.AppPrefs
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.*
@@ -40,7 +39,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
