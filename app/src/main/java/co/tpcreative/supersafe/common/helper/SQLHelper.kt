@@ -7,6 +7,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.entities.InstanceGenerator
 import co.tpcreative.supersafe.common.entities.ItemEntity
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity
+import co.tpcreative.supersafe.common.extension.setRequestSyncData
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*

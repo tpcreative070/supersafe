@@ -336,7 +336,7 @@ class ServiceManager() : BaseServiceView<Any?> {
                                pathContent.createDirectory()
                                val thumbnailPath = pathContent + "thumbnail_" + currentTime
                                val originalPath = pathContent + currentTime
-                               val itemsPhoto = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, Utils.getSaverSpace(), false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                               val itemsPhoto = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, Utils.isSaverSpace(), false, false, 0, false, false, false, EnumStatus.UPLOAD)
                                val file = getThumbnail(mPath)
                                Utils.Log(TAG, "start compress")
                                val createdThumbnail = file.createFile(File(thumbnailPath), file, Cipher.ENCRYPT_MODE)
@@ -621,7 +621,7 @@ class ServiceManager() : BaseServiceView<Any?> {
             pathContent.createDirectory()
             val thumbnailPath = pathContent + "thumbnail_" + currentTime
             val originalPath = pathContent + currentTime
-            val isSaver: Boolean = PrefsController.getBoolean(getString(R.string.key_saving_space), false)
+            val isSaver: Boolean = Utils.isSaverSpace()
             val items = ItemModel(getString(R.string.key_jpg), originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype(), uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, currentTime + getString(R.string.key_jpg), "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, isSaver, false, false, 0, false, false, false, EnumStatus.UPLOAD)
             val mFileOriginal = mData?.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance())
             val mFileThumbnail = getThumbnail(mFileOriginal?.absolutePath!!)

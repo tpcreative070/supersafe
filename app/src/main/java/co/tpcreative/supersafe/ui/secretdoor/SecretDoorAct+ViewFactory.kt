@@ -3,6 +3,7 @@ import android.view.View
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.util.Utils
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
@@ -14,10 +15,8 @@ fun SecretDoorAct.initUI(){
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     btnSwitch?.setOnCheckedChangeListener(this)
-    val value: Boolean = PrefsController.getBoolean(getString(R.string.key_secret_door), false)
-    val options: Boolean = PrefsController.getBoolean(getString(R.string.key_calculator), false)
-    btnSwitch?.isChecked = value
-    if (options) {
+    btnSwitch?.isChecked = Utils.isSecretDoor()
+    if (Utils.isSecretDoorOfCalculator()) {
         tvOptionItems?.text = getString(R.string.calculator)
         imgIcons?.setImageResource(R.drawable.ic_calculator)
     } else {
@@ -44,23 +43,21 @@ fun SecretDoorAct.onChooseOptionItems() {
                 Utils.Log(TAG, "position $position")
                 when (position) {
                     0 -> {
-                        PrefsController.putBoolean(getString(R.string.key_calculator), false)
+                        Utils.putSecretDoorOfCalculator(false)
                         tvOptionItems?.text = getString(R.string.virus_scanner)
                         imgIcons?.setImageResource(R.drawable.baseline_donut_large_white_48)
-                        val isFirstScanVirus: Boolean = PrefsController.getBoolean(getString(R.string.is_first_scan_virus), false)
-                        if (!isFirstScanVirus) {
+                        if (!Utils.isFirstScanVirus()) {
                             Navigator.onMoveSecretDoorSetUp(this@onChooseOptionItems)
-                            PrefsController.putBoolean(getString(R.string.is_first_scan_virus), true)
+                            Utils.putFistScanVirus(true)
                         }
                     }
                     else -> {
-                        PrefsController.putBoolean(getString(R.string.key_calculator), true)
+                        Utils.putSecretDoorOfCalculator(true)
                         tvOptionItems?.text = getString(R.string.calculator)
                         imgIcons?.setImageResource(R.drawable.ic_calculator)
-                        val isFirstCalculator: Boolean = PrefsController.getBoolean(getString(R.string.is_first_calculator), false)
-                        if (!isFirstCalculator) {
+                        if (!Utils.isFirstCalculator()) {
                             Navigator.onMoveSecretDoorSetUp(this@onChooseOptionItems)
-                            PrefsController.putBoolean(getString(R.string.is_first_calculator), true)
+                            Utils.putFistCalculator(true)
                         }
                     }
                 }

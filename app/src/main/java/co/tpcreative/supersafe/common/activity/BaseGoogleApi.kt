@@ -13,12 +13,12 @@ import androidx.appcompat.app.AppCompatActivity
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
-import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
+import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.model.*
 import com.google.android.gms.auth.GoogleAuthException
@@ -73,7 +73,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
 
     protected fun onFaceDown(isFaceDown: Boolean) {
         if (isFaceDown) {
-            val result: Boolean = PrefsController.getBoolean(getString(R.string.key_face_down_lock), false)
+            val result: Boolean = Utils.isFaceDown()
             if (result) {
                 Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
             }
@@ -165,7 +165,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             val mUser: User? = Utils.getUserInfo()
             if (mUser != null) {
                 mUser.driveConnected = false
-                Utils.setUserPreShare(mUser)
+                Utils.putUserPreShare(mUser)
                 onDriveError()
                 Utils.onWriteLog("Sign-in failed on Google drive..", EnumStatus.SIGN_IN)
             }
@@ -300,7 +300,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             val mUser: User? = Utils.getUserInfo()
             if (mUser != null) {
                 mUser.driveConnected = false
-                Utils.setUserPreShare(mUser)
+                Utils.putUserPreShare(mUser)
                 Utils.putRequestGoogleDriveSignOut(false)
             }
             onDriveSignOut()

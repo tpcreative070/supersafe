@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.putUserPreShare
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
@@ -50,6 +52,6 @@ class EnableCloudViewModel(private val userViewModel: UserViewModel) : BaseViewM
         val mCloudData: UserCloudResponse? = mData.userCloud
         mUser?.cloud_id = mCloudData?.cloud_id
         Utils.Log(TAG,"Response ${mData.toJson()}")
-        Utils.setUserPreShare(mUser)
+        Utils.putUserPreShare(mUser)
     }
 }

@@ -18,9 +18,12 @@ import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
+import co.tpcreative.supersafe.common.controller.EncryptedPreferenceDataStore
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.instantiate
+import co.tpcreative.supersafe.common.extension.setRequestSyncData
 import co.tpcreative.supersafe.common.helper.ThemeHelper
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import de.mrapp.android.dialog.MaterialDialog
@@ -302,6 +305,9 @@ class SettingsAct : BaseActivity() {
         }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            if (SuperSafeApplication.getInstance().isLiveMigration()){
+                preferenceManager.preferenceDataStore = EncryptedPreferenceDataStore.getInstance(requireContext())
+            }
             addPreferencesFromResource(R.xml.pref_general)
         }
 

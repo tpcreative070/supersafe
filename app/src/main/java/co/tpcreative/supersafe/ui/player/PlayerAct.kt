@@ -6,6 +6,8 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BasePlayerActivity
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.extension.putLastWindowIndex
+import co.tpcreative.supersafe.common.extension.putSeekTo
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.PlayerViewModel
@@ -85,8 +87,8 @@ class PlayerAct : BasePlayerActivity(), PlayerAdapter.ItemSelectedListener {
         super.onSaveInstanceState(outState)
         val seekPosition: Long? = player?.currentPosition
         outState.putBoolean(getString(R.string.key_rotate), isPortrait)
-        PrefsController.putLong(getString(R.string.key_seek_to), seekPosition!!.toLong())
-        PrefsController.putInt(getString(R.string.key_lastWindowIndex), player!!.currentWindowIndex)
+        Utils.putSeekTo(seekPosition ?: 0)
+        Utils.putLastWindowIndex(player?.currentWindowIndex ?:0)
         Utils.Log(TAG, "Saved------------------------ " + seekPosition + " - " + player?.currentWindowIndex)
     }
 

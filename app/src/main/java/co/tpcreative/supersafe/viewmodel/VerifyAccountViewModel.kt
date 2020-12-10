@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.putUserPreShare
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.ChangeUserIdRequest
@@ -77,7 +79,7 @@ class VerifyAccountViewModel(private val userViewModel: UserViewModel)  : Verify
                 mUser.email = email
                 mUser.other_email = email
                 mUser.change = true
-                Utils.setUserPreShare(mUser)
+                Utils.putUserPreShare(mUser)
             }
         }
     }

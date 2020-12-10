@@ -1,5 +1,7 @@
 package co.tpcreative.supersafe.common.controller
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.extension.getCheckoutItems
+import co.tpcreative.supersafe.common.extension.putCheckoutItems
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.CheckoutItems
@@ -64,7 +66,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                     mCheckout = CheckoutItems()
                     mCheckout.isPurchasedLifeTime = Utils.isRealCheckedOut(data.orderId)
                 }
-                Utils.setCheckoutItems(mCheckout)
+                Utils.putCheckoutItems(mCheckout)
             }
             EnumPurchase.SIX_MONTHS -> {
                 if (mCheckout != null) {
@@ -90,7 +92,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                         mCheckout.isPurchasedSixMonths = false
                     }
                 }
-                Utils.setCheckoutItems(mCheckout)
+                Utils.putCheckoutItems(mCheckout)
                 Utils.Log(TAG,"Preparing save ${Gson().toJson(mCheckout)}")
             }
             EnumPurchase.ONE_YEAR -> {
@@ -119,7 +121,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                     }
                 }
                 Utils.Log(TAG,"Preparing save ${Gson().toJson(mCheckout)}")
-                Utils.setCheckoutItems(mCheckout)
+                Utils.putCheckoutItems(mCheckout)
             }
             else -> {
                 /*When the user cancel and refund*/
@@ -127,7 +129,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                     Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                 }
                 Utils.checkingExistingSaver()
-                Utils.setCheckoutItems(CheckoutItems())
+                Utils.putCheckoutItems(CheckoutItems())
             }
         }
     }

@@ -1,8 +1,7 @@
 package co.tpcreative.supersafe.viewmodel
-import androidx.lifecycle.ViewModel
 import co.tpcreative.supersafe.common.api.requester.CategoryService
 import co.tpcreative.supersafe.common.api.requester.ItemService
-import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
@@ -12,7 +11,6 @@ import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.response.TrackingSyncResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import co.tpcreative.supersafe.common.services.SuperSafeService
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import com.google.gson.Gson
@@ -160,7 +158,7 @@ class ItemViewModel(private val itemService: ItemService) : BaseViewModel<ItemMo
         val mUser  = Utils.getUserInfo()
         mUser?.let {
             it.syncData = mData
-            Utils.setUserPreShare(it)
+            Utils.putUserPreShare(it)
         }
     }
 
@@ -169,7 +167,7 @@ class ItemViewModel(private val itemService: ItemService) : BaseViewModel<ItemMo
     private fun checkSaverSpace(itemModel: ItemModel, isOriginalGlobalId: Boolean) {
         val mType = EnumFormatType.values()[itemModel.formatType]
         if (mType == EnumFormatType.IMAGE) {
-            if (Utils.getSaverSpace()) {
+            if (Utils.isSaverSpace()) {
                 itemModel.isSaver = true
                 Utils.checkSaverToDelete(itemModel.getOriginal(), isOriginalGlobalId)
             }

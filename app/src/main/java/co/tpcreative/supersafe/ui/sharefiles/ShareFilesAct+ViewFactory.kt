@@ -46,7 +46,7 @@ fun ShareFilesAct.initUI(){
             tvTitle?.setTextColor(ContextCompat.getColor(this,themeApp.getAccentColor()))
         }
     } catch (e: Exception) {
-        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
+        Utils.putThemeColor(0)
     }
 
     btnGotIt.setOnClickListener {

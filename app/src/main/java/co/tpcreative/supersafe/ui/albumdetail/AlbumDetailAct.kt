@@ -14,6 +14,7 @@ import co.tpcreative.supersafe.common.activity.BaseGalleryActivity
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.extension.deleteDirectory
+import co.tpcreative.supersafe.common.extension.putScreenStatus
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Configuration

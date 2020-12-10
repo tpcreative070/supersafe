@@ -16,6 +16,10 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
+import co.tpcreative.supersafe.common.extension.getLastWindowIndex
+import co.tpcreative.supersafe.common.extension.getSeekTo
+import co.tpcreative.supersafe.common.extension.putLastWindowIndex
+import co.tpcreative.supersafe.common.extension.putSeekTo
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -52,8 +56,8 @@ fun PlayerAct.initUI(){
     } catch (e: Exception) {
         e.printStackTrace()
     }
-    seekTo = PrefsController.getLong(getString(R.string.key_seek_to), 0)
-    lastWindowIndex = PrefsController.getInt(getString(R.string.key_lastWindowIndex), 0)
+    seekTo = Utils.getSeekTo()
+    lastWindowIndex = Utils.getLastWindowIndex()
     if (mCipher != null) {
         initRecycleView(layoutInflater)
         getData()
@@ -77,7 +81,7 @@ fun PlayerAct.initUI(){
             tvTitle?.setTextColor(ContextCompat.getColor(this,themeApp.getAccentColor()))
         }
     } catch (e: Exception) {
-        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
+        Utils.putThemeColor(0)
     }
     imgArrowBack.setOnClickListener {
         val isLandscape: Boolean = Utils.isLandscape(this)
@@ -86,8 +90,8 @@ fun PlayerAct.initUI(){
             isPortrait = true
             Utils.Log(TAG, "Request SCREEN_ORIENTATION_PORTRAIT")
         } else {
-            PrefsController.putLong(getString(R.string.key_seek_to), 0)
-            PrefsController.putInt(getString(R.string.key_lastWindowIndex), 0)
+            Utils.putSeekTo(0)
+            Utils.putLastWindowIndex(0)
             finish()
         }
     }

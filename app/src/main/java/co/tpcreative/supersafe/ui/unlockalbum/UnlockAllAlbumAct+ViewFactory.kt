@@ -5,6 +5,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
+import co.tpcreative.supersafe.common.extension.getUserInfo
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.helper.SQLHelper

@@ -12,6 +12,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
+import co.tpcreative.supersafe.common.extension.isFaceDown
 import co.tpcreative.supersafe.model.ThemeApp
 
 abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
@@ -34,7 +35,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
 
     protected fun onFaceDown(isFaceDown: Boolean) {
         if (isFaceDown) {
-            val result: Boolean = PrefsController.getBoolean(getString(R.string.key_face_down_lock), false)
+            val result: Boolean = Utils.isFaceDown()
             if (result) {
                 Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
             }

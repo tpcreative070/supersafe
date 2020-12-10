@@ -8,6 +8,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.extension.setRequestSyncData
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp

@@ -9,6 +9,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
+import co.tpcreative.supersafe.common.extension.getUserInfo
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.network.Status

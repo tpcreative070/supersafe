@@ -6,12 +6,12 @@ import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.adapter.DividerItemDecoration
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.putUserPreShare
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.User
-import co.tpcreative.supersafe.ui.albumcover.AlbumCoverAct
 import co.tpcreative.supersafe.viewmodel.AccountManagerViewModel
-import co.tpcreative.supersafe.viewmodel.AlbumCoverViewModel
 import kotlinx.android.synthetic.main.activity_account_manager.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +41,7 @@ fun AccountManagerAct.intUI(){
                 override fun onCompleted() {
                     mUser.verified = false
                     mUser.driveConnected = false
-                    Utils.setUserPreShare(mUser)
+                    Utils.putUserPreShare(mUser)
                     onBackPressed()
                 }
                 override fun onError() {}

@@ -3,9 +3,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
 import co.tpcreative.supersafe.common.api.requester.DriveService
 import co.tpcreative.supersafe.common.api.requester.ItemService
-import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.extension.isFileExist
-import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
@@ -174,19 +172,19 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
         if (mData==null){
             if (mUser != null) {
                 mUser.driveConnected = false
-                Utils.setUserPreShare(mUser)
+                Utils.putUserPreShare(mUser)
             }
         }else{
             if (mData.error != null) {
                 if (mUser != null) {
                     mUser.driveConnected = false
-                    Utils.setUserPreShare(mUser)
+                    Utils.putUserPreShare(mUser)
                 }
             } else {
                 if (mUser != null) {
                     mUser.driveConnected = true
                     mUser.driveAbout = mData
-                    Utils.setUserPreShare(mUser)
+                    Utils.putUserPreShare(mUser)
                     Utils.Log(TAG,"set data here....")
                 }
             }
@@ -199,7 +197,7 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
             if (mUser != null) {
                 if (mUser.driveAbout != null) {
                     mUser.driveAbout?.inAppUsed = 0
-                    Utils.setUserPreShare(mUser)
+                    Utils.putUserPreShare(mUser)
                 }
             }
         } else {
@@ -215,7 +213,7 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                 if (mUser != null) {
                     if (mUser.driveAbout != null) {
                         mUser.driveAbout?.inAppUsed = countSize
-                        Utils.setUserPreShare(mUser)
+                        Utils.putUserPreShare(mUser)
                     }
                 }
             } catch (e: Exception) {
@@ -287,7 +285,7 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
     private fun checkSaverSpace(itemModel: ItemModel, isOriginalGlobalId: Boolean) {
         val mType = EnumFormatType.values()[itemModel.formatType]
         if (mType == EnumFormatType.IMAGE) {
-            if (Utils.getSaverSpace()) {
+            if (Utils.isSaverSpace()) {
                 itemModel.isSaver = true
                 Utils.checkSaverToDelete(itemModel.getOriginal(), isOriginalGlobalId)
             }

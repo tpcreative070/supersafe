@@ -5,6 +5,8 @@ import android.text.SpannableString
 import android.view.View
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.extension.isSecretDoorOfCalculator
+import co.tpcreative.supersafe.common.extension.putSecretDoor
 import co.tpcreative.supersafe.common.util.CalculatorImpl
 import co.tpcreative.supersafe.common.util.Constants
 import co.tpcreative.supersafe.common.util.Utils
@@ -22,8 +24,7 @@ fun SecretDoorSetUpAct.intUI(){
     mCalc = CalculatorImpl(this)
     AutofitHelper.create(tvResult)
     AutofitHelper.create(tvFormula)
-    val options: Boolean = PrefsController.getBoolean(getString(R.string.key_calculator), false)
-    if (options) {
+    if (Utils.isSecretDoorOfCalculator()) {
         calculator_holder?.visibility = View.VISIBLE
         imgLauncher?.visibility = View.INVISIBLE
         rlSecretDoor?.visibility = View.INVISIBLE
@@ -157,9 +158,9 @@ fun SecretDoorSetUpAct.onShowDialog() {
             .message(text = getString(R.string.enable_secret_door_detail))
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
-            .positiveButton {  PrefsController.putBoolean(getString(R.string.key_secret_door), true) }
+            .positiveButton {    Utils.putSecretDoor(true) }
             .negativeButton {
-                PrefsController.putBoolean(getString(R.string.key_secret_door), false)
+                Utils.putSecretDoor(false)
                 onBackPressed()
             }
     builder.show()

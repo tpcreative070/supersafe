@@ -15,7 +15,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity
 import co.tpcreative.supersafe.common.controller.*
-import co.tpcreative.supersafe.common.extension.instantiate
+import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.preference.MyPreference
 import co.tpcreative.supersafe.common.preference.MySwitchPreference
@@ -40,7 +40,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
     var mFirstPin: String? = ""
     var mRealPin: String? = Utils.getPinFromSharedPreferences()
     var mFakePin: String? = Utils.getFakePinFromSharedPreferences()
-    var isFakePinEnabled: Boolean = Utils.isEnabledFakePin()
+    var isFakePinEnabled: Boolean = Utils.isFacePin()
     var hiddenCam: HiddenCam? = null
     var mPinAlert = ""
     var goldfinger: Goldfinger? = null
@@ -180,7 +180,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
         onSetVisitableForgotPin(View.GONE)
         mRealPin = Utils.getPinFromSharedPreferences()
         mFakePin = Utils.getFakePinFromSharedPreferences()
-        isFakePinEnabled = Utils.isEnabledFakePin()
+        isFakePinEnabled = Utils.isFacePin()
     }
 
     override fun onPause() {
@@ -336,7 +336,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
 
     /*Call back finger print*/
     override fun onBiometricSuccessful() {
-        val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+        val isFingerPrintUnLock: Boolean = Utils.isAvailableBiometric()
         isFingerprint = isFingerPrintUnLock
         if (!isFingerPrintUnLock) {
             return
@@ -407,13 +407,13 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
             mChangePin?.onPreferenceChangeListener = createChangeListener()
             mChangePin?.onPreferenceClickListener = createActionPreferenceClickListener()
             /*Face down*/mFaceDown = findPreference(getString(R.string.key_face_down_lock)) as MySwitchPreference?
-            val switchFaceDown: Boolean = PrefsController.getBoolean(getString(R.string.key_face_down_lock), false)
+            val switchFaceDown: Boolean = Utils.isFaceDown()
             mFaceDown?.onPreferenceChangeListener = createChangeListener()
             mFaceDown?.onPreferenceClickListener = createActionPreferenceClickListener()
             mFaceDown?.setDefaultValue(switchFaceDown)
             Utils.Log(TAG, "default $switchFaceDown")
             /*FingerPrint*/mFingerPrint = findPreference(getString(R.string.key_fingerprint_unlock)) as MySwitchPreference?
-            val switchFingerPrint: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+            val switchFingerPrint: Boolean = Utils.isAvailableBiometric()
             mFingerPrint?.onPreferenceChangeListener = createChangeListener()
             mFingerPrint?.onPreferenceClickListener = createActionPreferenceClickListener()
             mFingerPrint?.setDefaultValue(switchFingerPrint)
@@ -425,6 +425,9 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
         }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            if (SuperSafeApplication.getInstance().isLiveMigration()){
+                preferenceManager.preferenceDataStore = EncryptedPreferenceDataStore.getInstance(requireContext())
+            }
             addPreferencesFromResource(R.xml.pref_general_lock_screen)
         }
     }
@@ -437,8 +440,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
     }
 
     fun onInitHiddenCamera() {
-        val value: Boolean = PrefsController.getBoolean(getString(R.string.key_break_in_alert), false)
-        if (!value) {
+        if (!Utils.isBreakAlert()) {
             return
         }
         hiddenCam = HiddenCam(
@@ -455,8 +457,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
     }
 
     fun onTakePicture(pin: String?) {
-        val value: Boolean = PrefsController.getBoolean(getString(R.string.key_break_in_alert), false)
-        if (!value) {
+        if (!Utils.isBreakAlert()) {
             return
         }
         pin?.let {

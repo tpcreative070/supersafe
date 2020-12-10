@@ -6,12 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.DividerItemDecoration
-import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.extension.isBreakAlert
+import co.tpcreative.supersafe.common.extension.putBreakAlert
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerAct
 import co.tpcreative.supersafe.viewmodel.BreakInAlertsViewModel
-import co.tpcreative.supersafe.viewmodel.CloudManagerViewModel
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -28,8 +27,7 @@ fun BreakInAlertsAct.initUI(){
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     btnSwitch?.setOnCheckedChangeListener(this)
-    val value: Boolean = PrefsController.getBoolean(getString(R.string.key_break_in_alert), false)
-    btnSwitch?.isChecked = value
+    btnSwitch?.isChecked = Utils.isBreakAlert()
     initRecycleView()
     tvPremiumDescription?.text = getString(R.string.break_in_alerts)
     rlBreakInAlerts.setOnClickListener {
@@ -53,15 +51,15 @@ fun BreakInAlertsAct.onAddPermissionCamera(value: Boolean) {
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     if (report?.areAllPermissionsGranted()!!) {
-                        Utils.setBreakAlert(value)
+                        Utils.putBreakAlert(value)
                     } else {
-                        Utils.setBreakAlert(false)
+                        Utils.putBreakAlert(false)
                         btnSwitch?.isChecked = false
                         Utils.Log(TAG, "Permission is denied")
                     }
                     // check for permanent denial of any permission
                     if (report.isAnyPermissionPermanentlyDenied) {
-                        Utils.setBreakAlert(false)
+                        Utils.putBreakAlert(false)
                         btnSwitch?.isChecked = false
                         /*Miss add permission in manifest*/Utils.Log(TAG, "request permission is failed")
                     }

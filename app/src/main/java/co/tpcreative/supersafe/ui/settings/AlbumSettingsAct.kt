@@ -14,6 +14,7 @@ import androidx.preference.PreferenceFragmentCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
+import co.tpcreative.supersafe.common.controller.EncryptedPreferenceDataStore
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
@@ -22,6 +23,7 @@ import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.AlbumSettingsViewModel
@@ -227,6 +229,9 @@ class AlbumSettingsAct : BaseActivity(){
         }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            if (SuperSafeApplication.getInstance().isLiveMigration()){
+                preferenceManager.preferenceDataStore = EncryptedPreferenceDataStore.getInstance(requireContext())
+            }
             addPreferencesFromResource(R.xml.pref_general_album_settings)
         }
 

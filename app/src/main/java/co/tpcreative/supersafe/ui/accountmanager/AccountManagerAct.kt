@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
+import co.tpcreative.supersafe.common.extension.getUserInfo
 import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*

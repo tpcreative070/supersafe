@@ -1,25 +1,18 @@
 package co.tpcreative.supersafe.common.util
 import android.Manifest
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.os.PowerManager
 import android.os.StatFs
-import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Patterns
-import android.util.TypedValue
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
@@ -58,8 +51,6 @@ import java.io.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.crypto.Cipher
-
 
 /**
  * Created by pc on 07/16/2017.
@@ -78,7 +69,7 @@ object Utils {
     const val COUNT_RATE = 9
     const val CODE_EXCEPTION = 1111
     const val MAX_LENGTH = 100
-    private val TAG = Utils::class.java.simpleName
+    val TAG = Utils::class.java.simpleName
     fun isValidEmail(target: CharSequence?): Boolean {
         return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target ?: "").matches()
     }
@@ -149,12 +140,6 @@ object Utils {
             val inputManager = SuperSafeApplication.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputManager.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
         }
-    }
-
-    fun dpToPx(dp: Int): Int {
-        val r: Resources = SuperSafeApplication.getInstance().getResources()
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                dp.toFloat(), r.displayMetrics).toInt()
     }
 
     fun getPackagePath(context: Context): File {
@@ -267,7 +252,7 @@ object Utils {
         view.startAnimation(animate)
     }
 
-    fun stringToHex(content: String): String? {
+    fun stringToHex(content: String): String {
         return String(Base64.encodeBase64(content.toByteArray(Charsets.UTF_8)))
     }
 
@@ -332,23 +317,6 @@ object Utils {
         hashMap["application/vnd.ms-powerpoint.slideshow.macroEnabled.12"] = MimeTypeFile(".ppsm", EnumFormatType.FILES, "application/vnd.ms-powerpoint.slideshow.macroEnabled.12")
         hashMap["application/vnd.ms-access"] = MimeTypeFile(".mdb", EnumFormatType.FILES, "application/vnd.ms-access")
         return hashMap
-    }
-
-    fun deviceInfo(): String? {
-        try {
-            val manufacturer: String = Build.MANUFACTURER
-            val model: String = Build.MODEL
-            val version: Int = Build.VERSION.SDK_INT
-            val versionRelease: String = Build.VERSION.RELEASE
-            return """manufacturer $manufacturer 
- model $model 
- version $version 
- versionRelease $versionRelease 
- app version name ${BuildConfig.VERSION_NAME}"""
-        } catch (e: Exception) {
-            onWriteLog(e.message, EnumStatus.DEVICE_ABOUT)
-        }
-        return "Exception"
     }
 
     fun onWriteLog(message: String?, status: EnumStatus) {
@@ -457,13 +425,13 @@ object Utils {
         return getScreenSize(activity).y
     }
 
-    fun getFontString(content: Int, value: String): String? {
+    fun getFontString(content: Int, value: String): String {
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         val mAccessColor = String.format("#%06x", themeApp?.getAccentColor()?.let { ContextCompat.getColor(SuperSafeApplication.getInstance(), it) }?.and(0xffffff))
         return SuperSafeApplication.getInstance().getString(content, "<font color='$mAccessColor'><b>$value</b></font>")
     }
 
-    fun getFontString(content: Int, value: String?, fontSize: Int): String? {
+    fun getFontString(content: Int, value: String?, fontSize: Int): String {
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         val mAccessColor = String.format("#%06x", themeApp?.getAccentColor()?.let { ContextCompat.getColor(SuperSafeApplication.getInstance(), it) }?.and(0xffffff))
         return SuperSafeApplication.getInstance().getString(content, "<font size='$fontSize' color='$mAccessColor'><b>$value</b></font>")
@@ -540,36 +508,12 @@ object Utils {
         return SuperSafeApplication.getInstance().readFakeKey()
     }
 
-    fun isEnabledFakePin(): Boolean {
-        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_fake_pin), false)
-    }
-
     fun isExistingFakePin(pin: String?, currentPin: String?): Boolean {
         return pin == currentPin
     }
 
     fun isExistingRealPin(pin: String?, currentPin: String?): Boolean {
         return pin == currentPin
-    }
-
-    fun onCheckNewVersion() {
-        if (PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.current_code_version), 0) == BuildConfig.VERSION_CODE) {
-            Log(TAG, "Already install this version")
-            return
-        } else {
-            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.current_code_version), BuildConfig.VERSION_CODE)
-            PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.we_are_a_team), false)
-            Log(TAG, "New install this version")
-        }
-    }
-
-    fun onUpdatedCountRate() {
-        val count: Int = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_count_to_rate), 0)
-        if (count > 999) {
-            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_count_to_rate), 0)
-        } else {
-            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_count_to_rate), count + 1)
-        }
     }
 
     fun onHomePressed(){
@@ -613,31 +557,6 @@ object Utils {
 
     fun getDeviceId() : String {
         return SuperSafeApplication.getInstance().getDeviceId()
-    }
-
-    fun isPauseSync(): Boolean {
-        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), false)
-    }
-
-    fun pauseSync(isPaused: Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), isPaused)
-    }
-
-    fun isCheckSyncSuggestion(): Boolean {
-        val name: String = SuperSafeApplication.getInstance().getString(R.string.key_count_sync)
-        val mCount: Int = PrefsController.getInt(name, 0)
-        val mSynced = getUserInfo()?.driveConnected
-        mSynced?.let {
-            if (!it) {
-                if (mCount == 5) {
-                    PrefsController.putInt(name, 0)
-                    return true
-                } else {
-                    PrefsController.putInt(name, mCount + 1)
-                }
-            }
-        }
-        return false
     }
 
     fun getAccessToken(): String? {
@@ -761,15 +680,6 @@ object Utils {
         return mListResult
     }
 
-    /*Check saver space*/
-    fun getSaverSpace(): Boolean {
-        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), false)
-    }
-
-    fun putSaverSpace(isSaver: Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), isSaver)
-    }
-
     /*Delete folder*/
     fun onDeleteItemFolder(item_id: String?) {
         val path: String = SuperSafeApplication.getInstance().getSuperSafePrivate() + item_id
@@ -808,83 +718,14 @@ object Utils {
         return !(value == null || value == "" || value == "null")
     }
 
-    fun getCheckedList(mList: MutableList<ItemModel>): MutableList<ItemModel> {
-        val mResult: MutableList<ItemModel> = ArrayList<ItemModel>()
-        for (index in mList) {
-            if (index.isChecked) {
-                mResult.add(index)
-            }
-        }
-        return mResult
-    }
-
     fun checkSaverToDelete(originalPath: String?, isOriginalGlobalId: Boolean) {
-        if (getSaverSpace()) {
+        if (isSaverSpace()) {
             if (originalPath?.isFileExist() == true) {
                 if (isOriginalGlobalId) {
                     onDeleteFile(originalPath)
                 }
             }
         }
-    }
-
-    fun getUserInfo(): User? {
-        try {
-            if(SuperSafeApplication.getInstance().isLiveMigration()){
-                val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
-                val mDecrypted = value?.createdTextByDefaultPKCS7(Cipher.DECRYPT_MODE)
-                if (mDecrypted!=null){
-                    Log(TAG,"user object decrypted length ${mDecrypted.length}")
-                    val mUser: User? = Gson().fromJson(mDecrypted, User::class.java)
-                    if (mUser != null) {
-                        return mUser
-                    }
-                }else{
-                    if (value != null) {
-                        val mUser: User? = Gson().fromJson(value, User::class.java)
-                        if (mUser != null) {
-                            return mUser
-                        }
-                    }
-                }
-            }else{
-                val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
-                if (value != null) {
-                    val mUser: User? = Gson().fromJson(value, User::class.java)
-                    if (mUser != null) {
-                        return mUser
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    fun setUserPreShare(user: User?) {
-        Log(TAG, "User id ====================> ${user?.email}")
-        Log(TAG, "Cloud id ===================> ${user?.cloud_id}")
-        if (SuperSafeApplication.getInstance().isLiveMigration()){
-            val mJson = Gson().toJson(user)
-            val mEncrypted = mJson.createdTextByDefaultPKCS7(Cipher.ENCRYPT_MODE)
-            if (mEncrypted!=null){
-                Log(TAG,"user object encrypted length ${mEncrypted.length}")
-                PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mEncrypted)
-            }else{
-                PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),mJson)
-            }
-        }else{
-            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user), Gson().toJson(user))
-        }
-    }
-
-    fun isRequestGoogleDriveSignOut() : Boolean{
-        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sign_out_google_drive), false)
-    }
-
-    fun putRequestGoogleDriveSignOut(value: Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sign_out_google_drive), value)
     }
 
     fun clearAppDataAndReCreateData(){
@@ -895,7 +736,7 @@ object Utils {
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance())
         SQLHelper.onCleanDatabase()
         PrefsController.clear()
-        setUserPreShare(User())
+        putUserPreShare(User())
         SQLHelper.getList()
         EncryptDecryptFilesHelper.getInstance()?.cleanUp()
         EncryptDecryptPinHelper.getInstance()?.cleanUp()
@@ -923,7 +764,7 @@ object Utils {
         if (!cloudId.isNullOrEmpty()){
             mUser?.cloud_id = cloudId
         }
-        setUserPreShare(mUser)
+        putUserPreShare(mUser)
     }
 
     fun setEmailToken(data: EmailToken?){
@@ -933,7 +774,7 @@ object Utils {
         token?.refresh_token = data?.refresh_token
         token?.token_type = data?.token_type
         mUser?.email_token = token
-        setUserPreShare(mUser)
+        putUserPreShare(mUser)
     }
 
     fun onScanFile(activity: Context, nameLogs: String?) {
@@ -950,81 +791,8 @@ object Utils {
         }
     }
 
-    /*Request from android greater than or equally*/
-    fun saveScanLog() {
-        val resolver = SuperSafeApplication.getInstance().contentResolver
-        val contentValues = ContentValues()
-        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "image1")
-        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/supersafe")
-        val uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
-        resolver.openOutputStream(uri!!).use {
-            try {
-                // it?.write("Hello".toByteArray())
-                val finalBitmap = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources, R.drawable.ic_drive_cloud)
-                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, it)
-                it?.flush()
-                it?.close()
-                Utils.Log(TAG, "Created file successfully")
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
-                Utils.Log(TAG, "Could not create file")
-            }
-        }
-    }
-
-    fun insertValue(item: ItemModel){
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val resolver = SuperSafeApplication.getInstance().contentResolver
-                val mFile = geOutputExportFiles(item, false)
-                val contentValues = ContentValues()
-                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, mFile?.name)
-                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, item.mimeType)
-                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/SuperSafeExport")
-                resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
-            }
-        }
-        catch (e: Exception){
-            e.printStackTrace()
-        }
-    }
-
-    fun saveImage() {
-        val bm: Bitmap = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources, R.drawable.ic_drive_cloud)
-        val root: String = SuperSafeApplication.getInstance().getSuperSafe()
-        val myDir = File(root)
-        myDir.mkdirs()
-        val file = File(myDir, "text.jpg")
-        try {
-            val out = FileOutputStream(file)
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, out)
-            out.flush()
-            out.close()
-            Log(TAG, "Created file successfully")
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-            Log(TAG, "Could not create file")
-        }
-    }
-
     fun isRealCheckedOut(orderId: String): Boolean {
         return orderId.contains("GPA")
-    }
-
-    fun setCheckoutItems(checkoutItems: CheckoutItems?) {
-        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_checkout_items), Gson().toJson(checkoutItems))
-    }
-
-    fun getCheckoutItems(): CheckoutItems? {
-        val value: String? = PrefsController.getString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_checkout_items), null)
-        if (value != null) {
-            val mResult: CheckoutItems? = Gson().fromJson(value, CheckoutItems::class.java)
-            if (mResult != null) {
-                return mResult
-            }
-        }
-        return null
     }
 
     fun isPremium(): Boolean {
@@ -1038,14 +806,6 @@ object Utils {
             }
         }
         return false
-    }
-
-    fun setBreakAlert(value: Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_break_in_alert), value)
-    }
-
-    fun isBreakAlert() : Boolean{
-       return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_break_in_alert), false)
     }
 
     fun isVerifiedAccount() : Boolean{
@@ -1076,7 +836,7 @@ object Utils {
                     } else {
                         mUserResult.driveConnected = false
                         mUserResult.access_token = null
-                        setUserPreShare(mUser)
+                        putUserPreShare(mUser)
                     }
                 }
             }
@@ -1183,10 +943,10 @@ object Utils {
 
     /*Stopping premium features*/
     fun stoppingPremiumFeatures(){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_fake_pin), false)
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_break_in_alert), false)
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_secret_door), false)
-        if(getSaverSpace()){
+        putFacePin(false)
+        putBreakAlert(false)
+        putSecretDoor(false)
+        if(isSaverSpace()){
             stopSaverSpace()
             putSaverSpace(false)
         }
@@ -1200,14 +960,14 @@ object Utils {
     }
 
     fun checkingServicesToStopPremiumFeatures() : Boolean{
-        if (getSaverSpace() || getThemeColor()>0 || getPositionThemeMode() > 0 || isEnabledFakePin() || isBreakAlert()){
+        if (isSaverSpace() || getThemeColor()>0 || getPositionThemeMode() > 0 || isFacePin() || isBreakAlert()){
             return true
         }
         return false
     }
 
     fun checkingExistingSaver(){
-        if (!getSaverSpace()){
+        if (!isSaverSpace()){
             val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isSaver = true, isFakePin = false)
             mList?.let {
                 if (it.size>0){
@@ -1265,8 +1025,6 @@ object Utils {
             return result
         }
         return null
-//        val message: String = kotlin.String.format(getString(R.string.your_space_is_not_enough_to), "export. ", "Request spaces: $result")
-//        Utils.showDialog(this, message = message)
     }
 
     fun getDataItemsFromImport(mainCategory: MainCategoryModel, mData: MutableList<ImageModel>) : MutableList<ImportFilesModel> {
@@ -1279,7 +1037,7 @@ object Utils {
             Log(TAG, "mimeType $mimeType")
             Log(TAG, "name $name")
             Log(TAG, "path $path")
-            val fileExtension: String? = getFileExtension(path)
+            val fileExtension: String = getFileExtension(path)
             Log(TAG, "file extension " + getFileExtension(path))
             try {
                 val mimeTypeFile: MimeTypeFile? = mediaTypeSupport()[fileExtension]
@@ -1298,22 +1056,6 @@ object Utils {
     fun getId() : String?{
         val mData = getUserInfo()
         return mData?._id
-    }
-
-    fun setLastTimeSyncData(value: String){
-        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_last_time_sync_data), value)
-    }
-
-    fun getLastTimeSyncData() : String {
-        return PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_last_time_sync_data), "") ?: ""
-    }
-
-    fun setRequestSyncData(value: Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data), value)
-    }
-
-    fun isRequestSyncData() : Boolean {
-        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_request_sync_data), true)
     }
 
     fun isRequestUpload() : Boolean{
@@ -1338,40 +1080,9 @@ object Utils {
         }
     }
 
-    fun getScreenStatus() : Int{
-        return PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-    }
-
-    fun putScreenStatus(value: Int){
-        return PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), value)
-    }
-
-    fun getHomePressed() : Boolean{
-        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_home_pressed), false)
-    }
-
-    fun putHomePressed(value: Boolean){
-        return PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_home_pressed), value)
-    }
-
-    fun isScreenOn(activity: Activity) : Boolean {
-        val pm = activity.getSystemService(Context.POWER_SERVICE) as PowerManager
-        if (pm.isInteractive) {
-            return true
-        }
-        return false
-    }
-
-    fun isEnabledTwoFactoryAuthentication() : Boolean{
-        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_enable_two_factor_authentication),false)
-    }
-
-    fun isRunning() : Boolean {
-        return  PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_running), false)
-    }
-    fun putIsRunning(value : Boolean){
-        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_running),value)
-    }
+   fun getString(res : Int) : String {
+       return SuperSafeApplication.getInstance().getString(res)
+   }
 }
 
 interface UtilsListener {

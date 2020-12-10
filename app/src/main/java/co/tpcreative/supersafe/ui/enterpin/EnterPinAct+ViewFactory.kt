@@ -9,6 +9,9 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonScreenLock
+import co.tpcreative.supersafe.common.extension.getScreenStatus
+import co.tpcreative.supersafe.common.extension.isSecretDoor
+import co.tpcreative.supersafe.common.extension.isSecretDoorOfCalculator
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.CalculatorImpl
@@ -52,7 +55,7 @@ fun EnterPinAct.initUI() {
                         onDisplayText()
                     } else {
                         if (Utils.isSensorAvailable()) {
-                            val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+                            val isFingerPrintUnLock: Boolean = Utils.isAvailableBiometric()
                             if (isFingerPrintUnLock) {
                                 imgSwitchTypeUnClock?.visibility = View.VISIBLE
                                 isFingerprint = isFingerPrintUnLock
@@ -60,7 +63,7 @@ fun EnterPinAct.initUI() {
                                 Utils.Log(TAG, "Action find fingerPrint")
                             }
                         }
-                        val value: Boolean = PrefsController.getBoolean(getString(R.string.key_secret_door), false)
+                        val value: Boolean = Utils.isSecretDoor()
                         if (value) {
                             imgSwitchTypeUnClock?.visibility = View.INVISIBLE
                             changeLayoutSecretDoor(true)
@@ -203,7 +206,7 @@ fun EnterPinAct.initUI() {
             onSetVisitFingerprintView(isFingerprint)
         }
         imgFingerprint.setOnClickListener {
-            val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+            val isFingerPrintUnLock: Boolean = Utils.isAvailableBiometric()
             if (isFingerPrintUnLock) {
                 startBiometricPrompt()
             }
@@ -349,7 +352,7 @@ fun EnterPinAct.changeLayoutSecretDoor(isVisit: Boolean) {
         rlButton?.visibility = View.INVISIBLE
         rlDots?.visibility = View.INVISIBLE
         tvTopAttempts?.visibility = View.INVISIBLE
-        val options: Boolean = PrefsController.getBoolean(getString(R.string.key_calculator), false)
+        val options: Boolean = Utils.isSecretDoorOfCalculator()
         if (options) {
             imgLauncher?.visibility = View.INVISIBLE
             rlSecretDoor?.visibility = View.INVISIBLE
@@ -369,7 +372,7 @@ fun EnterPinAct.changeLayoutSecretDoor(isVisit: Boolean) {
         rlSecretDoor?.visibility = View.INVISIBLE
         calculator_holder?.visibility = View.INVISIBLE
         if (Utils.isSensorAvailable()) {
-            val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+            val isFingerPrintUnLock: Boolean = Utils.isAvailableBiometric()
             if (isFingerPrintUnLock) {
                 imgSwitchTypeUnClock?.visibility = View.VISIBLE
                 isFingerprint = isFingerPrintUnLock

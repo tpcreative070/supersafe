@@ -18,6 +18,7 @@ import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.extension.createDirectory
 import co.tpcreative.supersafe.common.extension.deleteFile
+import co.tpcreative.supersafe.common.extension.putScreenStatus
 import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper

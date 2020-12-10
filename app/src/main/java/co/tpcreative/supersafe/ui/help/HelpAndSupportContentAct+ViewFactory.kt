@@ -3,6 +3,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.extension.getUserInfo
 import co.tpcreative.supersafe.common.extension.setIconTint
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory

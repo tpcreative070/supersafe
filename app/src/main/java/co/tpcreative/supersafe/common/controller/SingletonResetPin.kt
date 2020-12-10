@@ -1,5 +1,7 @@
 package co.tpcreative.supersafe.common.controller
 import android.os.CountDownTimer
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.putUserPreShare
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
@@ -26,7 +28,7 @@ class SingletonResetPin {
                 Utils.Log(TAG, "Finish :")
                 val mUser: User? = Utils.getUserInfo()
                 mUser?.isWaitingSendMail = true
-                Utils.setUserPreShare(mUser)
+                Utils.putUserPreShare(mUser)
                 mCountDownTimer = null
                 ServiceManager.getInstance()?.onSendEmail()
                 ServiceManager.getInstance()?.setIsWaitingSendMail(false)
@@ -42,13 +44,13 @@ class SingletonResetPin {
             ServiceManager.getInstance()?.setIsWaitingSendMail(false)
             val mUser: User? = Utils.getUserInfo()
             mUser?.isWaitingSendMail = false
-            Utils.setUserPreShare(mUser)
+            Utils.putUserPreShare(mUser)
         } else {
             try {
                 ServiceManager.getInstance()?.setIsWaitingSendMail(false)
                 val mUser: User? = Utils.getUserInfo()
                 mUser?.isWaitingSendMail = false
-                Utils.setUserPreShare(mUser)
+                Utils.putUserPreShare(mUser)
             } catch (e: Exception) {
             }
         }

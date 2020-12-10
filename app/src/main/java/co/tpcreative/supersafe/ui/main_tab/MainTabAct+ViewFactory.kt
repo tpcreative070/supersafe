@@ -21,6 +21,7 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
+import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.util.NetworkUtil
@@ -211,20 +212,18 @@ fun MainTabAct.onAlert(content: String) {
 }
 
 fun MainTabAct.onShowSuggestion() {
-    val isFirstFile: Boolean = PrefsController.getBoolean(getString(R.string.key_is_first_files), false)
-    if (!isFirstFile) {
+    if (!Utils.isFirstFiles()) {
         val mList: MutableList<ItemModel>? = SQLHelper.getListAllItems(false)
         if (mList != null && mList.size > 0) {
-            PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
+            Utils.putFirstFiles(true)
             return
         }
         viewFloatingButton?.visibility = View.VISIBLE
         onSuggestionAddFiles()
     } else {
-        val isFirstEnableSyncData: Boolean = PrefsController.getBoolean(getString(R.string.key_is_first_enable_sync_data), false)
-        if (!isFirstEnableSyncData) {
+        if (!Utils.isFirstEnableSyncData()) {
             if (Utils.isConnectedToGoogleDrive()) {
-                PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
+                Utils.putFirstEnableSyncData(true)
             }
             onSuggestionSyncData()
         }
@@ -242,20 +241,20 @@ fun MainTabAct.onAskingRateApp() {
             .negativeButton(text = getString(R.string.report_problem))
             .neutralButton(text = getString(R.string.no_thanks))
             .neutralButton {
-                PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
+                Utils.putWeAreATeam(true)
                 finish()
             }
             .negativeButton {
                 val categories = Categories(1, getString(R.string.contact_support))
                 val support = HelpAndSupportModel(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null)
                 Navigator.onMoveReportProblem(this, support)
-                PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
+                Utils.putWeAreATeam(true)
             }
             .positiveButton {
                 Utils.Log(TAG, "Positive")
                 onRateApp()
-                PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
-                PrefsController.putBoolean(getString(R.string.we_are_a_team_positive), true)
+                Utils.putWeAreATeam(true)
+                Utils.putWeAreATeamOfPositive(true)
             }
     builder.show()
 }
@@ -294,27 +293,27 @@ fun MainTabAct.onSuggestionSyncData() {
                     super.onTargetClick(view) // This call is optional
                     onEnableSyncData()
                     view?.dismiss(true)
-                    PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
+                    Utils.putFirstEnableSyncData(true)
                     Utils.Log(TAG, "onTargetClick")
                 }
 
                 override fun onOuterCircleClick(view: TapTargetView?) {
                     super.onOuterCircleClick(view)
-                    PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
+                    Utils.putFirstEnableSyncData(true)
                     view?.dismiss(true)
                     Utils.Log(TAG, "onOuterCircleClick")
                 }
 
                 override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
                     super.onTargetDismissed(view, userInitiated)
-                    PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
+                    Utils.putFirstEnableSyncData(true)
                     view?.dismiss(true)
                     Utils.Log(TAG, "onTargetDismissed")
                 }
 
                 override fun onTargetCancel(view: TapTargetView?) {
                     super.onTargetCancel(view)
-                    PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
+                    Utils.putFirstEnableSyncData(true)
                     view?.dismiss(true)
                     Utils.Log(TAG, "onTargetCancel")
                 }

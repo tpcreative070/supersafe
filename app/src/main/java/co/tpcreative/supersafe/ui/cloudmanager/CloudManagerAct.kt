@@ -7,6 +7,9 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.isSaverSpace
+import co.tpcreative.supersafe.common.extension.pauseSync
+import co.tpcreative.supersafe.common.extension.putSaverSpace
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.CloudManagerViewModel
@@ -21,7 +24,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
     var isDownload = false
     var isSaverSpace = false
     var isRefresh = false
-    private val isPreviousSaverSpace  = Utils.getSaverSpace()
+    private val isPreviousSaverSpace  = Utils.isSaverSpace()
     lateinit var viewModel : CloudManagerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,17 +109,17 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
         /*Check disable saver func*/
-        if (isDownload && isPreviousSaverSpace != Utils.getSaverSpace()) {
+        if (isDownload && isPreviousSaverSpace != Utils.isSaverSpace()) {
             /*Stop saver saver*/
             Utils.stopSaverSpace()
             Utils.Log(TAG, "stop saver space")
         }
-        if (isSaverSpace && isPreviousSaverSpace != Utils.getSaverSpace()) {
+        if (isSaverSpace && isPreviousSaverSpace != Utils.isSaverSpace()) {
             /*Start saver space*/
             viewModel.startSaverSpace()
             Utils.Log(TAG, "start saver space")
         }
-        if (isRefresh || isPreviousSaverSpace != Utils.getSaverSpace() || !isPauseCloudSync) {
+        if (isRefresh || isPreviousSaverSpace != Utils.isSaverSpace() || !isPauseCloudSync) {
             ServiceManager.getInstance()?.onPreparingSyncData()
         }
     }

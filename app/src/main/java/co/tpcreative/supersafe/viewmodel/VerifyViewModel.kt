@@ -3,6 +3,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.extension.getString
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.putUserPreShare
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
@@ -118,7 +120,7 @@ open class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewM
     private fun setCodeRequest(mCode : String){
         val mUser: User? = Utils.getUserInfo()
         mUser?.code = mCode
-        Utils.setUserPreShare(mUser)
+        Utils.putUserPreShare(mUser)
     }
 
     private fun setPremiumData(mData : DataResponse?){
@@ -131,7 +133,7 @@ open class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewM
             if (mData.premium != null) {
                 mUser.premium = mData.premium
             }
-            Utils.setUserPreShare(mUser)
+            Utils.putUserPreShare(mUser)
         }
     }
 }

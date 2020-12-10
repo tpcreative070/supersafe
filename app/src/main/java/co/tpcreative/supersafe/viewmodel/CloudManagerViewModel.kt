@@ -6,6 +6,8 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.deleteFile
 import co.tpcreative.supersafe.common.extension.getString
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.isSaverSpace
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
@@ -96,7 +98,7 @@ class CloudManagerViewModel : BaseViewModel<ItemModel>(){
         leftItems.postValue(lefFiles)
         val uploadedFiles: String = kotlin.String.format(getString(R.string.uploaded), "" + (Navigator.LIMIT_UPLOAD - (mUser?.syncData?.left ?: Navigator.LIMIT_UPLOAD)))
         uploadedItems.postValue(uploadedFiles)
-        if (Utils.getSaverSpace()) {
+        if (Utils.isSaverSpace()) {
             deviceSaving.postValue(ConvertUtils.byte2FitMemorySize(sizeSaverFiles))
         } else {
             deviceSaving.postValue(ConvertUtils.byte2FitMemorySize(0))

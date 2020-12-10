@@ -6,6 +6,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.extension.putFacePin
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
@@ -50,7 +51,7 @@ class FakePinAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
 
     override fun onCheckedChanged(compoundButton: CompoundButton?, b: Boolean) {
         val mThemeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-        PrefsController.putBoolean(getString(R.string.key_fake_pin), b)
+        Utils.putFacePin(b)
         if (b) {
             tvCreatePin?.setTextColor(ContextCompat.getColor(this,mThemeApp?.getAccentColor()!!))
             tvCreatePin?.isEnabled = b

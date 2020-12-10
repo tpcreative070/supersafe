@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.extension.getCheckoutItems
+import co.tpcreative.supersafe.common.extension.putCheckoutItems
 import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
@@ -125,7 +127,7 @@ fun PremiumAct.onCheckout(data: PurchaseData?, purchase: EnumPurchase?) {
                 mCheckout = CheckoutItems()
                 mCheckout.isPurchasedLifeTime = Utils.isRealCheckedOut(data?.orderId ?: "")
             }
-            Utils.setCheckoutItems(mCheckout)
+            Utils.putCheckoutItems(mCheckout)
         }
         EnumPurchase.SIX_MONTHS -> {
             if (mCheckout != null) {
@@ -142,7 +144,7 @@ fun PremiumAct.onCheckout(data: PurchaseData?, purchase: EnumPurchase?) {
                     mCheckout.isPurchasedSixMonths = false
                 }
             }
-            Utils.setCheckoutItems(mCheckout)
+            Utils.putCheckoutItems(mCheckout)
         }
         EnumPurchase.ONE_YEAR -> {
             if (mCheckout != null) {
@@ -159,9 +161,9 @@ fun PremiumAct.onCheckout(data: PurchaseData?, purchase: EnumPurchase?) {
                     mCheckout.isPurchasedOneYears = false
                 }
             }
-            Utils.setCheckoutItems(mCheckout)
+            Utils.putCheckoutItems(mCheckout)
         }
-        else -> Utils.setCheckoutItems(CheckoutItems())
+        else -> Utils.putCheckoutItems(CheckoutItems())
     }
 }
 

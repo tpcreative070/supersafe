@@ -22,6 +22,7 @@ import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.RetrofitBuilder
+import co.tpcreative.supersafe.common.controller.AppPrefs
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.*
@@ -39,6 +40,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
@@ -75,7 +77,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         serverApiCor = RetrofitBuilder.getService(typeService = EnumTypeServices.SYSTEM)
         serverDriveApiCor = RetrofitBuilder.getService(getString(R.string.url_google), typeService = EnumTypeServices.GOOGLE_DRIVE)
         serverMicCor = RetrofitBuilder.getService(getString(R.string.url_graph_microsoft), typeService = EnumTypeServices.EMAIL_OUTLOOK)
-        //ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
                 .setContext(applicationContext)
                 .setMode(ContextWrapper.MODE_PRIVATE)
@@ -83,8 +84,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
                 .setUseDefaultSharedPreference(true)
                 .build()
         Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
-        PrefsController.putLong(getString(R.string.key_seek_to), 0)
-        PrefsController.putInt(getString(R.string.key_lastWindowIndex), 0)
+        Utils.putSeekTo(0)
+        Utils.putLastWindowIndex(0)
         /*Migration*/
         if (isLiveMigration()) {
             superSafe = getExternalFilesDir(null)?.absolutePath + "/.SuperSafe_DoNot_Delete/"
@@ -464,7 +465,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         if (!BuildConfig.DEBUG){
             return true
         }
-        return true
+        return false
     }
 
     fun checkingMigrationAfterVerifiedPin(value: String?, isReal: Boolean, isWrite: Boolean){

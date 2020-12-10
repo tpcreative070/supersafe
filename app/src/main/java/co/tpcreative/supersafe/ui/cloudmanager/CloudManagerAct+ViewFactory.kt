@@ -7,8 +7,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.extension.isPauseSync
+import co.tpcreative.supersafe.common.extension.isSaverSpace
+import co.tpcreative.supersafe.common.extension.putSaverSpace
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.ConvertUtils
@@ -65,7 +67,7 @@ fun CloudManagerAct.initUI(){
 
     val pauseCloudSync: Boolean = Utils.isPauseSync()
     btnSwitchPauseSync?.isChecked = pauseCloudSync
-    val savingSpace: Boolean = Utils.getSaverSpace()
+    val savingSpace: Boolean = Utils.isSaverSpace()
     switch_SaveSpace?.isChecked = savingSpace
 
 
@@ -129,7 +131,7 @@ fun CloudManagerAct.onShowDialog(size : Long) {
             .positiveButton(text = getString(R.string.download))
             .positiveButton {
                 Utils.Log(TAG, "positive")
-                PrefsController.putBoolean(getString(R.string.key_saving_space), false)
+                Utils.putSaverSpace(false)
                disableSaverSpace(EnumStatus.DOWNLOAD)
             }
     builder.show()
@@ -147,7 +149,7 @@ fun CloudManagerAct.onShowPremium() {
         builder.setMargin(60, 0, 60, 0)
         builder.showHeader(true)
         builder.setPositiveButton(getString(R.string.get_premium)) { _, i -> Navigator.onMoveToPremium(this) }
-        builder.setNegativeButton(getText(R.string.later)) { _, i -> PrefsController.putBoolean(getString(R.string.key_saving_space), false) }
+        builder.setNegativeButton(getText(R.string.later)) { _, i -> Utils.putSaverSpace(false) }
         builder.show()
     } catch (e: Exception) {
         e.printStackTrace()

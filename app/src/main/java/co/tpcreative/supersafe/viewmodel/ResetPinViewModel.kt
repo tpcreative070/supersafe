@@ -3,6 +3,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.extension.getString
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.putUserPreShare
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
@@ -63,7 +65,7 @@ class ResetPinViewModel(private val userViewModel: UserViewModel)  : VerifyViewM
     private fun setCodeRequest(mCode : String){
         val mUser: User? = Utils.getUserInfo()
         mUser?.code = mCode
-        Utils.setUserPreShare(mUser)
+        Utils.putUserPreShare(mUser)
     }
 
     fun verifyTwoFactoryAuthentication() = liveData(Dispatchers.Main){

@@ -7,6 +7,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.extension.isSaverSpace
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
@@ -195,7 +196,7 @@ fun PhotoSlideShowAct.deleteItems(isExport : Boolean? = false){
 }
 
 fun PhotoSlideShowAct.exportingFiles(mData : MutableList<ItemModel>,isSharingFiles : Boolean) = CoroutineScope(Dispatchers.Main).launch{
-    if (Utils.getSaverSpace()){
+    if (Utils.isSaverSpace()){
         if (NetworkUtil.pingIpAddress(this@exportingFiles)){
             Utils.onBasicAlertNotify(this@exportingFiles,"Alert",getString(R.string.no_connection))
             return@launch

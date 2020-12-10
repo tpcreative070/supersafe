@@ -3,6 +3,7 @@ import androidx.lifecycle.ViewModel
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.requester.MicService
 import co.tpcreative.supersafe.common.extension.getString
+import co.tpcreative.supersafe.common.extension.getUserInfo
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.MicRequest

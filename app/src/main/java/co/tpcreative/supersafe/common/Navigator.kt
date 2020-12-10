@@ -53,7 +53,6 @@ object Navigator {
     const val VERIFY_PIN = 1004
     const val SECRET_DOOR_SUET_UP = 1005
     const val ENABLE_CLOUD = 1006
-    const val REQUEST_TWO_FACTORY_AUTHENTICATION = 7777
     const val REQUEST_CODE_EMAIL = 1007
     const val REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 1008
     const val SHARE = 1009
@@ -71,9 +70,9 @@ object Navigator {
     const val ERROR = 2005
     const val COMPLETED_RECREATE = 2006
     const val PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 23
-    val INTENT_EXTRA_ALBUM: String? = "album"
-    val INTENT_EXTRA_IMAGES: String? = "images"
-    val INTENT_EXTRA_LIMIT: String? = "limit"
+    val INTENT_EXTRA_ALBUM: String = "album"
+    val INTENT_EXTRA_IMAGES: String = "images"
+    val INTENT_EXTRA_LIMIT: String = "limit"
     const val DEFAULT_LIMIT = 20
     var limit = 0
     fun onMoveToMainTab(context: Context?,isClear : Boolean) {

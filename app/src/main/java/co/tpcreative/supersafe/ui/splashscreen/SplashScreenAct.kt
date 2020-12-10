@@ -9,6 +9,9 @@ import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.extension.deleteDirectory
+import co.tpcreative.supersafe.common.extension.isRunning
+import co.tpcreative.supersafe.common.extension.putScreenStatus
+import co.tpcreative.supersafe.common.extension.setRequestSyncData
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
@@ -43,7 +46,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                 rlScreen?.setBackgroundColor(ContextCompat.getColor(this,themeApp.getPrimaryColor()))
             }
         } catch (e: Exception) {
-            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),0)
+            Utils.putThemeColor(0)
         }
         grantAccess = SuperSafeApplication.getInstance().isGrantAccess()
         SuperSafeApplication.getInstance().initFolder()

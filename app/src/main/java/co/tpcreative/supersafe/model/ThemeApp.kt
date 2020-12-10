@@ -62,17 +62,17 @@ class ThemeApp : Serializable {
         this.accentColor = accentColor
     }
 
-    fun getThemeInfo(): ThemeApp? {
+    fun getThemeInfo(): ThemeApp {
         try {
             val value: Int = Utils.getThemeColor()
             val mThem: List<ThemeApp> = ThemeUtil.getThemeList()
             if (mThem.size > value) {
                 return mThem[value]
             }else {
-                PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
+                Utils.putThemeColor(0)
             }
         } catch (e: Exception) {
-            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
+            Utils.putThemeColor(0)
             e.printStackTrace()
         }
         return ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton)

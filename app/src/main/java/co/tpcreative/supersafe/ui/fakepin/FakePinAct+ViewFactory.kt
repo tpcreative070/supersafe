@@ -2,7 +2,9 @@ package co.tpcreative.supersafe.ui.fakepin
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.extension.isFacePin
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import kotlinx.android.synthetic.main.activity_fake_pin.*
 import kotlinx.android.synthetic.main.layout_premium_header.*
@@ -11,7 +13,7 @@ fun FakePinAct.initUI(){
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     btnSwitch?.setOnCheckedChangeListener(this)
-    val value: Boolean = PrefsController.getBoolean(getString(R.string.key_fake_pin), false)
+    val value: Boolean = Utils.isFacePin()
     btnSwitch?.isChecked = value
     tvCreatePin?.isEnabled = value
     val fakePin: String? = SuperSafeApplication.getInstance().readFakeKey()

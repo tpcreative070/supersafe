@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.ui.askpermission
 import android.Manifest
 import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.extension.isRunning
+import co.tpcreative.supersafe.common.extension.putScreenStatus
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication

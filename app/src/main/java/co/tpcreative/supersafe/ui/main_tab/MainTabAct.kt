@@ -6,14 +6,13 @@ import android.view.*
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
-import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.controller.PremiumManager
 import co.tpcreative.supersafe.common.dialog.DialogListener
 import co.tpcreative.supersafe.common.dialog.DialogManager
-import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
+import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.AnimationsContainer
@@ -141,7 +140,7 @@ class MainTabAct : BaseGoogleApi(){
         Utils.Log(TAG, "OnDestroy")
         Utils.onUpdatedCountRate()
         EventBus.getDefault().unregister(this)
-        PrefsController.putBoolean(getString(R.string.second_loads), true)
+        Utils.putSecondLoads(true)
         if (SingletonManager.getInstance().isReloadMainTab()) {
             SingletonManager.getInstance().setReloadMainTab(false)
         } else {
@@ -214,16 +213,10 @@ class MainTabAct : BaseGoogleApi(){
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     val mData: ArrayList<ImageModel>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
                     mData?.let {
-                        val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
-                        if (list == null) {
-                            Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE)
-                            return
-                        }
+                        val list: MutableList<MainCategoryModel> = SQLHelper.getList()
                         val mCategory: MainCategoryModel = list[0]
-                        val mResult = mCategory?.let { it1 -> Utils.getDataItemsFromImport(it1,it) }
-                        if (mResult != null) {
-                            importingData(mResult)
-                        }
+                        val mResult = mCategory.let { it1 -> Utils.getDataItemsFromImport(it1,it) }
+                        importingData(mResult)
                     }
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery")
@@ -266,15 +259,12 @@ class MainTabAct : BaseGoogleApi(){
         } else {
             PremiumManager.getInstance().onStop()
             Utils.onDeleteTemporaryFile()
-            val isPressed: Boolean = PrefsController.getBoolean(getString(R.string.we_are_a_team), false)
-            if (isPressed) {
+            if (Utils.getWeAreATeam()) {
                 super.onBackPressed()
             } else {
-                val isSecondLoad: Boolean = PrefsController.getBoolean(getString(R.string.second_loads), false)
-                if (isSecondLoad) {
-                    val isPositive: Boolean = PrefsController.getBoolean(getString(R.string.we_are_a_team_positive), false)
-                    mCountToRate = PrefsController.getInt(getString(R.string.key_count_to_rate), 0)
-                    if (!isPositive && mCountToRate > Utils.COUNT_RATE) {
+                if (Utils.isSecondLoads()) {
+                    mCountToRate = Utils.getCountToRate()
+                    if (!Utils.getWeAreATeam() && mCountToRate > Utils.COUNT_RATE) {
                         onAskingRateApp()
                     } else {
                         super.onBackPressed()
@@ -322,12 +312,12 @@ class MainTabAct : BaseGoogleApi(){
                         speedDial?.open()
                         view?.dismiss(true)
                         viewFloatingButton?.visibility = View.GONE
-                        PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
+                        Utils.putFirstFiles(true)
                     }
 
                     override fun onOuterCircleClick(view: TapTargetView?) {
                         super.onOuterCircleClick(view)
-                        PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
+                        Utils.putFirstFiles(true)
                         view?.dismiss(true)
                         viewFloatingButton?.visibility = View.GONE
                         Utils.Log(TAG, "onOuterCircleClick")
@@ -335,7 +325,7 @@ class MainTabAct : BaseGoogleApi(){
 
                     override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
                         super.onTargetDismissed(view, userInitiated)
-                        PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
+                        Utils.putFirstFiles(true)
                         view?.dismiss(true)
                         viewFloatingButton?.visibility = View.GONE
                         Utils.Log(TAG, "onTargetDismissed")
@@ -343,7 +333,7 @@ class MainTabAct : BaseGoogleApi(){
 
                     override fun onTargetCancel(view: TapTargetView?) {
                         super.onTargetCancel(view)
-                        PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
+                        Utils.putFirstFiles(true)
                         view?.dismiss(true)
                         viewFloatingButton?.visibility = View.GONE
                         Utils.Log(TAG, "onTargetCancel")

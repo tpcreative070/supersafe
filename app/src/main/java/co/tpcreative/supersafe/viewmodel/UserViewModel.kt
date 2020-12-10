@@ -6,13 +6,11 @@ import androidx.lifecycle.liveData
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.requester.MicService
 import co.tpcreative.supersafe.common.api.requester.UserService
-import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.extension.getString
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.putUserPreShare
 import co.tpcreative.supersafe.common.extension.toJson
-import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
-import co.tpcreative.supersafe.common.helper.EncryptDecryptPinHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.*
@@ -69,7 +67,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                         //Utils.clearAppDataAndReCreateData()
                         Utils.Log(TAG,"clearAppDataAndReCreateData")
                         val mData: DataResponse? = mResultSignUp.data.data
-                        Utils.setUserPreShare(mData?.user)
+                        Utils.putUserPreShare(mData?.user)
                         emit(mResultSignUp)
                     }
                 }
@@ -97,7 +95,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                     }else{
                         /*Clean up cache before enter up app*/
                         val mData: DataResponse? = mResultSignIn.data.data
-                        Utils.setUserPreShare(mData?.user)
+                        Utils.putUserPreShare(mData?.user)
                         val mResultTwoFactoryAuthentication = getTwoFactoryAuthenticationCor(TwoFactoryAuthenticationRequest())
                         when(mResultTwoFactoryAuthentication.status){
                             Status.SUCCESS -> {
@@ -453,7 +451,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                 mAuthor?.refresh_token = mAuthorGlobal?.refresh_token
                 mAuthor?.session_token = mAuthorGlobal?.session_token
                 mUser?.author = mAuthor
-                Utils.setUserPreShare(mUser)
+                Utils.putUserPreShare(mUser)
             }
         }
     }
@@ -462,7 +460,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         val user: User? = Utils.getUserInfo()
         mData?.user?.let {
             user?.author = it.author
-            Utils.setUserPreShare(user)
+            Utils.putUserPreShare(user)
         }
     }
 
@@ -470,7 +468,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         val mUser: User? = Utils.getUserInfo()
         mData?.let {
             mUser?.author?.session_token = it.user?.author?.session_token
-            Utils.setUserPreShare(mUser)
+            Utils.putUserPreShare(mUser)
         }
     }
 
@@ -486,7 +484,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         if (mData.premium != null && mData.email_token != null) {
             mUser?.premium = mData.premium
             mUser?.email_token = mData.email_token
-            Utils.setUserPreShare(mUser)
+            Utils.putUserPreShare(mUser)
         }
     }
 }

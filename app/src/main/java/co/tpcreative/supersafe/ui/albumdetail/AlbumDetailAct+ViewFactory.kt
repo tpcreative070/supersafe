@@ -16,8 +16,8 @@ import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.extension.createDirectory
 import co.tpcreative.supersafe.common.extension.isFileExist
+import co.tpcreative.supersafe.common.extension.isSaverSpace
 import co.tpcreative.supersafe.common.extension.readFile
-import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
@@ -26,8 +26,6 @@ import co.tpcreative.supersafe.common.util.NetworkUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.*
 import co.tpcreative.supersafe.model.*
-import co.tpcreative.supersafe.ui.main_tab.onEnableSyncData
-import co.tpcreative.supersafe.ui.twofactoryauthentication.initUI
 import co.tpcreative.supersafe.viewmodel.AlbumDetailViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
@@ -311,7 +309,7 @@ fun AlbumDetailAct.onShowDialog(mData : MutableList<ItemModel>,status: EnumStatu
 }
 
 fun AlbumDetailAct.exportingFiles(mData : MutableList<ItemModel>,isSharingFiles : Boolean) = CoroutineScope(Dispatchers.Main).launch{
-    if (Utils.getSaverSpace()){
+    if (Utils.isSaverSpace()){
         if (NetworkUtil.pingIpAddress(this@exportingFiles)){
             Utils.onBasicAlertNotify(this@exportingFiles,"Alert",getString(R.string.no_connection))
             return@launch

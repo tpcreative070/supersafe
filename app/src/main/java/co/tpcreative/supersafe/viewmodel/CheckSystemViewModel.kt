@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.putUserPreShare
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.UserCloudRequest
@@ -71,6 +73,6 @@ class CheckSystemViewModel(private val userViewModel: UserViewModel) :BaseViewMo
        val mUser = Utils.getUserInfo()
         val mCloudData: UserCloudResponse? = mData.userCloud
         mUser?.cloud_id = mCloudData?.cloud_id
-        Utils.setUserPreShare(mUser)
+        Utils.putUserPreShare(mUser)
     }
 }

@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.common.controller
 import android.accounts.Account
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.extension.getUserInfo
+import co.tpcreative.supersafe.common.extension.putUserPreShare
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
@@ -41,7 +43,7 @@ class RefreshTokenSingleton private constructor() {
             val mAuthor: User? = Utils.getUserInfo()
             if (mAuthor != null) {
                 mAuthor.driveConnected = false
-                Utils.setUserPreShare(mAuthor)
+                Utils.putUserPreShare(mAuthor)
             }
             Utils.Log(TAG,"account is null")
         }

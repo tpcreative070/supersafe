@@ -5,6 +5,9 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.extension.isSecretDoor
+import co.tpcreative.supersafe.common.extension.isSecretDoorOfCalculator
+import co.tpcreative.supersafe.common.extension.putSecretDoor
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import kotlinx.android.synthetic.main.activity_secret_door.*
@@ -21,7 +24,7 @@ class SecretDoorAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
 
     override fun onCheckedChanged(compoundButton: CompoundButton?, b: Boolean) {
         if (!b) {
-            PrefsController.putBoolean(getString(R.string.key_secret_door), b)
+            Utils.putSecretDoor(b)
         }
         tvStatus?.text = if (b) getString(R.string.enabled) else getString(R.string.disabled)
     }
@@ -41,10 +44,8 @@ class SecretDoorAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        val value: Boolean = PrefsController.getBoolean(getString(R.string.key_secret_door), false)
-        val options: Boolean = PrefsController.getBoolean(getString(R.string.key_calculator), false)
-        btnSwitch?.isChecked = value
-        if (options) {
+        btnSwitch?.isChecked = Utils.isSecretDoor()
+        if (Utils.isSecretDoorOfCalculator()) {
             tvOptionItems?.text = getString(R.string.calculator)
             imgIcons?.setImageResource(R.drawable.ic_calculator)
         } else {
