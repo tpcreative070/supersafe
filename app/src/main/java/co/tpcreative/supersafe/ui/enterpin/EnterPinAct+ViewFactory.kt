@@ -114,10 +114,8 @@ fun EnterPinAct.initUI() {
             llForgotPin.setOnClickListener {
                 Navigator.onMoveToForgotPin(this@initUI, false)
             }
-
         }
         mResult.await()
-
         btnDone.setOnClickListener {
             Navigator.onMoveToFaceDown(this@initUI)
         }

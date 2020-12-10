@@ -94,6 +94,10 @@ class ServiceManager() : BaseServiceView<Any?> {
             Utils.onWriteLog(EnumStatus.AUTHOR_SYNC, EnumStatus.AUTHOR_SYNC, "onPreparingSyncData is unauthorized")
             return
         }
+        if (Utils.getScreenStatus() == EnumPinAction.SCREEN_LOCK.ordinal){
+            Utils.Log(TAG, "Waiting until unlock to call this func.....")
+            return
+        }
         if (isRequestingSyncCor){
             Utils.onPushEventBus(actionProgressing)
             Utils.Log(TAG,"==========================================Sync data is loading===============================================")
