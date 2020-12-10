@@ -184,6 +184,9 @@ object PrefsController {
 
     fun putLong(key: String?, value: Long) {
         if (SuperSafeApplication.getInstance().isLiveMigration()){
+            if (contains(key)){
+                removeOldPreKey(key)
+            }
             AppPrefs.encryptedPrefs.write(key,value)
         }else{
             putOldLong(key,value)
@@ -192,6 +195,9 @@ object PrefsController {
 
     fun putInt(key: String?, value: Int) {
         if (SuperSafeApplication.getInstance().isLiveMigration()){
+            if (contains(key)){
+                removeOldPreKey(key)
+            }
             AppPrefs.encryptedPrefs.write(key,value)
         }else{
             putOldInt(key,value)
@@ -200,6 +206,9 @@ object PrefsController {
 
     fun putDouble(key: String?, value: Double) {
         if (SuperSafeApplication.getInstance().isLiveMigration()){
+            if (contains(key)){
+                removeOldPreKey(key)
+            }
             AppPrefs.encryptedPrefs.write(key,value)
         }else{
             putOldDouble(key,value)
@@ -208,6 +217,9 @@ object PrefsController {
 
     fun putFloat(key: String?, value: Float) {
         if (SuperSafeApplication.getInstance().isLiveMigration()){
+            if (contains(key)){
+                removeOldPreKey(key)
+            }
             AppPrefs.encryptedPrefs.write(key,value)
         }else{
             putOldFloat(key,value)
@@ -216,6 +228,9 @@ object PrefsController {
 
     fun putBoolean(key: String?, value: Boolean) {
         if (SuperSafeApplication.getInstance().isLiveMigration()){
+            if (contains(key)){
+                removeOldPreKey(key)
+            }
             AppPrefs.encryptedPrefs.write(key,value)
         }else{
             putOldBoolean(key,value)
@@ -224,6 +239,9 @@ object PrefsController {
 
     fun putString(key: String?, value: String?) {
         if (SuperSafeApplication.getInstance().isLiveMigration()){
+            if (contains(key)){
+                removeOldPreKey(key)
+            }
             AppPrefs.encryptedPrefs.write(key,value)
         }else{
             putOldString(key,value)
