@@ -31,6 +31,7 @@ fun CloudManagerAct.initUI(){
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     onUpdatedView()
+    switch_SaveSpace?.setOnCheckedChangeListener(this)
     rlSaveSpace.setOnClickListener {
         switch_SaveSpace?.isChecked = !switch_SaveSpace!!.isChecked
     }
