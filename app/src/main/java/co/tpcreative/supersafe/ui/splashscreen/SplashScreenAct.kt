@@ -20,10 +20,7 @@ import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
 import kotlinx.android.synthetic.main.activity_splash_screen.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -39,6 +36,13 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         if (SuperSafeApplication.getInstance().getDeviceId() == "66801ac00252fe84") {
             finish()
         }
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(1000)
+            loadingData()
+        }
+    }
+
+    private fun loadingData(){
         grantAccess = SuperSafeApplication.getInstance().isGrantAccess()
         SuperSafeApplication.getInstance().initFolder()
         var mCount = 0
@@ -47,7 +51,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
             it?.let {
                 runOnUiThread {
                     mCount +=1
-                    tvTotal.text  = "$it/$mCount"
+                    tvTotal.text = String.format(getString(R.string.migration),"$it","$mCount")
                 }
             }
         }

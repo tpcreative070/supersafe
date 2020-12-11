@@ -281,6 +281,7 @@
     <string name="empty_all_trash">Are you sure to delete all items? You can not undo this!</string>
     <string name="restore">These items will be restored!</string>
     <string name="restore_now">Restore Now</string>
+    <string name="migration">%1$s/%2$s</string>
     <string name="tvPrimacyPolicy">https://sites.google.com/view/tpcreative/home</string>
     <string name="no_internet_connection">No Internet Connection</string>
     <string name="secret_pin_was_created">Secret PIN was generated is %1$s</string>

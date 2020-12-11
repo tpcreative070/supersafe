@@ -19,15 +19,5 @@
             app:srcCompat="@drawable/ic_launcher"
             android:layout_width="100dp"
             android:layout_height="100dp"/>
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvTotal"
-            android:textStyle="bold"
-            android:textSize="30sp"
-            android:textColor="@color/white"
-            android:layout_marginBottom="70dp"
-            android:layout_alignParentBottom="true"
-            android:layout_width="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_height="wrap_content"/>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
