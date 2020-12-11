@@ -33,6 +33,7 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                 }
                 Utils.Log(TAG,"Total download ${mergeList?.size}")
                 for (index in mergeList!!){
+                    Utils.Log(TAG,"global_id ${index.global_id}")
                     val mResultDownloaded = driveService.downloadFile(index,onGetContentOfDownload(index)!!,mProgressDownloading)
                     when(mResultDownloaded.status){
                         Status.SUCCESS -> {
@@ -66,17 +67,19 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                     val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
                     val listUpload: MutableList<ItemModel> = Utils.getMergedOriginalThumbnailList(true, mResult!!)
                     for (index in listUpload){
-                        val mResultUpload = driveService.uploadFile(index,onGetContentOfUpload(index),mProgressUploading,onGetFilePath(index))
-                        when(mResultUpload.status){
-                            Status.SUCCESS ->{
-                                val mResultInserted = mResultUpload.data?.id?.let { itemViewModel.insertItemToSystem(index, it) }
-                                when(mResultInserted?.status){
-                                    Status.SUCCESS -> Utils.Log(TAG,mResultInserted.data?.responseMessage)
-                                    else -> Utils.Log(TAG,mResultInserted?.message)
+                        onGetFilePath(index)?.let {mFilePath ->
+                            val mResultUpload = driveService.uploadFile(index,onGetContentOfUpload(index),mProgressUploading,mFilePath)
+                            when(mResultUpload.status){
+                                Status.SUCCESS ->{
+                                    val mResultInserted = mResultUpload.data?.id?.let { itemViewModel.insertItemToSystem(index, it) }
+                                    when(mResultInserted?.status){
+                                        Status.SUCCESS -> Utils.Log(TAG,mResultInserted.data?.responseMessage)
+                                        else -> Utils.Log(TAG,mResultInserted?.message)
+                                    }
                                 }
-                            }
-                            else -> {
-                                Utils.Log(TAG,mResultUpload.message)
+                                else -> {
+                                    Utils.Log(TAG,mResultUpload.message)
+                                }
                             }
                         }
                     }

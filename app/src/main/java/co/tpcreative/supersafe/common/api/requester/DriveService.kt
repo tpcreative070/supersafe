@@ -71,6 +71,7 @@ class DriveService() {
                 ResponseHandler.handleSuccess("Download successful")
             }
             catch (throwable : Exception){
+                throwable.printStackTrace()
                 ResponseHandler.handleException(throwable)
             }
         }

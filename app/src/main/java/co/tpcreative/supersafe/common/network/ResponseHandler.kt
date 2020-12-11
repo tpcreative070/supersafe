@@ -45,6 +45,7 @@ open class ResponseHandler {
                                 ServiceManager.getInstance()?.updatedDriveAccessToken()
                                 Utils.Log(TAG,"ServiceManager.getInstance()?.updatedDriveAccessToken()")
                             }
+                            Utils.Log(TAG,"response code $mCode")
                         }
                         Resource.error(mCode!!,mMessage ?: "Unknown", null)
                     }
