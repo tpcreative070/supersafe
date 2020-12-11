@@ -115,9 +115,9 @@ fun ShareFilesAct.handleSendSingleItem(intent: Intent) {
     try {
         val imageUri : Uri? = intent.getParcelableExtra(Intent.EXTRA_STREAM)
         val type: String? = intent.type
-        val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
-        val mainCategories: MainCategoryModel? = list?.get(0)
-        if (imageUri != null && mainCategories != null) {
+        val list: MutableList<MainCategoryModel> = SQLHelper.getList()
+        val mainCategories: MainCategoryModel = list.get(0)
+        if (imageUri != null) {
             var response : String? = ""
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Utils.Log(TAG, "value path :" + imageUri.path)
@@ -141,7 +141,7 @@ fun ShareFilesAct.handleSendSingleItem(intent: Intent) {
                 if (mFile.exists()) {
                     val path = mFile.absolutePath
                     val name = mFile.name
-                    val fileExtension: String? = Utils.getFileExtension(path)
+                    val fileExtension: String = Utils.getFileExtension(path)
                     val mimeType: String? = intent.getType()
                     Utils.Log(TAG, "file extension $fileExtension")
                     Utils.Log(TAG, "Path file :$path")
@@ -199,8 +199,8 @@ fun ShareFilesAct.handleSendSingleItem(intent: Intent) {
 fun ShareFilesAct.handleSendMultipleFiles(intent: Intent?) {
     try {
         val imageUris: ArrayList<Uri>? = intent?.getParcelableArrayListExtra(Intent.EXTRA_STREAM)
-        val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
-        val mainCategories: MainCategoryModel? = list?.get(0)
+        val list: MutableList<MainCategoryModel> = SQLHelper.getList()
+        val mainCategories: MainCategoryModel = list.get(0)
         if (imageUris != null) {
             val mDataList = mutableListOf<ImportFilesModel>()
             for (index in imageUris) {
@@ -222,7 +222,7 @@ fun ShareFilesAct.handleSendMultipleFiles(intent: Intent?) {
                         val path = mFile.absolutePath
                         val name = mFile.name
                         val mimeType: String? = intent.type
-                        val fileExtension: String? = Utils.getFileExtension(path)
+                        val fileExtension: String = Utils.getFileExtension(path)
                         Utils.Log(TAG, "file extension $fileExtension")
                         Utils.Log(TAG, "Path file :$path")
                         var mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport().get(fileExtension)
