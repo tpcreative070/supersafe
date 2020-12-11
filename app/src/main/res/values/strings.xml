@@ -492,7 +492,7 @@
     <string name="key_info">Info</string>
     <string name="key_account">Account</string>
     <string name="key_upgrade">Upgrade</string>
-    <string name="key_lock_screen">Lock screen</string>
+    <string name="key_lock_screen">Lock screen &amp; security</string>
     <string name="key_private_cloud">Private Cloud</string>
     <string name="key_theme">Themes</string>
     <string name="key_dark_mode">Dark mode</string>
@@ -586,6 +586,8 @@
 
     <string name="what_is_the_fake_pin_and_how_do_i_use_it">What\'s the fake PIN and how do I use it?</string>
     <string name="what_is_the_fake_pin_and_how_do_i_use_it_content">file:///android_asset/fake_pin.html</string>
+    <string name="what_is_the_secret_pin_and_how_do_i_use_it">What\'s the Two-factor SECRET PIN and how do I use it?</string>
+    <string name="what_is_the_secret_pin_and_how_do_i_use_it_content">file:///android_asset/secret_pin.html?</string>
 
     <string name="contact_support">Contact support</string>
     <string name="contact_support_content">Contact support</string>

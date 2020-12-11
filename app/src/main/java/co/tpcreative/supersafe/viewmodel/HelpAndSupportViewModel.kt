@@ -49,6 +49,7 @@ class HelpAndSupportViewModel(private val emailOutlookViewModel: EmailOutlookVie
         dataList.add(HelpAndSupportModel(categories, getString(R.string.how_do_i_recover_items_from_trash), getString(R.string.how_do_i_recover_items_from_trash_content), null))
         dataList.add(HelpAndSupportModel(categories, getString(R.string.i_forgot_the_password_how_to_unlock_my_albums), getString(R.string.i_forgot_the_password_how_to_unlock_my_albums_content), null))
         dataList.add(HelpAndSupportModel(categories, getString(R.string.what_is_the_fake_pin_and_how_do_i_use_it), getString(R.string.what_is_the_fake_pin_and_how_do_i_use_it_content), null))
+        dataList.add(HelpAndSupportModel(categories, getString(R.string.what_is_the_secret_pin_and_how_do_i_use_it), getString(R.string.what_is_the_secret_pin_and_how_do_i_use_it_content), null))
         categories = Categories(1, getString(R.string.contact_support))
         dataList.add(HelpAndSupportModel(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null))
         emit(dataList)
