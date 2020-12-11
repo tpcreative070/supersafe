@@ -25,14 +25,15 @@ import co.tpcreative.supersafe.model.BreakInAlertsModel
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
-import co.tpcreative.supersafe.ui.main_tab.MainTabAct
 import co.tpcreative.supersafe.viewmodel.LockScreenViewModel
 import com.cottacush.android.hiddencam.CameraType
 import com.cottacush.android.hiddencam.HiddenCam
 import com.cottacush.android.hiddencam.OnImageCapturedListener
 import kotlinx.android.synthetic.main.activity_enterpin.*
 import kotlinx.android.synthetic.main.include_calculator.*
+import kotlinx.coroutines.*
 import java.io.File
+import java.lang.Runnable
 import kotlin.properties.Delegates
 
 class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListener.Listener, SingletonScreenLock.SingletonScreenLockListener, OnImageCapturedListener {
@@ -189,7 +190,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
         super.onPause()
     }
 
-    fun onSuccessful(status: EnumStatus?, action: EnumPinAction?) {
+    suspend fun onSuccessful(status: EnumStatus?, action: EnumPinAction?) = withContext(Dispatchers.Main) {
         Utils.Log(TAG, "EnumPinAction 1:...." + action?.name)
         when (status) {
             EnumStatus.VERIFY -> {
@@ -214,11 +215,11 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                     }
                     EnumPinAction.DONE -> {
                         /*Unlock for real pin*/
+                        finish()
                         SingletonManager.getInstance().setAnimation(false)
                         Utils.onPushEventBus(EnumStatus.UNLOCK)
-                        finish()
-                        Utils.Log(TAG, "Action ...................done")
                         Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
+                        Utils.Log(TAG, "Action ...................done")
                     }
                     EnumPinAction.VERIFY -> {
                         finish()
