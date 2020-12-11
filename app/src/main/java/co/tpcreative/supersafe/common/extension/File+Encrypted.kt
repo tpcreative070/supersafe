@@ -39,6 +39,10 @@ fun File.isFileExist(path: String?): Boolean {
     return File(path).exists()
 }
 
+fun File.isFileExist(): Boolean {
+    return File(absolutePath).exists()
+}
+
 fun File.getSize(type : SizeUnit) : Double{
     return EncryptDecryptFilesHelper.getInstance()?.getSize(this,type) ?: 0.0
 }
