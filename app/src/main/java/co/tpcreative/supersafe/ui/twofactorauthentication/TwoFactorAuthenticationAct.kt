@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.twofactoryauthentication
+package co.tpcreative.supersafe.ui.twofactorauthentication
 import android.os.Bundle
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -12,16 +12,16 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.NetworkUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.viewmodel.EnumTwoFactoryAuthentication
-import co.tpcreative.supersafe.viewmodel.TwoFactoryAuthenticationViewModel
-import kotlinx.android.synthetic.main.activity_two_factory_authentication.*
+import co.tpcreative.supersafe.viewmodel.TwoFactorAuthenticationViewModel
+import kotlinx.android.synthetic.main.activity_two_factor_authentication.*
 
-class TwoFactoryAuthenticationAct : BaseActivity(), CompoundButton.OnCheckedChangeListener,TextView.OnEditorActionListener {
-    lateinit var viewModel : TwoFactoryAuthenticationViewModel
+class TwoFactorAuthenticationAct : BaseActivity(), CompoundButton.OnCheckedChangeListener,TextView.OnEditorActionListener {
+    lateinit var viewModel : TwoFactorAuthenticationViewModel
     var isNext = false
     var  status : EnumTwoFactoryAuthentication = EnumTwoFactoryAuthentication.NONE
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_two_factory_authentication)
+        setContentView(R.layout.activity_two_factor_authentication)
         initUI()
     }
 

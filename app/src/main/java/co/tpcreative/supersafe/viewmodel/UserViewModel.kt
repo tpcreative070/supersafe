@@ -96,7 +96,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                         /*Clean up cache before enter up app*/
                         val mData: DataResponse? = mResultSignIn.data.data
                         Utils.putUserPreShare(mData?.user)
-                        val mResultTwoFactoryAuthentication = getTwoFactoryAuthenticationCor(TwoFactoryAuthenticationRequest())
+                        val mResultTwoFactoryAuthentication = getTwoFactoryAuthenticationCor(TwoFactorAuthenticationRequest())
                         when(mResultTwoFactoryAuthentication.status){
                             Status.SUCCESS -> {
                                 if (mResultTwoFactoryAuthentication.data?.error==true){
@@ -108,7 +108,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                                         else -> emit(Resource.error(mResultSentEmail.code?:Utils.CODE_EXCEPTION, mResultSentEmail.message ?:"",null))
                                     }
                                 }else{
-                                    if (mResultTwoFactoryAuthentication.data?.data?.twoFactoryAuthentication?.isEnabled ==true){
+                                    if (mResultTwoFactoryAuthentication.data?.data?.twoFactorAuthentication?.isEnabled ==true){
                                         /*Checking is enable is == true*/
                                         emit(mResultTwoFactoryAuthentication)
                                     }else{
@@ -155,7 +155,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
     fun verifyTwoFactoryAuthentication() = liveData(Dispatchers.Main){
         try {
             isLoading.postValue(true)
-            val mRequest = TwoFactoryAuthenticationRequest(secret_pin = secretPin)
+            val mRequest = TwoFactorAuthenticationRequest(secret_pin = secretPin)
             Utils.Log(TAG,mRequest.toJson())
             val mResult =  verifyTwoFactoryAuthenticationCor(mRequest)
             when(mResult.status){
@@ -327,7 +327,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
-    suspend fun addTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse>{
+    suspend fun addTwoFactoryAuthenticationCor(request: TwoFactorAuthenticationRequest) : Resource<RootResponse>{
         return withContext(Dispatchers.IO){
             try {
                 service.addTwoFactoryAuthenticationCor(request)
@@ -337,7 +337,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
-    suspend fun changeTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse>{
+    suspend fun changeTwoFactoryAuthenticationCor(request: TwoFactorAuthenticationRequest) : Resource<RootResponse>{
         return withContext(Dispatchers.IO){
             try {
                 service.changeTwoFactoryAuthenticationCor(request)
@@ -348,7 +348,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
     }
 
 
-    suspend fun verifyTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse>{
+    suspend fun verifyTwoFactoryAuthenticationCor(request: TwoFactorAuthenticationRequest) : Resource<RootResponse>{
         return withContext(Dispatchers.IO){
             try {
                 service.verifyTwoFactoryAuthenticationCor(request)
@@ -358,7 +358,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
-    suspend fun getTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse>{
+    suspend fun getTwoFactoryAuthenticationCor(request: TwoFactorAuthenticationRequest) : Resource<RootResponse>{
         return withContext(Dispatchers.IO){
             try {
                 service.getTwoFactoryAuthenticationCor(request)

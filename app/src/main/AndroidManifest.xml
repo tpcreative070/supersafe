@@ -26,7 +26,7 @@
         android:usesCleartextTraffic="true"
         tools:replace="allowBackup">
         <activity android:name=".ui.seeyou.SeeYouAct"></activity>
-        <activity android:name=".ui.twofactoryauthentication.TwoFactoryAuthenticationAct" />
+        <activity android:name=".ui.twofactorauthentication.TwoFactorAuthenticationAct" />
         <activity android:name=".ui.splashscreen.SplashScreenAct">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -70,7 +70,7 @@
             android:label="@string/key_sign_in" />
         <activity
             android:name=".ui.verify.VerifyAct"
-            android:label="@string/verify" />
+            android:label="@string/lb_verify_account" />
         <activity android:name=".ui.askpermission.AskPermissionAct" />
         <activity android:name=".ui.dashboard.DashBoardAct" />
         <activity

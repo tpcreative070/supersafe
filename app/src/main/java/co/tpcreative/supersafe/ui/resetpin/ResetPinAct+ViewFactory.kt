@@ -20,7 +20,6 @@ import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.NetworkUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import co.tpcreative.supersafe.ui.main_tab.onShowDialog
 import co.tpcreative.supersafe.viewmodel.ResetPinViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
@@ -214,7 +213,7 @@ fun ResetPinAct.getTwoFactoryAuthentication() {
     viewModel.getTwoFactoryInfo().observe(this, Observer {
         when(it.status){
             Status.SUCCESS-> {
-                if (it.data?.data?.twoFactoryAuthentication?.isEnabled==true){
+                if (it.data?.data?.twoFactorAuthentication?.isEnabled==true){
                     alertAskInputSecretPin()
                 }else{
                     sendRequestCode()

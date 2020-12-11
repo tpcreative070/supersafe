@@ -83,8 +83,8 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(LockScreenViewModel::class.java)){
             return LockScreenViewModel() as T
         }
-        else if (modelClass.isAssignableFrom(TwoFactoryAuthenticationViewModel::class.java)){
-            return TwoFactoryAuthenticationViewModel(UserViewModel(UserService(),MicService())) as T
+        else if (modelClass.isAssignableFrom(TwoFactorAuthenticationViewModel::class.java)){
+            return TwoFactorAuthenticationViewModel(UserViewModel(UserService(),MicService())) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

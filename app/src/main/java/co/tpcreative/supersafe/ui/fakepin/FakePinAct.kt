@@ -5,7 +5,6 @@ import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
-import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.extension.putFacePin
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
@@ -59,6 +58,6 @@ class FakePinAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
             tvCreatePin?.setTextColor(ContextCompat.getColor(this,R.color.material_gray_500))
             tvCreatePin?.isEnabled = b
         }
-        tvStatus?.text = (if (b) getString(R.string.enabled) else getString(R.string.disabled))
+        tvStatus?.text = (if (b) getString(R.string.enabled) else getString(R.string.disable))
     }
 }

@@ -6,7 +6,7 @@ import co.tpcreative.supersafe.common.extension.getString
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
-import co.tpcreative.supersafe.common.request.TwoFactoryAuthenticationRequest
+import co.tpcreative.supersafe.common.request.TwoFactorAuthenticationRequest
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumValidationKey
@@ -21,7 +21,7 @@ enum class EnumTwoFactoryAuthentication {
     REQUEST_GENERATE,
     NONE
 }
-class TwoFactoryAuthenticationViewModel(private val userViewModel: UserViewModel) : BaseViewModel<ItemModel>() {
+class TwoFactorAuthenticationViewModel(private val userViewModel: UserViewModel) : BaseViewModel<ItemModel>() {
     val TAG = this::class.java.simpleName
     override val errorResponseMessage: MutableLiveData<MutableMap<String, String?>?>
         get() = super.errorResponseMessage
@@ -68,7 +68,7 @@ class TwoFactoryAuthenticationViewModel(private val userViewModel: UserViewModel
     fun getTwoFactoryInfo() = liveData(Dispatchers.Main){
         try {
             isLoading.postValue(true)
-            val mResult =  userViewModel.getTwoFactoryAuthenticationCor(TwoFactoryAuthenticationRequest())
+            val mResult =  userViewModel.getTwoFactoryAuthenticationCor(TwoFactorAuthenticationRequest())
             when(mResult.status){
                 Status.SUCCESS -> {
                     emit(mResult)
@@ -88,7 +88,7 @@ class TwoFactoryAuthenticationViewModel(private val userViewModel: UserViewModel
     fun switchStatusTwoFactoryInfo() = liveData(Dispatchers.Main){
         try {
             isLoading.postValue(true)
-            val mResult =  userViewModel.changeTwoFactoryAuthenticationCor(TwoFactoryAuthenticationRequest(isEnabled = isEnabled,secret_pin = secretPin))
+            val mResult =  userViewModel.changeTwoFactoryAuthenticationCor(TwoFactorAuthenticationRequest(isEnabled = isEnabled,secret_pin = secretPin))
             when(mResult.status){
                 Status.SUCCESS -> {
                     if (mResult.data?.error ==true){
@@ -112,7 +112,7 @@ class TwoFactoryAuthenticationViewModel(private val userViewModel: UserViewModel
     fun verifyTwoFactoryAuthentication() = liveData(Dispatchers.Main){
         try {
             isLoading.postValue(true)
-            val mRequest = TwoFactoryAuthenticationRequest(secret_pin = secretPin ,isEnabled = isEnabled)
+            val mRequest = TwoFactorAuthenticationRequest(secret_pin = secretPin ,isEnabled = isEnabled)
             Utils.Log(TAG,mRequest.toJson())
             val mResult =  userViewModel.verifyTwoFactoryAuthenticationCor(mRequest)
             when(mResult.status){
@@ -145,7 +145,7 @@ class TwoFactoryAuthenticationViewModel(private val userViewModel: UserViewModel
     fun changeTwoFactoryAuthentication() = liveData(Dispatchers.Main){
         try {
             isLoading.postValue(true)
-            val mRequest = TwoFactoryAuthenticationRequest(secret_pin = secretPin ,new_secret_pin  = newSecretPin,isEnabled = isEnabled)
+            val mRequest = TwoFactorAuthenticationRequest(secret_pin = secretPin ,new_secret_pin  = newSecretPin,isEnabled = isEnabled)
             Utils.Log(TAG,mRequest.toJson())
             val mResult =  userViewModel.changeTwoFactoryAuthenticationCor(mRequest)
             when(mResult.status){
@@ -171,7 +171,7 @@ class TwoFactoryAuthenticationViewModel(private val userViewModel: UserViewModel
     fun addTwoFactoryAuthentication() = liveData(Dispatchers.Main){
         try {
             isLoading.postValue(true)
-            val mRequest = TwoFactoryAuthenticationRequest(secret_pin  = newSecretPin,isEnabled = isEnabled)
+            val mRequest = TwoFactorAuthenticationRequest(secret_pin  = newSecretPin,isEnabled = isEnabled)
             Utils.Log(TAG,mRequest.toJson())
             val mResult =  userViewModel.addTwoFactoryAuthenticationCor(mRequest)
             when(mResult.status){

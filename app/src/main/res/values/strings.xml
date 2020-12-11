@@ -231,7 +231,7 @@
     <string name="choose_an_account">Please select %1$s to link to Google Drive</string>
     <string name="choose_an_new_account">Please select or add your Google account to sign in with SuperSafe</string>
     <string name="not_the_same_account">Not the same account</string>
-    <string name="are_you_sure_you_want_disable_two_factory_authentication">Are you sure. You want to disable TWO FACTORY AUTHENTICATION.</string>
+    <string name="are_you_sure_you_want_disable_two_factor_authentication">Are you sure. You want to disable TWO FACTOR AUTHENTICATION.</string>
     <string name="choose_the_same_account">Please select %1$s</string>
     <string name="select_again">SELECT AGAIN</string>
     <string name="user_another">USER ANOTHER</string>
@@ -283,8 +283,8 @@
     <string name="restore_now">Restore Now</string>
     <string name="tvPrimacyPolicy">https://sites.google.com/view/tpcreative/home</string>
     <string name="no_internet_connection">No Internet Connection</string>
-    <string name="secret_pin_was_created">Secret PIN was generated is %1$s.</string>
-    <string name="secret_pin_was_changed">Secret PIN was changed is %1$s.</string>
+    <string name="secret_pin_was_created">Secret PIN was generated is %1$s</string>
+    <string name="secret_pin_was_changed">Secret PIN was changed is %1$s</string>
 
     <string name="pin_was_wrong">PIN was incorrect</string>
     <string name="forgot_your_pin">Forgot your pin? No problem. Here\'s how to reset it</string>
@@ -301,7 +301,7 @@
     <string name="premium_feature">Premium feature</string>
     <string name="premium">Premium</string>
     <string name="break_in_alerts">Whenever someone enters an incorrect PIN, We will log the date time and snap a secret photo</string>
-    <string name="disabled">Disabled</string>
+    <string name="disable">Disable</string>
     <string name="set_custom_covers">Set custom cover</string>
     <string name="enabled">Enabled</string>
     <string name="fake_pin">Create a second PIN or pattern that opens to a decoy SuperSafe</string>
@@ -424,11 +424,13 @@
     <string name="enable_two_factor_secret_detail">Increase your account\'s security by enabling Two-Factor SECRET PIN</string>
     <string name="enter_new_secret_pin">Enter new secret pin</string>
     <string name="enter_secret_pin">Enter secret pin</string>
-    <string name="verify_secret_pin_to_disable_two_factory_authentication">Verify secret pin to disable TWO FACTORY AUTHENTICATION</string>
-    <string name="verify_secret_pin_to_enable_two_factory_authentication">Verify secret pin to enable TWO FACTORY AUTHENTICATION</string>
+    <string name="verify_secret_pin_to_disable_two_factor_authentication">Verify secret pin to disable TWO FACTOR AUTHENTICATION</string>
+    <string name="verify_secret_pin_to_enable_two_factor_authentication">Verify secret pin to enable TWO FACTOR AUTHENTICATION</string>
     <string name="verify_secret_pin">Verify secret pin</string>
-    <string name="generate_two_factory_authentication">Generate two factory authentication</string>
+    <string name="generate_two_factor_authentication">Generate Two-factor authentication</string>
     <string name="send_request">Send request</string>
+    <string name="verify_account">You need to verify account first. In order to turn on two-factor authentication</string>
+    <string name="lb_verify_account">Verify account</string>
 
     /*Preference keys*/
     <string name="key_enable_two_factor_authentication">key_enable_two_factor_authentication</string>

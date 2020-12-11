@@ -12,7 +12,7 @@ class SeeYouAct : BaseActivityNoneSlide() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_see_you)
         CoroutineScope(Dispatchers.Main).launch {
-            delay(1200)
+            delay(1000)
             finish()
         }
     }

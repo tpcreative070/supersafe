@@ -96,10 +96,10 @@ class UserService (){
         }
     }
 
-    suspend fun addTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse> {
+    suspend fun addTwoFactoryAuthenticationCor(request: TwoFactorAuthenticationRequest) : Resource<RootResponse> {
         return withContext(Dispatchers.IO) {
             try {
-                val mResult = ApiHelper.getInstance()?.onAddTwoFactoryAuthenticationCor(request)
+                val mResult = ApiHelper.getInstance()?.onAddTwoFactorAuthenticationCor(request)
                 ResponseHandler.handleSuccess(mResult as RootResponse)
             }
             catch (throwable : Exception){
@@ -108,10 +108,10 @@ class UserService (){
         }
     }
 
-    suspend fun changeTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse> {
+    suspend fun changeTwoFactoryAuthenticationCor(request: TwoFactorAuthenticationRequest) : Resource<RootResponse> {
         return withContext(Dispatchers.IO) {
             try {
-                val mResult = ApiHelper.getInstance()?.onChangeTwoFactoryAuthenticationCor(request)
+                val mResult = ApiHelper.getInstance()?.onChangeTwoFactorAuthenticationCor(request)
                 ResponseHandler.handleSuccess(mResult as RootResponse)
             }
             catch (throwable : Exception){
@@ -120,10 +120,10 @@ class UserService (){
         }
     }
 
-    suspend fun verifyTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse> {
+    suspend fun verifyTwoFactoryAuthenticationCor(request: TwoFactorAuthenticationRequest) : Resource<RootResponse> {
         return withContext(Dispatchers.IO) {
             try {
-                val mResult = ApiHelper.getInstance()?.onVerifyTwoFactoryAuthenticationCor(request)
+                val mResult = ApiHelper.getInstance()?.onVerifyTwoFactorAuthenticationCor(request)
                 ResponseHandler.handleSuccess(mResult as RootResponse)
             }
             catch (throwable : Exception){
@@ -132,10 +132,10 @@ class UserService (){
         }
     }
 
-    suspend fun getTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) : Resource<RootResponse> {
+    suspend fun getTwoFactoryAuthenticationCor(request: TwoFactorAuthenticationRequest) : Resource<RootResponse> {
         return withContext(Dispatchers.IO) {
             try {
-                val mResult = ApiHelper.getInstance()?.onGetTwoFactoryAuthenticationCor(request)
+                val mResult = ApiHelper.getInstance()?.onGetTwoFactorAuthenticationCor(request)
                 ResponseHandler.handleSuccess(mResult as RootResponse)
             }
             catch (throwable : Exception){

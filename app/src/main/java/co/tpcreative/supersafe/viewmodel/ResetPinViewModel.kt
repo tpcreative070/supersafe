@@ -9,7 +9,7 @@ import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.RequestCodeRequest
-import co.tpcreative.supersafe.common.request.TwoFactoryAuthenticationRequest
+import co.tpcreative.supersafe.common.request.TwoFactorAuthenticationRequest
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.User
@@ -71,7 +71,7 @@ class ResetPinViewModel(private val userViewModel: UserViewModel)  : VerifyViewM
     fun verifyTwoFactoryAuthentication() = liveData(Dispatchers.Main){
         try {
             isLoading.postValue(true)
-            val mRequest = TwoFactoryAuthenticationRequest(secret_pin = secretPin)
+            val mRequest = TwoFactorAuthenticationRequest(secret_pin = secretPin)
             Utils.Log(TAG,mRequest.toJson())
             val mResult =  userViewModel.verifyTwoFactoryAuthenticationCor(mRequest)
             when(mResult.status){
@@ -97,7 +97,7 @@ class ResetPinViewModel(private val userViewModel: UserViewModel)  : VerifyViewM
     fun getTwoFactoryInfo() = liveData(Dispatchers.Main){
         try {
             isLoading.postValue(true)
-            val mResult =  userViewModel.getTwoFactoryAuthenticationCor(TwoFactoryAuthenticationRequest())
+            val mResult =  userViewModel.getTwoFactoryAuthenticationCor(TwoFactorAuthenticationRequest())
             when(mResult.status){
                 Status.SUCCESS -> {
                     emit(mResult)

@@ -18,7 +18,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumValidationKey
 import co.tpcreative.supersafe.model.User
-import co.tpcreative.supersafe.ui.twofactoryauthentication.*
+import co.tpcreative.supersafe.ui.twofactorauthentication.*
 import co.tpcreative.supersafe.viewmodel.UserViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
@@ -29,7 +29,6 @@ import kotlinx.android.synthetic.main.activity_signin.progressBarCircularIndeter
 import kotlinx.android.synthetic.main.activity_signin.toolbar
 import kotlinx.android.synthetic.main.activity_signin.tvSupport
 import kotlinx.android.synthetic.main.activity_signin.view.*
-import kotlinx.android.synthetic.main.activity_two_factory_authentication.*
 
 fun SignInAct.initUI(){
     TAG = this::class.java.simpleName
@@ -116,7 +115,7 @@ fun SignInAct.onSignIn() {
     viewModel.signIn().observe(this, Observer{
         when(it.status){
             Status.SUCCESS -> {
-                if (it.data?.data?.twoFactoryAuthentication?.isEnabled ==true){
+                if (it.data?.data?.twoFactorAuthentication?.isEnabled ==true){
                     showEnableView(false)
                     alertAskInputSecretPin()
                 }else{

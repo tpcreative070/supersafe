@@ -39,7 +39,7 @@ import co.tpcreative.supersafe.ui.signin.SignInAct
 import co.tpcreative.supersafe.ui.signup.SignUpAct
 import co.tpcreative.supersafe.ui.theme.ThemeSettingsAct
 import co.tpcreative.supersafe.ui.trash.TrashAct
-import co.tpcreative.supersafe.ui.twofactoryauthentication.TwoFactoryAuthenticationAct
+import co.tpcreative.supersafe.ui.twofactorauthentication.TwoFactorAuthenticationAct
 import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumAct
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountAct
 import co.tpcreative.supersafe.ui.verify.VerifyAct
@@ -308,7 +308,7 @@ object Navigator {
     }
 
     fun onMoveTwoFactoryAuthentication(context: Context) {
-        val intent = Intent(context, TwoFactoryAuthenticationAct::class.java)
+        val intent = Intent(context, TwoFactorAuthenticationAct::class.java)
         context.startActivity(intent)
     }
 

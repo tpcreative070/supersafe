@@ -86,7 +86,7 @@ class BreakInAlertsAct : BaseActivity(), CompoundButton.OnCheckedChangeListener,
         } else {
             Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.error_not_having_camera))
         }
-        tvStatus?.text = (if (b) getString(R.string.enabled) else getString(R.string.disabled))
+        tvStatus?.text = (if (b) getString(R.string.enabled) else getString(R.string.disable))
     }
 
     override fun onClickItem(position: Int) {

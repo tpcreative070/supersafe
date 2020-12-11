@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.twofactoryauthentication
+package co.tpcreative.supersafe.ui.twofactorauthentication
 import android.text.InputType
 import android.view.View
 import android.widget.EditText
@@ -7,22 +7,22 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.extension.isEnabledTwoFactoryAuthentication
+import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.NetworkUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumValidationKey
-import co.tpcreative.supersafe.ui.main_tab.onShowDialog
 import co.tpcreative.supersafe.viewmodel.EnumTwoFactoryAuthentication
-import co.tpcreative.supersafe.viewmodel.TwoFactoryAuthenticationViewModel
+import co.tpcreative.supersafe.viewmodel.TwoFactorAuthenticationViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
-import kotlinx.android.synthetic.main.activity_two_factory_authentication.*
-import kotlinx.android.synthetic.main.activity_two_factory_authentication.progressBarCircularIndeterminate
-import kotlinx.android.synthetic.main.activity_two_factory_authentication.toolbar
+import kotlinx.android.synthetic.main.activity_two_factor_authentication.*
+import kotlinx.android.synthetic.main.activity_two_factor_authentication.progressBarCircularIndeterminate
+import kotlinx.android.synthetic.main.activity_two_factor_authentication.toolbar
 
-fun TwoFactoryAuthenticationAct.initUI(){
+fun TwoFactorAuthenticationAct.initUI(){
     TAG = this::class.java.simpleName
     setupViewModel()
     btnSwitch?.setOnCheckedChangeListener(this)
@@ -146,7 +146,7 @@ fun TwoFactoryAuthenticationAct.initUI(){
     onShowUI()
 }
 
-fun TwoFactoryAuthenticationAct.onShowUI(){
+fun TwoFactorAuthenticationAct.onShowUI(){
     if (status == EnumTwoFactoryAuthentication.GENERATE){
         edtSecretPin.visibility = View.GONE
         btnChange.text = getString(R.string.generate_secret_pin)
@@ -181,14 +181,14 @@ fun TwoFactoryAuthenticationAct.onShowUI(){
     }
 }
 
-private fun TwoFactoryAuthenticationAct.setupViewModel() {
+private fun TwoFactorAuthenticationAct.setupViewModel() {
     viewModel = ViewModelProviders.of(
             this,
             ViewModelFactory()
-    ).get(TwoFactoryAuthenticationViewModel::class.java)
+    ).get(TwoFactorAuthenticationViewModel::class.java)
 }
 
-fun TwoFactoryAuthenticationAct.getTwoFactoryAuthentication() {
+fun TwoFactorAuthenticationAct.getTwoFactoryAuthentication() {
     viewModel.getTwoFactoryInfo().observe(this, Observer {
         when(it.status){
             Status.SUCCESS-> {
@@ -196,12 +196,12 @@ fun TwoFactoryAuthenticationAct.getTwoFactoryAuthentication() {
                     status = EnumTwoFactoryAuthentication.GENERATE
                 }else{
                     status = EnumTwoFactoryAuthentication.CHANGE
-                    val mResult = it.data?.data?.twoFactoryAuthentication
+                    val mResult = it.data?.data?.twoFactorAuthentication
                     btnSwitch.isChecked = mResult?.isEnabled ?: false
                     if (mResult?.isEnabled==true){
                         tvStatus.text = getString(R.string.enabled)
                     }else{
-                        tvStatus.text = getString(R.string.disabled)
+                        tvStatus.text = getString(R.string.disable)
                     }
                 }
                 onShowUI()
@@ -214,7 +214,7 @@ fun TwoFactoryAuthenticationAct.getTwoFactoryAuthentication() {
     })
 }
 
-fun TwoFactoryAuthenticationAct.switchStatusTwoFactoryAuthentication() {
+fun TwoFactorAuthenticationAct.switchStatusTwoFactoryAuthentication() {
     viewModel.switchStatusTwoFactoryInfo().observe(this, Observer {
         when(it.status){
             Status.SUCCESS-> {
@@ -228,7 +228,7 @@ fun TwoFactoryAuthenticationAct.switchStatusTwoFactoryAuthentication() {
     })
 }
 
-fun TwoFactoryAuthenticationAct.verifyTwoFactoryAuthentication() {
+fun TwoFactorAuthenticationAct.verifyTwoFactoryAuthentication() {
     viewModel.verifyTwoFactoryAuthentication().observe(this, Observer {
         when(it.status){
             Status.SUCCESS-> {
@@ -266,16 +266,23 @@ fun TwoFactoryAuthenticationAct.verifyTwoFactoryAuthentication() {
     })
 }
 
-fun TwoFactoryAuthenticationAct.addTwoFactoryAuthentication() {
+fun TwoFactorAuthenticationAct.addTwoFactoryAuthentication() {
     viewModel.addTwoFactoryAuthentication().observe(this, Observer {
         when(it.status){
             Status.SUCCESS-> {
-                val mResult = it.data?.data?.twoFactoryAuthentication
+                val mResult = it.data?.data?.twoFactorAuthentication
                 btnSwitch.isChecked = mResult?.isEnabled ?: false
                 Utils.onBasicAlertNotify(this,"Alert",String.format(getString(R.string.secret_pin_was_created),viewModel.newSecretPin))
+                if (mResult?.isEnabled==true){
+                    tvStatus.text = getString(R.string.enabled)
+                }else{
+                    tvStatus.text = getString(R.string.disable)
+                }
+                viewModel.isEnabled = mResult?.isEnabled ?: false
                 status = EnumTwoFactoryAuthentication.CHANGE
                 onShowUI()
                 disableUI()
+                Utils.Log(TAG,it.toJson())
             }
             else -> {
                 Utils.Log(TAG,it.message)
@@ -285,7 +292,7 @@ fun TwoFactoryAuthenticationAct.addTwoFactoryAuthentication() {
     })
 }
 
-fun TwoFactoryAuthenticationAct.changeTwoFactoryAuthentication() {
+fun TwoFactorAuthenticationAct.changeTwoFactoryAuthentication() {
     Utils.Log(TAG,"Call here")
     viewModel.changeTwoFactoryAuthentication().observe(this, Observer {
         when(it.status){
@@ -296,7 +303,7 @@ fun TwoFactoryAuthenticationAct.changeTwoFactoryAuthentication() {
                 if (viewModel.isEnabled){
                     tvStatus.text = getString(R.string.enabled)
                 }else{
-                    tvStatus.text = getString(R.string.disabled)
+                    tvStatus.text = getString(R.string.disable)
                 }
                 onShowUI()
                 disableUI()
@@ -309,7 +316,7 @@ fun TwoFactoryAuthenticationAct.changeTwoFactoryAuthentication() {
     })
 }
 
-fun TwoFactoryAuthenticationAct.disableUI(){
+fun TwoFactorAuthenticationAct.disableUI(){
     edtSecretPin.removeTextChangedListener(mTextWatcher)
     edtSecretPin.text?.clear()
     btnChange?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
@@ -317,10 +324,10 @@ fun TwoFactoryAuthenticationAct.disableUI(){
     edtSecretPin?.addTextChangedListener(mTextWatcher)
 }
 
-fun TwoFactoryAuthenticationAct.disableTwoFactoryAuthentication() {
+fun TwoFactorAuthenticationAct.disableTwoFactoryAuthentication() {
     val builder: MaterialDialog = MaterialDialog(this)
             .title(text = getString(R.string.confirm))
-            .message(res = R.string.are_you_sure_you_want_disable_two_factory_authentication)
+            .message(res = R.string.are_you_sure_you_want_disable_two_factor_authentication)
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
             .positiveButton {
@@ -335,13 +342,13 @@ fun TwoFactoryAuthenticationAct.disableTwoFactoryAuthentication() {
     builder.show()
 }
 
-fun TwoFactoryAuthenticationAct.alertAskInputSecretPin() {
+fun TwoFactorAuthenticationAct.alertAskInputSecretPin() {
     var mMessage = ""
     if (status == EnumTwoFactoryAuthentication.ENABLE){
-       mMessage = getString(R.string.verify_secret_pin_to_enable_two_factory_authentication)
+       mMessage = getString(R.string.verify_secret_pin_to_enable_two_factor_authentication)
     }
     else if (status == EnumTwoFactoryAuthentication.DISABLE){
-        mMessage = getString(R.string.verify_secret_pin_to_disable_two_factory_authentication)
+        mMessage = getString(R.string.verify_secret_pin_to_disable_two_factor_authentication)
     }
     else if (status == EnumTwoFactoryAuthentication.CHANGE){
         mMessage = getString(R.string.verify_secret_pin)

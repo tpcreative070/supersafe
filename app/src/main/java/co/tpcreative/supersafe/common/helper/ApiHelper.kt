@@ -2,11 +2,8 @@ package co.tpcreative.supersafe.common.helper
 import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.request.*
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import co.tpcreative.supersafe.model.DriveAbout
 import co.tpcreative.supersafe.model.EmailToken
 import okhttp3.MultipartBody
-import retrofit2.Response
-import retrofit2.http.*
 
 class ApiHelper() {
 
@@ -42,10 +39,10 @@ class ApiHelper() {
     suspend fun onAddUserCloudCor(request: UserCloudRequest) = getApiCor()?.onAddUserCloudCor(request)
     suspend fun onUpdateUserCor(request: ChangeUserIdRequest) = getApiCor()?.onUpdateUserCor(request)
 
-    suspend fun onAddTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) = getApiCor()?.onAddTwoFactoryAuthenticationCor(request)
-    suspend fun onChangeTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) = getApiCor()?.onChangeTwoFactoryAuthenticationCor(request)
-    suspend fun onVerifyTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) = getApiCor()?.onVerifyTwoFactoryAuthenticationCor(request)
-    suspend fun onGetTwoFactoryAuthenticationCor(request: TwoFactoryAuthenticationRequest) = getApiCor()?.onGetTwoFactoryAuthenticationCor(request)
+    suspend fun onAddTwoFactorAuthenticationCor(request: TwoFactorAuthenticationRequest) = getApiCor()?.onAddTwoFactorAuthenticationCor(request)
+    suspend fun onChangeTwoFactorAuthenticationCor(request: TwoFactorAuthenticationRequest) = getApiCor()?.onChangeTwoFactorAuthenticationCor(request)
+    suspend fun onVerifyTwoFactorAuthenticationCor(request: TwoFactorAuthenticationRequest) = getApiCor()?.onVerifyTwoFactorAuthenticationCor(request)
+    suspend fun onGetTwoFactorAuthenticationCor(request: TwoFactorAuthenticationRequest) = getApiCor()?.onGetTwoFactorAuthenticationCor(request)
 
     suspend fun onDeleteOldAccessTokenCor(request: UserRequest) = getApiCor()?.onDeleteOldAccessTokenCor(request)
     suspend fun updateTokenCor(request: UserRequest) = getApiCor()?.onUpdateTokenCor(request)

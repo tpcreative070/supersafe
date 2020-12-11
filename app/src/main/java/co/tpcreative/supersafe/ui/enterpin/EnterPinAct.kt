@@ -396,7 +396,19 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                         enterPinAct.changeStatus(EnumStatus.VERIFY, EnumPinAction.VERIFY_TO_CHANGE,null,true,false)
                     }
                     if (preference.key == getString(R.string.key_enable_two_factor_authentication)){
-                        Navigator.onMoveTwoFactoryAuthentication(activity!!)
+                        if (Utils.isVerifiedAccount()) {
+                            Navigator.onMoveTwoFactoryAuthentication(activity!!)
+                        } else {
+                            Utils.showDialog(activity!!,R.string.verify_account,object : ServiceManager.ServiceManagerSyncDataListener{
+                                override fun onCompleted() {
+                                    Navigator.onVerifyAccount(context!!)
+                                }
+                                override fun onError() {
+                                }
+                                override fun onCancel() {
+                                }
+                            })
+                        }
                     }
                 }
                 true

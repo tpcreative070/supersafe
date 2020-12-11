@@ -4,7 +4,7 @@ import co.tpcreative.supersafe.common.extension.encryptTextByIdPKCS7
 import co.tpcreative.supersafe.common.util.Utils
 import javax.crypto.Cipher
 
-class TwoFactoryAuthenticationRequest {
+class TwoFactorAuthenticationRequest {
     var user_id : String? = null
     var secret_pin : String? = null
     var new_secret_pin : String? = null

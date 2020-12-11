@@ -4,7 +4,6 @@ import android.widget.CompoundButton
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
-import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.extension.isSecretDoor
 import co.tpcreative.supersafe.common.extension.isSecretDoorOfCalculator
 import co.tpcreative.supersafe.common.extension.putSecretDoor
@@ -26,7 +25,7 @@ class SecretDoorAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
         if (!b) {
             Utils.putSecretDoor(b)
         }
-        tvStatus?.text = if (b) getString(R.string.enabled) else getString(R.string.disabled)
+        tvStatus?.text = if (b) getString(R.string.enabled) else getString(R.string.disable)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
