@@ -69,7 +69,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
 
     fun initData(){
         mInstance = this
-        isLive = false
+        isLive = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
         serverApiCor = RetrofitBuilder.getService(typeService = EnumTypeServices.SYSTEM)
