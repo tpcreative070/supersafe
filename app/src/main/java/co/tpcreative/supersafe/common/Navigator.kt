@@ -32,6 +32,7 @@ import co.tpcreative.supersafe.ui.premium.PremiumAct
 import co.tpcreative.supersafe.ui.resetpin.ResetPinAct
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorAct
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpAct
+import co.tpcreative.supersafe.ui.seeyou.SeeYouAct
 import co.tpcreative.supersafe.ui.settings.SettingsAct
 import co.tpcreative.supersafe.ui.settings.AlbumSettingsAct
 import co.tpcreative.supersafe.ui.signin.SignInAct
@@ -336,6 +337,11 @@ object Navigator {
     fun onMoveToPremium(context: Context) {
         val intent = Intent(context, PremiumAct::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
+    fun onMoveSeeYou(context: Context) {
+        val intent = Intent(context, SeeYouAct::class.java)
         context.startActivity(intent)
     }
 

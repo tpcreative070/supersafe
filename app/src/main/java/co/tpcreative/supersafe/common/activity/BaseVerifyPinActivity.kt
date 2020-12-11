@@ -39,7 +39,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
         if (isFaceDown) {
             val result: Boolean = Utils.isFaceDown()
             if (result) {
-                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
+                Navigator.onMoveToFaceDown(this)
             }
         }
     }
@@ -100,7 +100,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
                 .build()
     }
 
-    open fun handleGoldfingerResult(result: Goldfinger.Result) {
+    open fun handleGoldFingerResult(result: Goldfinger.Result) {
         if (result.type() == Goldfinger.Type.SUCCESS){
             onBiometricSuccessful()
         }

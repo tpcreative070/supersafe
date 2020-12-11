@@ -39,14 +39,6 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         if (SuperSafeApplication.getInstance().getDeviceId() == "66801ac00252fe84") {
             finish()
         }
-        try {
-            val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-            if (themeApp != null) {
-                rlScreen?.setBackgroundColor(ContextCompat.getColor(this,themeApp.getPrimaryColor()))
-            }
-        } catch (e: Exception) {
-            Utils.putThemeColor(0)
-        }
         grantAccess = SuperSafeApplication.getInstance().isGrantAccess()
         SuperSafeApplication.getInstance().initFolder()
         var mCount = 0
@@ -118,10 +110,6 @@ class SplashScreenAct : BaseActivityNoneSlide() {
     override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
-        EventBus.getDefault().unregister(this)
-    }
-
-    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 

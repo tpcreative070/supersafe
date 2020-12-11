@@ -49,10 +49,6 @@ class SignUpAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener{
         ServiceManager.getInstance()?.onStartService()
     }
 
-    override fun onStopListenerAWhile() {
-        EventBus.getDefault().unregister(this)
-    }
-
     override fun onOrientationChange(isFaceDown: Boolean) {}
     override fun onEditorAction(textView: TextView?, actionId: Int, keyEvent: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_DONE) {

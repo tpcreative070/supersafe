@@ -45,10 +45,6 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener{
         EventBus.getDefault().unregister(this)
     }
 
-    override fun onStopListenerAWhile() {
-        EventBus.getDefault().unregister(this)
-    }
-
     override fun onOrientationChange(isFaceDown: Boolean) {}
     override fun onEditorAction(textView: TextView?, actionId: Int, keyEvent: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {

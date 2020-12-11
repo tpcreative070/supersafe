@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.common.activity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -9,9 +10,14 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.extension.getScreenStatus
 import co.tpcreative.supersafe.common.extension.isFaceDown
+import co.tpcreative.supersafe.common.extension.putScreenStatus
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
+import co.tpcreative.supersafe.model.EnumStatus
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     var TAG : String = this::class.java.simpleName
@@ -23,7 +29,7 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
         if (isFaceDown) {
             val result: Boolean = Utils.isFaceDown()
             if (result) {
-                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
+                Navigator.onMoveToFaceDown(this)
             }
         }
     }
@@ -69,24 +75,43 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onStart() {
-        super.onStart()
-        Utils.onScanFile(this,"scan.log")
+    private fun onCallLockScreen() = CoroutineScope(Dispatchers.IO).launch {
         when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
+            /*First opening app*/
+            EnumPinAction.SPLASH_SCREEN -> {
+                Utils.putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
+                Navigator.onMoveToVerifyPin(this@BasePlayerActivity, EnumPinAction.NONE)
+                Utils.Log(TAG, "Lock screen")
+            }
+            /*Sleep screen or unlock device*/
             EnumPinAction.SCREEN_LOCK -> {
                 if (!SingletonManager.getInstance().isVisitLockScreen()) {
-                    SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
-                    Utils.Log(TAG, "Pressed home button")
-                    SingletonManager.Companion.getInstance().setVisitLockScreen(true)
-                    Utils.Log(TAG, "Verify pin")
+                    Navigator.onMoveToVerifyPin(this@BasePlayerActivity, EnumPinAction.NONE)
+                    SingletonManager.getInstance().setVisitLockScreen(true)
+                    Utils.Log(TAG, "Lock screen")
                 } else {
                     Utils.Log(TAG, "Verify pin already")
                 }
             }
             else -> {
-                Utils.Log(TAG, "Nothing to do on start " + action.name)
+                Utils.Log(TAG, "Nothing to do " + action.name)
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        /*Opening app*/
+        if (Utils.getScreenStatus() == EnumPinAction.SPLASH_SCREEN.ordinal ){
+            onCallLockScreen()
+            return
+        }
+        else if (Utils.getScreenStatus() == EnumPinAction.SCREEN_LOCK.ordinal && !SingletonManager.getInstance().isVisitLockScreen()){
+            onCallLockScreen()
+            return
+        }
+        /*Do somethings*/
+        Utils.onScanFile(this,"scan.log")
     }
 
     protected abstract fun onStopListenerAWhile()

@@ -12,11 +12,6 @@ class DashBoardAct : BaseActivityNoneSlide() {
         initUI()
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onStopListenerAWhile() {}
     override fun onOrientationChange(isFaceDown: Boolean) {}
 
     companion object {

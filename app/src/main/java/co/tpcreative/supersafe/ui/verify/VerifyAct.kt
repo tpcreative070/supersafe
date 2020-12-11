@@ -47,10 +47,6 @@ class VerifyAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener {
         EventBus.getDefault().unregister(this)
     }
 
-    override fun onStopListenerAWhile() {
-        EventBus.getDefault().unregister(this)
-    }
-
     override fun onOrientationChange(isFaceDown: Boolean) {}
 
     override fun onEditorAction(textView: TextView?, actionId: Int, keyEvent: KeyEvent?): Boolean {

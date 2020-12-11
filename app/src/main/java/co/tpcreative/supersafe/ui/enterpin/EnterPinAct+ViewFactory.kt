@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProviders
 import co.infinum.goldfinger.Goldfinger
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonScreenLock
 import co.tpcreative.supersafe.common.extension.getScreenStatus
@@ -26,96 +25,92 @@ import kotlinx.android.synthetic.main.footer_layout.*
 import kotlinx.android.synthetic.main.include_calculator.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import me.grantland.widget.AutofitHelper
 
-fun EnterPinAct.initUI() {
+fun EnterPinAct.initUI(){
     TAG = this::class.java.simpleName
-    CoroutineScope(Dispatchers.Main).launch {
-        val mResult = async {
-            setupViewModel()
-            setSupportActionBar(toolbar)
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            val result: Int = intent.getIntExtra(EnterPinAct.EXTRA_SET_PIN, 0)
-            EnterPinAct.mPinAction = EnumPinAction.values()[result]
-            val resultNext: Int = intent.getIntExtra(EnterPinAct.EXTRA_ENUM_ACTION, 0)
-            EnterPinAct.mPinActionNext = EnumPinAction.values()[resultNext]
-            SingletonScreenLock.getInstance()?.setListener(this@initUI)
-            EnterPinAct.enumPinPreviousAction = EnterPinAct.mPinAction
-            when (EnterPinAct.mPinAction) {
-                EnumPinAction.SET -> {
-                    onDisplayView()
-                    onDisplayText()
-                }
-                EnumPinAction.VERIFY -> {
-                    if (mRealPin == "") {
-                        EnterPinAct.mPinAction = EnumPinAction.SET
-                        onDisplayView()
-                        onDisplayText()
-                    } else {
-                        if (Utils.isSensorAvailable()) {
-                            val isFingerPrintUnLock: Boolean = Utils.isAvailableBiometric()
-                            if (isFingerPrintUnLock) {
-                                imgSwitchTypeUnClock?.visibility = View.VISIBLE
-                                isFingerprint = isFingerPrintUnLock
-                                onSetVisitFingerprintView(isFingerprint)
-                                Utils.Log(TAG, "Action find fingerPrint")
-                            }
-                        }
-                        val value: Boolean = Utils.isSecretDoor()
-                        if (value) {
-                            imgSwitchTypeUnClock?.visibility = View.INVISIBLE
-                            changeLayoutSecretDoor(true)
-                        } else {
-                            calculator_holder?.visibility = View.INVISIBLE
-                            onDisplayView()
-                            onDisplayText()
-                        }
+    setupViewModel()
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    val result: Int = intent.getIntExtra(EnterPinAct.EXTRA_SET_PIN, 0)
+    EnterPinAct.mPinAction = EnumPinAction.values()[result]
+    val resultNext: Int = intent.getIntExtra(EnterPinAct.EXTRA_ENUM_ACTION, 0)
+    EnterPinAct.mPinActionNext = EnumPinAction.values()[resultNext]
+    SingletonScreenLock.getInstance()?.setListener(this@initUI)
+    EnterPinAct.enumPinPreviousAction = EnterPinAct.mPinAction
+    when (EnterPinAct.mPinAction) {
+        EnumPinAction.SET -> {
+            onDisplayView()
+            onDisplayText()
+        }
+        EnumPinAction.VERIFY -> {
+            if (mRealPin == "") {
+                EnterPinAct.mPinAction = EnumPinAction.SET
+                onDisplayView()
+                onDisplayText()
+            } else {
+                if (Utils.isSensorAvailable()) {
+                    val isFingerPrintUnLock: Boolean = Utils.isAvailableBiometric()
+                    if (isFingerPrintUnLock) {
+                        imgSwitchTypeUnClock?.visibility = View.VISIBLE
+                        isFingerprint = isFingerPrintUnLock
+                        onSetVisitFingerprintView(isFingerprint)
+                        Utils.Log(TAG, "Action find fingerPrint")
                     }
                 }
-                EnumPinAction.INIT_PREFERENCE -> {
-                    initActionBar(true)
-                    onDisplayText()
+                val value: Boolean = Utils.isSecretDoor()
+                if (value) {
+                    imgSwitchTypeUnClock?.visibility = View.INVISIBLE
+                    changeLayoutSecretDoor(true)
+                } else {
+                    calculator_holder?.visibility = View.INVISIBLE
                     onDisplayView()
-                    onLauncherPreferences()
-                }
-                EnumPinAction.RESET -> {
-                    onDisplayView()
                     onDisplayText()
                 }
-                EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
-                    onDisplayText()
-                    onDisplayView()
-                }
-                else -> {
-                    Utils.Log(TAG, "Noting to do")
-                }
-            }
-            imgLauncher?.setOnLongClickListener {
-                changeLayoutSecretDoor(false)
-                false
-            }
-            ic_SuperSafe?.setOnLongClickListener {
-                changeLayoutSecretDoor(false)
-                false
-            }
-            if (Utils.isSensorAvailable()) {
-                if (Utils.isAvailableBiometric() && Utils.getScreenStatus()==EnumPinAction.SCREEN_LOCK.ordinal) {
-                    initBiometric()
-                }
-            }
-            onInitPin()
-            /*Calculator init*/
-            EnterPinAct.mCalc = CalculatorImpl(this@initUI)
-            AutofitHelper.create(tvResult)
-            AutofitHelper.create(tvFormula)
-            Utils.Log(TAG, "onCreated->EnterPinActivity")
-            llForgotPin.setOnClickListener {
-                Navigator.onMoveToForgotPin(this@initUI, false)
             }
         }
-        mResult.await()
+        EnumPinAction.INIT_PREFERENCE -> {
+            initActionBar(true)
+            onDisplayText()
+            onDisplayView()
+            onLauncherPreferences()
+        }
+        EnumPinAction.RESET -> {
+            onDisplayView()
+            onDisplayText()
+        }
+        EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
+            onDisplayText()
+            onDisplayView()
+        }
+        else -> {
+            Utils.Log(TAG, "Noting to do")
+        }
+    }
+    CoroutineScope(Dispatchers.Main).launch {
+        imgLauncher?.setOnLongClickListener {
+            changeLayoutSecretDoor(false)
+            false
+        }
+        ic_SuperSafe?.setOnLongClickListener {
+            changeLayoutSecretDoor(false)
+            false
+        }
+        if (Utils.isSensorAvailable()) {
+            if (Utils.isAvailableBiometric() && Utils.getScreenStatus()==EnumPinAction.SCREEN_LOCK.ordinal) {
+                initBiometric()
+            }
+        }
+        onInitPin()
+        /*Calculator init*/
+        EnterPinAct.mCalc = CalculatorImpl(this@initUI)
+        AutofitHelper.create(tvResult)
+        AutofitHelper.create(tvFormula)
+        Utils.Log(TAG, "onCreated->EnterPinActivity")
+        llForgotPin.setOnClickListener {
+            Navigator.onMoveToForgotPin(this@initUI, false)
+        }
         btnDone.setOnClickListener {
             Navigator.onMoveToFaceDown(this@initUI)
         }
@@ -579,13 +574,13 @@ fun EnterPinAct.startBiometricPrompt(){
         goldfinger!!.authenticate(buildPromptParams()!!, object : Goldfinger.Callback {
             override fun onError(e: Exception) {}
             override fun onResult(result: Goldfinger.Result) {
-                handleGoldfingerResult(result)
+                handleGoldFingerResult(result)
             }
         })
     }
 }
 
-fun EnterPinAct.onInitPin() {
+ fun EnterPinAct.onInitPin(){
     indicator_dots?.setActivity(this)
     pinlockView.attachIndicatorDots(indicator_dots)
     pinlockView.setPinLockListener(pinLockListener)

@@ -7,7 +7,6 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import co.tpcreative.supersafe.R
@@ -55,17 +54,25 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         return theme
     }
 
-    fun onCallLockScreen() {
+    private fun onCallLockScreen() = CoroutineScope(Dispatchers.IO).launch {
         when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
+            /*First opening app*/
             EnumPinAction.SPLASH_SCREEN -> {
                 Utils.putScreenStatus(EnumPinAction.SCREEN_LOCK.ordinal)
-                window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                Navigator.onMoveToVerifyPin(this, EnumPinAction.NONE)
+                Navigator.onMoveToVerifyPin(this@BaseGoogleApi, EnumPinAction.NONE)
                 Utils.Log(TAG, "Lock screen")
             }
+            /*Sleep screen or unlock device*/
+            EnumPinAction.SCREEN_LOCK -> {
+                if (!SingletonManager.getInstance().isVisitLockScreen()) {
+                    Navigator.onMoveToVerifyPin(this@BaseGoogleApi, EnumPinAction.NONE)
+                    SingletonManager.getInstance().setVisitLockScreen(true)
+                    Utils.Log(TAG, "Lock screen")
+                } else {
+                    Utils.Log(TAG, "Verify pin already")
+                }
+            }
             else -> {
-                Utils.onPushEventBus(EnumStatus.REGISTER_OR_LOGIN)
                 Utils.Log(TAG, "Nothing to do " + action.name)
             }
         }
@@ -75,7 +82,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         if (isFaceDown) {
             val result: Boolean = Utils.isFaceDown()
             if (result) {
-                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
+                Navigator.onMoveToFaceDown(this)
             }
         }
     }
@@ -135,26 +142,17 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
 
     override fun onStart() {
         super.onStart()
-        Utils.onScanFile(this,"scan.log")
-        Utils.Log(TAG, "onStart 1..........${SingletonManager.getInstance().isVisitLockScreen()})  ${Utils.getScreenStatus()}")
-        when (val action = EnumPinAction.values()[Utils.getScreenStatus()]) {
-            EnumPinAction.SCREEN_LOCK -> {
-                if (!SingletonManager.getInstance().isVisitLockScreen()) {
-                    Utils.Log(TAG, "onStart 2..........${SingletonManager.getInstance().isVisitLockScreen()})  ${Utils.getScreenStatus()}")
-                    SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
-                    Utils.Log(TAG, "Pressed home button")
-                    SingletonManager.getInstance().setVisitLockScreen(true)
-                    Utils.Log(TAG, "Verify pin")
-                } else {
-                    Utils.Log(TAG, "onStart 3..........${SingletonManager.getInstance().isVisitLockScreen()})  ${Utils.getScreenStatus()}")
-                    Utils.Log(TAG, "Verify pin already")
-                }
-            }
-            else -> {
-                Utils.Log(TAG, "onStart 4..........${SingletonManager.getInstance().isVisitLockScreen()})  ${Utils.getScreenStatus()}")
-                Utils.Log(TAG, "Nothing to do on start " + action.name)
-            }
+        /*Opening app*/
+        if (Utils.getScreenStatus() == EnumPinAction.SPLASH_SCREEN.ordinal ){
+            onCallLockScreen()
+            return
         }
+        else if (Utils.getScreenStatus() == EnumPinAction.SCREEN_LOCK.ordinal && !SingletonManager.getInstance().isVisitLockScreen()){
+            onCallLockScreen()
+            return
+        }
+        /*Do somethings*/
+        Utils.onScanFile(this,"scan.log")
         val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
         if (account != null && GoogleSignIn.hasPermissions(account, Scope(DriveScopes.DRIVE_FILE), Scope(DriveScopes.DRIVE_APPDATA))) {
             getGoogleSignInClient(account.account)

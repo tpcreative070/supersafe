@@ -46,12 +46,7 @@ class MainTabAct : BaseGoogleApi(){
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
-            EnumStatus.REGISTER_OR_LOGIN -> {
-                rlOverLay?.visibility = View.INVISIBLE
-            }
             EnumStatus.UNLOCK -> {
-                rlOverLay?.visibility = View.INVISIBLE
-                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 PremiumManager.getInstance().onStartInAppPurchase()
             }
             EnumStatus.FINISH -> {
@@ -127,7 +122,6 @@ class MainTabAct : BaseGoogleApi(){
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        onCallLockScreen()
         onRegisterHomeWatcher()
         ServiceManager.getInstance()?.setRequestShareIntent(false)
         if (Utils.isRequestSyncData() || Utils.isRequestUpload()){
@@ -260,6 +254,7 @@ class MainTabAct : BaseGoogleApi(){
             PremiumManager.getInstance().onStop()
             Utils.onDeleteTemporaryFile()
             if (Utils.getWeAreATeam()) {
+                Navigator.onMoveSeeYou(this)
                 super.onBackPressed()
             } else {
                 if (Utils.isSecondLoads()) {
@@ -267,9 +262,11 @@ class MainTabAct : BaseGoogleApi(){
                     if (!Utils.getWeAreATeam() && mCountToRate > Utils.COUNT_RATE) {
                         onAskingRateApp()
                     } else {
+                        Navigator.onMoveSeeYou(this)
                         super.onBackPressed()
                     }
                 } else {
+                    Navigator.onMoveSeeYou(this)
                     super.onBackPressed()
                 }
             }

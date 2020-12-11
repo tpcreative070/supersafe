@@ -242,6 +242,7 @@ fun MainTabAct.onAskingRateApp() {
             .neutralButton(text = getString(R.string.no_thanks))
             .neutralButton {
                 Utils.putWeAreATeam(true)
+                Navigator.onMoveSeeYou(this)
                 finish()
             }
             .negativeButton {

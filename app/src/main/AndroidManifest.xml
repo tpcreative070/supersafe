@@ -25,7 +25,8 @@
         android:theme="@style/AppThemeLaunch"
         android:usesCleartextTraffic="true"
         tools:replace="allowBackup">
-        <activity android:name=".ui.twofactoryauthentication.TwoFactoryAuthenticationAct"></activity>
+        <activity android:name=".ui.seeyou.SeeYouAct"></activity>
+        <activity android:name=".ui.twofactoryauthentication.TwoFactoryAuthenticationAct" />
         <activity android:name=".ui.splashscreen.SplashScreenAct">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

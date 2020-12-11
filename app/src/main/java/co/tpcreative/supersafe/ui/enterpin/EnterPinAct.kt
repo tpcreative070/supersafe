@@ -25,6 +25,7 @@ import co.tpcreative.supersafe.model.BreakInAlertsModel
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.ui.main_tab.MainTabAct
 import co.tpcreative.supersafe.viewmodel.LockScreenViewModel
 import com.cottacush.android.hiddencam.CameraType
 import com.cottacush.android.hiddencam.HiddenCam
@@ -32,15 +33,16 @@ import com.cottacush.android.hiddencam.OnImageCapturedListener
 import kotlinx.android.synthetic.main.activity_enterpin.*
 import kotlinx.android.synthetic.main.include_calculator.*
 import java.io.File
+import kotlin.properties.Delegates
 
 class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListener.Listener, SingletonScreenLock.SingletonScreenLockListener, OnImageCapturedListener {
     var count = 0
     var countAttempt = 0
     var isFingerprint = false
     var mFirstPin: String? = ""
-    var mRealPin: String? = Utils.getPinFromSharedPreferences()
-    var mFakePin: String? = Utils.getFakePinFromSharedPreferences()
-    var isFakePinEnabled: Boolean = Utils.isFacePin()
+    var mRealPin: String? = null
+    var mFakePin: String? = null
+    var isFakePinEnabled by Delegates.notNull<Boolean>()
     var hiddenCam: HiddenCam? = null
     var mPinAlert = ""
     var goldfinger: Goldfinger? = null

@@ -5,10 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
@@ -37,7 +34,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
         if (isFaceDown) {
             val result: Boolean = Utils.isFaceDown()
             if (result) {
-                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
+                Navigator.onMoveToFaceDown(this)
             }
         }
     }
@@ -83,8 +80,6 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
         }
         return super.onOptionsItemSelected(item)
     }
-
-    protected abstract fun onStopListenerAWhile()
 
     companion object {
         val TAG = BaseActivityNoneSlide::class.java.simpleName

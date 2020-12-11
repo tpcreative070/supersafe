@@ -8,6 +8,5 @@ class AskPermissionAct : BaseActivityNoneSlide() {
         setContentView(R.layout.activity_ask_permission)
         initUI()
     }
-    override fun onStopListenerAWhile() {}
     override fun onOrientationChange(isFaceDown: Boolean) {}
 }
