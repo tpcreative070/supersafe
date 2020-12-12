@@ -152,6 +152,7 @@ fun TwoFactorAuthenticationAct.onShowUI(){
         btnChange.text = getString(R.string.generate_secret_pin)
         btnSwitch.isEnabled = false
         rlSwitch.isEnabled = false
+        isNext = false
     }
     else if (status==EnumTwoFactoryAuthentication.REQUEST_GENERATE){
         edtSecretPin.visibility = View.VISIBLE
@@ -165,6 +166,7 @@ fun TwoFactorAuthenticationAct.onShowUI(){
         btnChange.text = getString(R.string.change_secret_pin)
         btnSwitch.isEnabled = true
         rlSwitch.isEnabled = true
+        isNext = false
     }
     else if (status == EnumTwoFactoryAuthentication.REQUEST_CHANGE){
         edtSecretPin.visibility = View.VISIBLE
