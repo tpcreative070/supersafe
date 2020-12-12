@@ -912,7 +912,7 @@ object Utils {
         PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), position)
     }
 
-    fun deleteFolderOfItemId(items_id: String) {
+    fun deleteFolderOfItemId(items_id: String?) {
         (SuperSafeApplication.getInstance().getSuperSafePrivate() + items_id).deleteDirectory()
     }
 
@@ -1008,7 +1008,9 @@ object Utils {
             true
         } else if (formatTypeFile == EnumFormatType.FILES && index.global_original_id == null) {
             true
-        } else (index.global_original_id == null) and (index.global_thumbnail_id == null)
+        } else{
+            index.global_original_id == null && index.global_thumbnail_id == null
+        }
     }
 
     fun availableToSave(mData: MutableList<ItemModel>) : String?{

@@ -95,7 +95,7 @@ class AlbumDetailViewModel : BaseViewModel<ItemModel>() {
                         index.deleteAction = EnumDelete.DELETE_WAITING.ordinal
                         SQLHelper.updatedItem(index)
                     }
-                    Utils.deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + index.items_id)
+                    Utils.deleteFolderOfItemId(index.items_id)
                 }else{
                     index.isDeleteLocal = true
                     index.let { SQLHelper.updatedItem(it) }

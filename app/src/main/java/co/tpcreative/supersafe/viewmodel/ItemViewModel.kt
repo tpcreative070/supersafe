@@ -197,9 +197,7 @@ class ItemViewModel(private val itemService: ItemService) : BaseViewModel<ItemMo
         mResultList.let {
             for (index in it) {
                 SQLHelper.deleteItem(index)
-                index.items_id?.let { it1 ->
-                    Utils.deleteFolderOfItemId(it1)
-                }
+                Utils.deleteFolderOfItemId(index.items_id)
             }
             Utils.Log(TAG, "Total need to delete items synced local.... " + it.size)
         }

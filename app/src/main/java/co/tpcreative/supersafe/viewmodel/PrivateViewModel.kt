@@ -57,12 +57,7 @@ class PrivateViewModel : BaseViewModel<MainCategoryModel>(){
             val mList: MutableList<ItemModel>? = SQLHelper.getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
             mList?.let {
                 for (index in it) {
-                    val formatTypeFile = EnumFormatType.values()[index.formatType]
-                    if (formatTypeFile == EnumFormatType.AUDIO && index.global_original_id == null) {
-                        SQLHelper.deleteItem(index)
-                    } else if (formatTypeFile == EnumFormatType.FILES && index.global_original_id == null) {
-                        SQLHelper.deleteItem(index)
-                    } else if ((index.global_original_id == null) and (index.global_thumbnail_id == null)) {
+                     if (Utils.isRequestDeletedLocal(index)) {
                         SQLHelper.deleteItem(index)
                     } else {
                         index.deleteAction = EnumDelete.DELETE_WAITING.ordinal

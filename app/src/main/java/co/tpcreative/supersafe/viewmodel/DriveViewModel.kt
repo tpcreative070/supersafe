@@ -34,21 +34,38 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                 Utils.Log(TAG,"Total download ${mergeList?.size}")
                 for (index in mergeList!!){
                     Utils.Log(TAG,"global_id ${index.global_id}")
-                    val mResultDownloaded = driveService.downloadFile(index,onGetContentOfDownload(index)!!,mProgressDownloading)
-                    when(mResultDownloaded.status){
-                        Status.SUCCESS -> {
-                            Utils.Log(TAG,mResultDownloaded.data)
-                            updatedDateAfterDownloadedFile(isDownloadToExport,index)
-                        }
-                        else -> {
-                            if (mResultDownloaded.code==EnumResponseCode.NOT_FOUND.code){
-                                val mResultDeleteItem = itemViewModel.deleteItemSystem(index)
-                                when(mResultDeleteItem.status){
-                                    Status.SUCCESS -> Utils.Log(TAG,mResultDeleteItem.data?.toJson())
-                                    else -> Utils.Log(TAG,mResultDeleteItem.message)
-                                }
+                    onGetContentOfDownload(index)?.let { mIndexRequest ->
+                        val mResultDownloaded = driveService.downloadFile(index,mIndexRequest,mProgressDownloading)
+                        when(mResultDownloaded.status){
+                            Status.SUCCESS -> {
+                                Utils.Log(TAG,mResultDownloaded.data)
+                                updatedDateAfterDownloadedFile(isDownloadToExport,index)
                             }
-                            Utils.Log(TAG,mResultDownloaded.message)
+                            else -> {
+                                if (mResultDownloaded.code==EnumResponseCode.NOT_FOUND.code){
+                                    val mResultDeleteItem = itemViewModel.deleteItemSystem(index)
+                                    when(mResultDeleteItem.status){
+                                        Status.SUCCESS ->{
+                                            Utils.Log(TAG,mResultDeleteItem.data?.toJson())
+                                            Utils.deleteFolderOfItemId(index.items_id)
+                                            SQLHelper.deleteItem(index)
+                                        }
+                                        else -> Utils.Log(TAG,mResultDeleteItem.message)
+                                    }
+                                }
+                                Utils.Log(TAG,mResultDownloaded.message)
+                            }
+                        }
+                    } ?: run {
+                        /*Not found id*/
+                        val mResultDeleteItem = itemViewModel.deleteItemSystem(index)
+                        when(mResultDeleteItem.status){
+                            Status.SUCCESS ->{
+                                Utils.Log(TAG,mResultDeleteItem.data?.toJson())
+                                Utils.deleteFolderOfItemId(index.items_id)
+                                SQLHelper.deleteItem(index)
+                            }
+                            else -> Utils.Log(TAG,mResultDeleteItem.message)
                         }
                     }
                 }
@@ -81,6 +98,9 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                                     Utils.Log(TAG,mResultUpload.message)
                                 }
                             }
+                        } ?: run {
+                            /*Not found path*/
+                            SQLHelper.deleteItem(index)
                         }
                     }
                 }else{
@@ -361,7 +381,8 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
         }
         request.items = item
         request.id = id
-        if (!Utils.isNotEmptyOrNull(id)) {
+        if (!Utils.isNotEmptyOrNull(id) || id == "null") {
+            Utils.Log(TAG,"onGetContentOfDownload: download id is null.....")
             return null
         }
         item.setOriginal(Utils.getOriginalPath(item.originalName, item.items_id))

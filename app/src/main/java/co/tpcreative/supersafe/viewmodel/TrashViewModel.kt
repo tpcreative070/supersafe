@@ -92,7 +92,7 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
                     SQLHelper.updatedItem(index)
                     Utils.Log(TAG, "ServiceManager waiting for delete")
                 }
-                Utils.deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + index.items_id)
+                Utils.deleteFolderOfItemId(index.items_id)
             } else {
                 index.isDeleteLocal = false
                 if (index.isChecked) {
