@@ -332,6 +332,7 @@ fun TwoFactorAuthenticationAct.disableTwoFactoryAuthentication() {
             .message(res = R.string.are_you_sure_you_want_disable_two_factor_authentication)
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
+            .cancelable(false)
             .positiveButton {
                 viewModel.isEnabled = false
                 alertAskInputSecretPin()
