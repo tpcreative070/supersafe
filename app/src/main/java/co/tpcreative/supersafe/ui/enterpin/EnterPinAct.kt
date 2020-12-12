@@ -32,6 +32,7 @@ import com.cottacush.android.hiddencam.OnImageCapturedListener
 import kotlinx.android.synthetic.main.activity_enterpin.*
 import kotlinx.android.synthetic.main.include_calculator.*
 import kotlinx.coroutines.*
+import spencerstudios.com.bungeelib.Bungee
 import java.io.File
 import java.lang.Runnable
 import kotlin.properties.Delegates
@@ -216,7 +217,7 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                     EnumPinAction.DONE -> {
                         /*Unlock for real pin*/
                         finish()
-                        SingletonManager.getInstance().setAnimation(false)
+                        Bungee.zoom(this@EnterPinAct)
                         Utils.onPushEventBus(EnumStatus.UNLOCK)
                         Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
                         Utils.Log(TAG, "Action ...................done")
@@ -271,10 +272,10 @@ class EnterPinAct : BaseVerifyPinActivity(),  Calculator, SingletonMultipleListe
                 /*UnLock for fake pin*/mPinAction = action
                 when (action) {
                     EnumPinAction.DONE -> {
-                        SingletonManager.getInstance().setAnimation(false)
                         Utils.putScreenStatus(EnumPinAction.NONE.ordinal)
                         if (SingletonManager.getInstance().isVisitFakePin()) {
                             finish()
+                            Bungee.zoom(this@EnterPinAct)
                         } else {
                             Navigator.onMoveFakePinComponent(this@EnterPinAct)
                         }

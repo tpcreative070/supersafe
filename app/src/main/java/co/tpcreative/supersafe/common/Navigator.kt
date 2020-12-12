@@ -43,6 +43,7 @@ import co.tpcreative.supersafe.ui.twofactorauthentication.TwoFactorAuthenticatio
 import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumAct
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountAct
 import co.tpcreative.supersafe.ui.verify.VerifyAct
+import spencerstudios.com.bungeelib.Bungee
 import java.util.*
 
 object Navigator {
@@ -280,6 +281,7 @@ object Navigator {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
+        Bungee.zoom(context)
     }
 
     fun onMoveFakePinComponentInside(context: Context) {

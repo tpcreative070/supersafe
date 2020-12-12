@@ -1,15 +1,6 @@
 package co.tpcreative.supersafe.common.controller
 
 class SingletonManager {
-    fun isAnimation(): Boolean {
-        return isAnimation
-    }
-
-    fun setAnimation(isAnimation: Boolean) {
-        this.isAnimation = isAnimation
-    }
-
-    private var isAnimation = false
     fun isVisitLockScreen(): Boolean {
         return isVisitLockScreen
     }

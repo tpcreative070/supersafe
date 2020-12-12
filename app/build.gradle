@@ -209,6 +209,7 @@ dependencies {
     kapt "com.github.bumptech.glide:compiler:$glide"
     implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:3.2.0'
     implementation "androidx.security:security-crypto:1.1.0-alpha03"
+    implementation 'com.github.Binary-Finery:Bungee:3.0'
 }
 /*Resolved duplicated for Google api client*/
 
