@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ui.help.HelpAndSupportContentActivity">
-
+    tools:context=".ui.help.HelpAndSupportContentAct">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:fitsSystemWindows="true">
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
+            android:background="?attr/colorPrimary"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -30,55 +29,49 @@
             app:expandedTitleMarginEnd="64dp">
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
     <RelativeLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
                 android:layout_margin="20dp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:textColor="?attr/colorPrimaryDark"
+                android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:textColor="?attr/colorAccent"
                     android:textSize="@dimen/text_size_xlarge"
                     android:id="@+id/tvTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
-                <co.tpcreative.supersafe.common.views.AdvancedWebView
+                <im.delight.android.webview.AdvancedWebView
                     android:id="@+id/webview"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                </co.tpcreative.supersafe.common.views.AdvancedWebView>
-
+                    android:layout_height="wrap_content">
+                </im.delight.android.webview.AdvancedWebView>
                 <LinearLayout
                     android:id="@+id/llEmail"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:textSize="@dimen/text_size_normal"
                         android:text="@string/from"
                         android:textColor="?attr/preference_summary"
                         android:gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
-                    <TextView
-                        android:paddingLeft="20dp"
-                        android:layout_gravity="left|center"
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:paddingStart="20dp"
+                        android:layout_gravity="start|center"
                         android:textSize="@dimen/text_size_normal"
-                        android:textColor="?attr/colorPrimaryDark"
+                        android:textColor="?attr/colorAccent"
                         android:id="@+id/tvEmail"
-                        android:gravity="left"
+                        android:gravity="start"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
@@ -96,6 +89,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             </LinearLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

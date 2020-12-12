@@ -7,9 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.lockscreen.EnterPinActivity">
+    tools:context=".ui.enterpin.EnterPinAct">
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:layout_margin="10dp"
         android:id="@+id/ic_SuperSafe"
         android:layout_gravity="top"
@@ -17,27 +17,27 @@
         android:layout_width="@dimen/icon_size_50"
         android:layout_height="@dimen/icon_size_50"/>
 
-    <TextView
-        android:textColor="@color/colorAccent"
-        android:id="@+id/formula"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:textColor="?attr/colorAccent"
+        android:id="@+id/tvFormula"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="2.1"
         android:fontFamily="sans-serif-light"
-        android:gravity="right|bottom"
+        android:gravity="end|bottom"
         android:maxLines="1"
         android:paddingLeft="@dimen/activity_margin"
         android:paddingRight="@dimen/activity_margin"
         android:textSize="@dimen/formula_text_size"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:textColor="@color/colorButton"
-        android:id="@+id/result"
+        android:id="@+id/tvResult"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.8"
         android:fontFamily="sans-serif-light"
-        android:gravity="center_vertical|right"
+        android:gravity="center_vertical|end"
         android:maxLines="1"
         android:paddingLeft="@dimen/activity_margin"
         android:paddingRight="@dimen/activity_margin"
@@ -50,7 +50,7 @@
         android:layout_weight="2"
         android:orientation="horizontal">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_modulo"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -60,7 +60,7 @@
             android:textAllCaps="false"
             android:textSize="@dimen/mod_text_size"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_power"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -68,7 +68,7 @@
             android:layout_weight="1"
             android:text="^"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_root"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -76,7 +76,7 @@
             android:layout_weight="1"
             android:text="√"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_clear"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -84,7 +84,7 @@
             android:layout_weight="1"
             android:text="C"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_reset"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -100,7 +100,7 @@
         android:layout_weight="2"
         android:orientation="horizontal">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_7"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -108,7 +108,7 @@
             android:layout_weight="1"
             android:text="7"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_8"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -116,7 +116,7 @@
             android:layout_weight="1"
             android:text="8"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_9"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -124,7 +124,7 @@
             android:layout_weight="1"
             android:text="9"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_divide"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -138,32 +138,28 @@
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:orientation="horizontal">
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_4"
             style="@style/MyButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="4"/>
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_5"
             style="@style/MyButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="5"/>
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_6"
             style="@style/MyButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="6"/>
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_multiply"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -177,32 +173,28 @@
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:orientation="horizontal">
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_1"
             style="@style/MyButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="1"/>
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_2"
             style="@style/MyButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="2"/>
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_3"
             style="@style/MyButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="3"/>
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_minus"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -217,7 +209,7 @@
         android:layout_weight="2"
         android:orientation="horizontal">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_0"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -225,7 +217,7 @@
             android:layout_weight="1"
             android:text="0"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_decimal"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -233,7 +225,7 @@
             android:layout_weight="1"
             android:text="."/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_equals"
             style="@style/MyButton"
             android:layout_width="match_parent"
@@ -241,7 +233,7 @@
             android:layout_weight="1"
             android:text="="/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_plus"
             style="@style/MyButton"
             android:layout_width="match_parent"

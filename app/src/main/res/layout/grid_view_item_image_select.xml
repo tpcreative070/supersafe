@@ -6,20 +6,17 @@
     android:paddingRight="1dp"
     android:paddingBottom="1dp"
     android:paddingLeft="1dp">
-
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/image_view_image_select"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
-
     <View
         android:id="@+id/view_alpha"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorButton"/>
-
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:textColor="@color/multiple_image_select_buttonText"
         android:layout_margin="5dp"
         android:maxLines="2"
@@ -27,13 +24,11 @@
         android:layout_gravity="center|top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgAudioVideo"
         android:src="@drawable/baseline_music_note_white_48"
-        android:layout_gravity="left|bottom"
+        android:layout_gravity="start|bottom"
         android:layout_margin="10dp"
         android:layout_width="20dp"
         android:layout_height="20dp"/>
-
 </FrameLayout>

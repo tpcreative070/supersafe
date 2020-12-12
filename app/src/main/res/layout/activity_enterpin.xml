@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:fitsSystemWindows="true">
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
+            android:background="?attr/colorPrimary"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -25,12 +26,12 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginStart="48dp"
             app:expandedTitleMarginEnd="64dp">
-        </com.google.android.material.appbar.CollapsingToolbarLayout>>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <RelativeLayout
         android:visibility="invisible"
         android:id="@+id/rlAttempt"
-        android:background="@color/colorAccent"
+        android:background="?attr/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -48,7 +49,7 @@
             app:circleProgressTextSize="@dimen/icon_size_60"
             app:circleProgressTextColor="@color/white"
             app:circleProgressValue="100"/>
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:textSize="@dimen/text_size_normal"
             android:textColor="@color/material_gray_200"
             android:layout_marginTop="20dp"
@@ -71,7 +72,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_margin="20dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -82,25 +83,25 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <TextView
-                    android:layout_marginRight="10dp"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_marginEnd="10dp"
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     android:text="@string/key_forgot_pin"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_gravity="center"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:src="@drawable/baseline_help_outline_white_48"
                     android:layout_width="@dimen/icon_size"
                     android:layout_height="@dimen/icon_size" />
             </LinearLayout>
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:visibility="gone"
                 android:layout_gravity="center"
-                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
                 android:id="@+id/imgSwitchTypeUnClock"
                 android:src="@drawable/baseline_dialpad_white_48"
                 android:layout_width="@dimen/image_size_custom_40"
@@ -116,7 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="80dp">
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imgLauncher"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
@@ -124,11 +125,11 @@
                     android:layout_gravity="center"
                     android:src="@drawable/ic_launcher"
                     android:visibility="invisible" />
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
                     android:textStyle="bold"
-                    android:id="@+id/title"
+                    android:id="@+id/tvTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -144,7 +145,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
-                <co.tpcreative.supersafe.ui.lockscreen.IndicatorDots
+                <co.tpcreative.supersafe.ui.enterpin.IndicatorDots
                     android:paddingRight="20dp"
                     android:paddingLeft="20dp"
                     android:id="@+id/indicator_dots"
@@ -156,19 +157,19 @@
                 <RelativeLayout
                     android:layout_width="@dimen/default_button_size"
                     android:layout_height="@dimen/default_button_size"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:onClick="onDelete">
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_centerInParent="true"
                         android:src="@drawable/ic_backspace" />
                 </RelativeLayout>
             </RelativeLayout>
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:textStyle="bold"
-                android:id="@+id/attempts"
+                android:id="@+id/tvTopAttempts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -181,14 +182,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="0dp">
-                <co.tpcreative.supersafe.ui.lockscreen.PinLockView
+                <co.tpcreative.supersafe.ui.enterpin.PinLockView
                     android:id="@+id/pinlockView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_margin="@dimen/lockview_margin"
                     android:scrollbars="none" />
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:visibility="gone"
                     android:src="@drawable/baseline_fingerprint_white_48"
                     android:id="@+id/imgFingerprint"
@@ -209,7 +210,6 @@
     </RelativeLayout>
     <RelativeLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:background="@color/white"
         android:visibility="invisible"
         android:id="@+id/rlPreference"
         android:layout_width="match_parent"

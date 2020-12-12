@@ -1,14 +1,14 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppThemeLaunch" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeLaunch"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorButton</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowDisablePreview">true</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -20,16 +20,31 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/colorPrimary</item>
+        <item name="dialogColorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="dialogColorAccent">@color/colorAccent</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.Share" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.Share"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorButton</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -43,17 +58,32 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/colorPrimary</item>
+        <item name="dialogColorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="dialogColorAccent">@color/colorAccent</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorButton</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -65,17 +95,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/colorPrimary</item>
+        <item name="dialogColorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="dialogColorAccent">@color/colorAccent</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.PINK" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.PINK" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorPink</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorPink</item>
         <item name="colorAccent">@color/secondaryColorPink</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -87,17 +132,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorPink</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorPink</item>
+        <item name="dialogColorAccent">@color/secondaryColorPink</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.PURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.PURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorPurple</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorPurple</item>
         <item name="colorAccent">@color/secondaryDarkColorPurple</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -109,17 +169,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorPurple</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorPurple</item>
+        <item name="dialogColorAccent">@color/secondaryDarkColorPurple</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.DEEPPURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.DEEPPURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorDeepPurple</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
-        <item name="colorAccent">@color/primaryColorPurple</item>
+        <item name="colorAccent">@color/secondaryColorDeepPurple</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -131,17 +206,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorDeepPurple</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
+        <item name="dialogColorAccent">@color/secondaryColorDeepPurple</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.CYAN" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.CYAN"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorCyan</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorCyan</item>
-        <item name="colorAccent">@color/primaryColorBrown</item>
+        <item name="colorAccent">@color/secondaryColorCyan</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -153,17 +243,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorCyan</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorCyan</item>
+        <item name="dialogColorAccent">@color/secondaryColorCyan</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.TEAL" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.TEAL" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorTeal</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorTeal</item>
         <item name="colorAccent">@color/secondaryDarkColorTeal</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -175,18 +280,33 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorTeal</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorTeal</item>
+        <item name="dialogColorAccent">@color/secondaryDarkColorTeal</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
 
-    <style name="AppTheme.LIGHTGREEN" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.LIGHTGREEN" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorLightGreen</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorLightGreen</item>
         <item name="colorAccent">@color/secondaryColorLightGreen</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -198,17 +318,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorLightGreen</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorLightGreen</item>
+        <item name="dialogColorAccent">@color/secondaryColorLightGreen</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.LIME" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.LIME" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorLime</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorLime</item>
-        <item name="colorAccent">@color/primaryColorBlueGray</item>
+        <item name="colorAccent">@color/secondaryColorLime</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -220,18 +355,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorLime</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorLime</item>
+        <item name="dialogColorAccent">@color/secondaryColorLime</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-
-    <style name="AppTheme.AMBER" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.AMBER" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorAmber</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorAmber</item>
         <item name="colorAccent">@color/secondaryColorAmber</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -243,17 +392,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorAmber</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorAmber</item>
+        <item name="dialogColorAccent">@color/secondaryColorAmber</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.BROWN" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.BROWN" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorBrown</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorBrown</item>
-        <item name="colorAccent">@color/md_teal_500</item>
+        <item name="colorAccent">@color/secondaryColorBrown</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -265,17 +429,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorBrown</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorBrown</item>
+        <item name="dialogColorAccent">@color/secondaryColorBrown</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.GRAY" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.GRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorGray</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorGray</item>
         <item name="colorAccent">@color/secondaryColorGray</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -287,17 +466,32 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorGray</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorGray</item>
+        <item name="dialogColorAccent">@color/secondaryColorGray</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
-    <style name="AppTheme.BLUEGRAY" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.BLUEGRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorBlueGray</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorBlueGray</item>
         <item name="colorAccent">@color/secondaryDarkColorBlueGray</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -309,6 +503,21 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorBlueGray</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorBlueGray</item>
+        <item name="dialogColorAccent">@color/secondaryDarkColorBlueGray</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <!-- End Custom theme -->
@@ -333,21 +542,22 @@
 
 
     <!--White color added font-->
-
     <style name="brandonRegularTextView" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">@font/brandon_reg</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_size_normal</item>
     </style>
 
-
     <!--White color non font-->
-
     <style name="RegularTextView" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_size_normal</item>
     </style>
 
+    <style name="SmallRegularTextView" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
 
     <!--Floating button -->
     <style name="AppTheme.Purple" parent="AppTheme">
@@ -356,7 +566,6 @@
         <item name="colorAccent">@color/material_purple_a700</item>
         <item name="colorControlHighlight">@color/material_purple_200</item>
     </style>
-
 
     <!-- Custom style for photo slide show -->
     <style name="SimpleButtonStyle" parent="AppTheme">
@@ -374,16 +583,6 @@
     </style>
 
 
-    <!--Multiple select items -->
-    <style name="MultipleImageSelectTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:textColor">@color/multiple_image_select_toolbarPrimaryText</item>
-        <item name="colorAccent">@color/multiple_image_select_accent</item>
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-    </style>
-
     <style name="CustomActionModeStyle" parent="Base.Widget.AppCompat.ActionMode">
         <item name="background">@color/material_orange_700</item>
         <item name="actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
@@ -395,7 +594,6 @@
         <item name="actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
         <item name="android:actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
     </style>
-
 
     <!--Animation transfer activities -->
     <style name="WindowAnimationTransition">
@@ -410,12 +608,53 @@
         <item name="DialogSpotCount">4</item>
     </style>
 
-
     <!-- Custom button for calculator -->
     <style name="MyButton" parent="Widget.AppCompat.Button">
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/button</item>
         <item name="android:textSize">@dimen/text_size_38</item>
         <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+
+    <!--Change theme -->
+    <style name="LightDialogTheme" parent="@style/MaterialDialog.Light">
+        <item name="colorPrimary">?attr/dialogColorPrimary</item>
+        <item name="colorPrimaryDark">?attr/dialogColorPrimaryDark</item>
+        <item name="colorAccent">?attr/dialogColorAccent</item>
+        <!--
+        <item name="android:fontFamily">@font/brandon_regs</item>
+        !-->
+    </style>
+
+    <style name="DarkDialogTheme" parent="@style/MaterialDialog">
+        <item name="colorPrimary">?attr/dialogColorPrimary</item>
+        <item name="colorPrimaryDark">?attr/dialogColorPrimaryDark</item>
+        <item name="colorAccent">?attr/dialogColorAccent</item>
+        <!--
+        <item name="android:fontFamily">@font/brandon_regs</item>
+        !-->
+    </style>
+
+    <style name="ToolbarStyle" parent="@style/Widget.AppCompat.Toolbar">
+        <!-- Makes the toolbar text whatever color you want for both light/dark-->
+        <item name="titleTextColor">@color/white</item>
+<!--        <item name="android:background">?attr/colorPrimary</item>-->
+    </style>
+
+    <style name="ToolbarStyle.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <!-- For toolbar menu -->
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="Toolbar.Button.Navigation.Tinted" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <!-- For the hamburger menu, back button, etc -->
+        <item name="tint">@color/white</item>
+    </style>
+
+    <style name="SpotsDialogDefault" parent="android:Theme.DeviceDefault.Light.Dialog">
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogTitleText">Loading…</item>
+        <item name="DialogSpotCount">5</item>
     </style>
 </resources>

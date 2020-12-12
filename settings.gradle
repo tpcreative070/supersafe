@@ -1,22 +1,15 @@
 include ':app',
-        'floatingbuttonlibrary' ,
-        'multipleimageselect',
         'materialstyledialoglibrary',
         'library-common',
         'library-circular',
         'library-progress',
-        'storage',
         'photoview',
-        'library-progress-dialog',
-        'compressorlibrary',
-        'image-picker-library',
         'time_ago_library',
         'taptargetviewlibrary',
         'vusikviewlibrary',
         'simplerecyclerviewlibrary',
-        'fingerprint-auth-library',
-        'checkoutlibrary',
-        'bungeelibrary',
-        'dialogsuccessprogresslibrary',
         'library-circleprogress',
-        'materialdialoglibrary'
+        'material-edit-text',
+        'library-hidden-camera'
+
+rootProject.name = "supersafe"

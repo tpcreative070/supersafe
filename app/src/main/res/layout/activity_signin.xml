@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.signin.SignInActivity">
-
+    tools:context=".ui.signin.SignInAct">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:fitsSystemWindows="true">
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
+            android:background="?attr/colorPrimary"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -29,7 +29,6 @@
             app:expandedTitleMarginEnd="64dp">
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
     <RelativeLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:background="@color/colorBackground"
@@ -39,39 +38,36 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_marginTop="150dp"
-            android:layout_marginLeft="@dimen/margin_left"
-            android:layout_marginRight="@dimen/margin_right"
+            android:layout_marginStart="@dimen/margin_left"
+            android:layout_marginEnd="@dimen/margin_right"
             android:layout_marginBottom="20dp"
             android:orientation="vertical"
             android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_marginLeft="@dimen/margin_left"
-                android:layout_marginRight="@dimen/margin_right"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_marginStart="@dimen/margin_left"
+                android:layout_marginEnd="@dimen/margin_right"
                 android:textColor="@color/white"
                 android:gravity="center"
                 android:text="@string/login"
                 android:textSize="@dimen/text_size_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
             <LinearLayout
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="40dp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/edtEmail"
                     android:textSize="@dimen/text_size_normal"
                     android:hint="Email"
                     android:singleLine="true"
+                    android:maxLength="100"
                     android:inputType="textEmailAddress"
                     android:imeOptions="actionNext"
                     style="@style/RegularTextView"
@@ -83,13 +79,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
-
-
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
                     android:visibility="invisible"
                     android:id="@+id/progressBarCircularIndeterminate"
@@ -99,8 +91,7 @@
                     android:background="@color/white"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"/>
-
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnNext"
                     android:textColor="@color/colorDisableText"
                     android:background="@drawable/bg_button_disable_rounded"
@@ -110,6 +101,30 @@
                     android:layout_height="@dimen/button_high"/>
             </RelativeLayout>
 
+            <LinearLayout
+                android:id="@+id/llSupport"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/SmallRegularTextView"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_normal"
+                    android:text="@string/contact_us"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_marginTop="2dp"
+                    style="@style/SmallRegularTextView"
+                    android:textColor="@color/white"
+                    android:clickable="false"
+                    android:autoLink="web|email"
+                    android:textSize="@dimen/text_size_normal"
+                    android:id="@+id/tvSupport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

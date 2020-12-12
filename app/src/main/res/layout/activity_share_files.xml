@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.sharefiles.ShareFilesActivity">
+    tools:context=".ui.sharefiles.ShareFilesAct">
     <RelativeLayout
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,13 +19,13 @@
             android:layout_centerInParent="true"
             android:layout_width="match_parent"
             android:layout_height="230dp">
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgChecked"
                 android:src="@drawable/baseline_check_circle_white_48"
                 android:layout_centerInParent="true"
                 android:layout_width="@dimen/image_size_custom"
                 android:layout_height="@dimen/image_size_custom" />
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_marginTop="25dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -38,7 +38,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnGotIt"
                 android:background="@drawable/bg_button_rounded_got_it"
                 android:layout_margin="20dp"
@@ -47,7 +47,7 @@
                 android:textSize="@dimen/text_size_normal"
                 android:textAllCaps="false"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/button_high" />
         </RelativeLayout>

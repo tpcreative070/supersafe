@@ -20,10 +20,10 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -92,8 +92,8 @@ class ToolbarTapTarget extends ViewTapTarget {
     final int size = toolbar.getChildCount();
     for (int i = 0; i < size; ++i) {
       final View child = toolbar.getChildAt(i);
-      if (child instanceof ImageButton) {
-        final Drawable childDrawable = ((ImageButton) child).getDrawable();
+      if (child instanceof AppCompatImageButton) {
+        final Drawable childDrawable = ((AppCompatImageButton) child).getDrawable();
         if (childDrawable == navigationIcon) {
           return child;
         }
@@ -120,8 +120,8 @@ class ToolbarTapTarget extends ViewTapTarget {
             parents.push((ViewGroup) child);
             continue;
           }
-          if (child instanceof ImageView) {
-            final Drawable childDrawable = ((ImageView) child).getDrawable();
+          if (child instanceof AppCompatImageView) {
+            final Drawable childDrawable = ((AppCompatImageView) child).getDrawable();
             if (childDrawable == overflowDrawable) {
               return child;
             }

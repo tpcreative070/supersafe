@@ -1,64 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rlHome"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <androidx.cardview.widget.CardView
+        android:layout_margin="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        app:cardCornerRadius="4dp"
+        android:layout_height="wrap_content">
+
         <RelativeLayout
-            android:background="@drawable/bg_rl_rounded_none_color"
-            android:id="@+id/rlHome"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
             <RelativeLayout
                 android:id="@+id/rlSlider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <co.tpcreative.supersafe.common.views.SquaredImageView
                     android:id="@+id/imgAlbum"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
-
                 <co.tpcreative.supersafe.common.views.SquaredImageView
                     android:clickable="false"
                     android:layout_centerInParent="true"
                     android:id="@+id/imgIcon"
                     android:layout_width="@dimen/finger_icon"
                     android:layout_height="@dimen/finger_icon"/>
-
             </RelativeLayout>
-
-
             <RelativeLayout
-                android:background="@color/white"
+                android:background="@color/private_item"
                 android:id="@+id/llHeader"
                 android:layout_below="@+id/rlSlider"
                 android:layout_centerInParent="true"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textColor="@color/black"
                     android:paddingTop="15dp"
                     android:paddingBottom="15dp"
                     android:textSize="@dimen/text_size_large"
                     android:id="@+id/tvTitle"
                     android:singleLine="true"
-                    android:layout_marginRight="@dimen/ic_album_overflow_width"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginEnd="@dimen/ic_album_overflow_width"
+                    android:layout_marginStart="15dp"
                     android:layout_centerInParent="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:tint="@color/material_gray_500"
                     android:padding="5dp"
                     android:layout_centerInParent="true"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:id="@+id/overflow"
                     android:layout_width="@dimen/ic_album_overflow_width"
                     android:layout_height="@dimen/ic_album_overflow_height"
@@ -66,4 +69,5 @@
                     app:srcCompat="@drawable/ic_more_vert_black_100dp"/>
             </RelativeLayout>
         </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

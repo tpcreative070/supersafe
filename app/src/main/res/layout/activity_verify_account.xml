@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ui.verifyaccount.VerifyAccountActivity">
-
+    tools:context=".ui.verifyaccount.VerifyAccountAct">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,21 +12,19 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
+                android:background="?attr/colorPrimary"
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
@@ -39,54 +35,46 @@
                 app:expandedTitleMarginStart="48dp"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
         </com.google.android.material.appbar.AppBarLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/appbar"
             android:orientation="vertical">
-
             <!-- Action -->
-
             <LinearLayout
                 android:id="@+id/llAction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="50dp"
                 android:orientation="vertical">
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/your_email"
                     android:textColor="?attr/colorAccent"
                     android:textSize="@dimen/text_size_normal" />
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="30dp"
                     android:layout_marginTop="10dp">
-
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imgEdit"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerInParent="true"
                         android:src="@drawable/baseline_create_white_48" />
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginRight="20dp"
-                        android:layout_toRightOf="@+id/imgEdit"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginEnd="20dp"
+                        android:layout_toEndOf="@+id/imgEdit"
                         android:singleLine="true"
                         android:textSize="@dimen/text_size_normal" />
                 </RelativeLayout>
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -98,8 +86,7 @@
                         android:layout_centerVertical="true"
                         android:elevation="10dp"
                         android:visibility="invisible" />
-
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:layout_centerInParent="true"
                         android:id="@+id/btnSendVerifyCode"
                         android:layout_width="match_parent"
@@ -109,18 +96,13 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_normal" />
                 </RelativeLayout>
-
-
-                <TextView
-                    android:textColor="?attr/colorPrimary"
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/medium_17"
                     android:layout_marginTop="30dp"
-                    android:layout_below="@+id/btnSendVerifyCode"
                     android:text="@string/verify_code_to_sync_files_to_cloud"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:textColor="?attr/colorAccent"
                     android:id="@+id/tvPrivateCloud"
@@ -130,76 +112,35 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
                 <RelativeLayout
                     android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp">
-
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1sp"
                         android:layout_centerInParent="true"
-                        android:layout_marginRight="20dp"
-                        android:layout_toLeftOf="@+id/tvOr"
+                        android:layout_marginEnd="20dp"
+                        android:layout_toStartOf="@+id/tvOr"
                         android:background="@color/green_500" />
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvOr"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:text="@string/or"
                         android:textColor="@color/grey_500" />
-
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1sp"
                         android:layout_centerInParent="true"
-                        android:layout_marginLeft="20dp"
-                        android:layout_toRightOf="@+id/tvOr"
+                        android:layout_marginStart="20dp"
+                        android:layout_toEndOf="@+id/tvOr"
                         android:background="@color/green_500" />
                 </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:visibility="gone"
-                    android:id="@+id/llGoogle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:background="@drawable/bg_button_rounded">
-
-                    <ImageView
-                        android:clickable="false"
-                        android:id="@+id/imgGoogle"
-                        android:layout_width="@dimen/button_high"
-                        android:layout_height="@dimen/button_high"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="1dp"
-                        android:background="@drawable/bg_button_rounded_none_color"
-                        android:src="@drawable/ic_google_512" />
-
-                    <Button
-                        android:clickable="false"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/button_high"
-                        android:layout_toRightOf="@+id/imgGoogle"
-                        android:background="@null"
-                        android:text="@string/login_with_google"
-                        android:textColor="@color/white" />
-
-                </RelativeLayout>
-
-
-
             </LinearLayout>
-
-
             <!-- Edit Email -->
-
             <LinearLayout
                 android:id="@+id/llChangeEmail"
                 android:layout_width="match_parent"
@@ -207,12 +148,10 @@
                 android:layout_margin="50dp"
                 android:orientation="vertical"
                 android:visibility="gone">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
                     <com.rengwuxian.materialedittext.MaterialEditText
                         android:id="@+id/edtEmail"
                         style="@style/RegularTextView"
@@ -223,37 +162,34 @@
                         android:inputType="textEmailAddress"
                         android:singleLine="true"
                         android:textSize="@dimen/text_size_normal"
+                        android:maxLength="100"
                         app:met_floatingLabel="highlight"
                         app:met_baseColor="?attr/colorAccent"
                         app:met_primaryColor="?attr/colorAccent"
                         app:met_textColorHint="?attr/colorAccent"
                         app:met_textColor="@color/material_gray_700" />
                 </LinearLayout>
-
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:orientation="horizontal"
                     android:weightSum="2">
-
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnCancel"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_high"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/bg_button_rounded"
                         android:text="@string/cancel"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_normal" />
-
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnSave"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_high"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/bg_button_disable_rounded"
                         android:text="@string/save"
@@ -261,10 +197,7 @@
                         android:textSize="@dimen/text_size_normal" />
                 </LinearLayout>
             </LinearLayout>
-
-
             <!-- Verify code -->
-
             <LinearLayout
                 android:id="@+id/llVerifyCode"
                 android:visibility="gone"
@@ -272,15 +205,14 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="50dp"
                 android:orientation="vertical">
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:textStyle="bold"
                     android:id="@+id/tvTitle"
                     android:textColor="?attr/colorAccent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
                     android:textSize="@dimen/text_size_normal" />
-
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/edtCode"
                     style="@style/RegularTextView"
@@ -297,22 +229,19 @@
                     app:met_primaryColor="?attr/colorAccent"
                     app:met_textColorHint="?attr/colorAccent"
                     app:met_textColor="@color/material_gray_700"/>
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
                     <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
                         android:id="@+id/progressBarCircularIndeterminateSignIn"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:background="@color/colorButton"
+                        android:background="?attr/colorAccent"
                         android:elevation="10dp"
                         android:visibility="invisible" />
-
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnSignIn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_high"
@@ -321,24 +250,20 @@
                         android:text="@string/verify"
                         android:textColor="@color/colorDisableText"
                         android:textSize="@dimen/text_size_normal" />
-
                 </RelativeLayout>
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
                     <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
                         android:id="@+id/progressBarCircularIndeterminateReSend"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:background="@color/colorButton"
+                        android:background="?attr/colorAccent"
                         android:elevation="10dp"
                         android:visibility="invisible"/>
-
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnReSend"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_high"
@@ -346,7 +271,6 @@
                         android:text="@string/resend"
                         android:textColor="?attr/colorAccent"
                         android:textSize="@dimen/text_size_normal"/>
-
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

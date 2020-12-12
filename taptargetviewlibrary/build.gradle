@@ -26,6 +26,6 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:'+appSupportVersion
-    implementation 'androidx.core:core-ktx:'+appSupportVersion
+    implementation "androidx.appcompat:appcompat:$appSupportVersion"
+    implementation "androidx.core:core-ktx:$appSupportVersion"
 }

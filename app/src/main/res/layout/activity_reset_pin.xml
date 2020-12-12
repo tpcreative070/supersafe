@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/material_gray_100"
-    tools:context=".ui.resetpin.ResetPinActivity">
+    tools:context=".ui.resetpin.ResetPinAct">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -13,7 +12,8 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:fitsSystemWindows="true">
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
+            android:background="?attr/colorPrimary"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -39,42 +39,36 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:orientation="vertical"
             android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textColor="?attr/colorAccent"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/forgot_your_pin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:layout_marginTop="20dp"
                 android:textStyle="bold"
                 android:text="@string/step_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvStep1"
                 android:layout_marginTop="10dp"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/request_an_access_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-
             <RelativeLayout
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:layout_centerInParent="true"
                     android:id="@+id/btnSendRequest"
                     android:textColor="@color/white"
@@ -83,39 +77,30 @@
                     android:background="@drawable/bg_button_rounded"
                     android:layout_width="200dp"
                     android:layout_height="@dimen/button_high" />
-
-                <fr.castorflex.android.circularprogressbar.CircularProgressBar
-                    android:visibility="invisible"
-                    android:layout_centerInParent="true"
-                    android:id="@+id/progressbar_circular"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:indeterminate="true"
-                    android:indeterminateOnly="false"/>
+                <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+                    android:id="@+id/progressbar_circular_request_code"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:elevation="10dp"
+                    android:background="?attr/colorAccent"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="invisible" />
             </RelativeLayout>
-
-
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:layout_marginTop="20dp"
                 android:textStyle="bold"
                 android:text="@string/step_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvStep2"
                 android:layout_marginTop="10dp"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/request_enter_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/edtCode"
                 style="@style/RegularTextView"
@@ -134,16 +119,29 @@
                 app:met_textColor="?attr/colorAccent"
                 app:met_textColorHint="?attr/colorAccent" />
 
-            <Button
-                android:id="@+id/btnReset"
-                android:enabled="false"
-                android:textColor="@color/white"
-                android:text="@string/reset_pin"
+            <RelativeLayout
                 android:layout_marginTop="20dp"
-                android:padding="10dp"
-                android:background="@drawable/bg_button_disable_rounded"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/button_high"/>
+                android:layout_height="wrap_content">
+                <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+                    android:id="@+id/progressbar_circular_reset_pin"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:elevation="10dp"
+                    android:background="?attr/colorAccent"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="invisible" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnReset"
+                    android:enabled="false"
+                    android:textColor="@color/white"
+                    android:text="@string/reset_pin"
+                    android:padding="10dp"
+                    android:background="@drawable/bg_button_disable_rounded"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_high"/>
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/llSupport"
@@ -151,20 +149,18 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:text="@string/did_not_receive_code"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:clickable="false"
                     android:autoLink="web|email"
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tvSupport"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

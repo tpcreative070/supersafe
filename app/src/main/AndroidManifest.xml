@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="co.tpcreative.supersafe">
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -11,22 +13,26 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
+
     <application
-        android:requestLegacyExternalStorage="true"
-        android:usesCleartextTraffic="true"
         android:name=".common.services.SuperSafeApplication"
-        android:largeHeap="true"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
-        android:theme="@style/AppThemeLaunch">
-        <activity
-            android:name=".ui.splashscreen.SplashScreenActivity">
+        android:theme="@style/AppThemeLaunch"
+        android:usesCleartextTraffic="true"
+        tools:replace="allowBackup">
+        <activity android:name=".ui.seeyou.SeeYouAct"></activity>
+        <activity android:name=".ui.twofactorauthentication.TwoFactorAuthenticationAct" />
+        <activity android:name=".ui.splashscreen.SplashScreenAct">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
@@ -39,14 +45,12 @@
                 <action android:name="android.intent.action.SCREEN_OFF" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
-        </receiver>
-
-        <!-- Upload Google Drive -->
+        </receiver> <!-- Upload Google Drive -->
         <service android:name=".common.services.SuperSafeService" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_app_id"/>
+            android:value="@string/admob_app_id" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -56,33 +60,29 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
-        </provider>
-        <!-- Enter pin code -->
+        </provider> <!-- Enter pin code -->
         <activity
-            android:name=".ui.lockscreen.EnterPinActivity"
-            android:label="@string/key_lock_screen"/>
-        <activity android:name=".ui.main_tab.MainTabActivity"/>
+            android:name=".ui.enterpin.EnterPinAct"
+            android:label="@string/key_lock_screen" />
+        <activity android:name=".ui.main_tab.MainTabAct" />
         <activity
-            android:name=".ui.signin.SignInActivity"
-            android:label="@string/key_sign_in"/>
+            android:name=".ui.signin.SignInAct"
+            android:label="@string/key_sign_in" />
         <activity
-            android:name=".ui.verify.VerifyActivity"
-            android:label="@string/verify"/>
+            android:name=".ui.verify.VerifyAct"
+            android:label="@string/lb_verify_account" />
+        <activity android:name=".ui.askpermission.AskPermissionAct" />
+        <activity android:name=".ui.dashboard.DashBoardAct" />
         <activity
-            android:name=".ui.askpermission.AskPermissionActivity"/>
-        <activity
-            android:name=".ui.dashboard.DashBoardActivity"/>
-        <activity
-            android:name=".ui.signup.SignUpActivity"
-            android:label="@string/key_sign_up"/>
-        <activity android:name=".ui.camera.CameraActivity"/>
-        <activity
-            android:name=".ui.fakepin.FakePinComponentActivity"/>
+            android:name=".ui.signup.SignUpAct"
+            android:label="@string/key_sign_up" />
+        <activity android:name=".ui.camera.CameraAct" />
+        <activity android:name=".ui.fakepin.FakePinComponentAct" />
         <activity
             android:name=".ui.multiselects.AlbumSelectActivity"
             android:label="@string/select_album">
             <intent-filter>
-                <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT"/>
+                <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -93,72 +93,76 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.albumdetail.AlbumDetailActivity"
+            android:name=".ui.albumdetail.AlbumDetailAct"
             android:label="" />
-        <activity android:name=".ui.photosslideshow.PhotoSlideShowActivity"/>
+        <activity android:name=".ui.photosslideshow.PhotoSlideShowAct" />
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".ui.settings.SettingsAct"
             android:label="@string/settings" />
         <activity
-            android:name=".ui.help.HelpAndSupportActivity"
+            android:name=".ui.help.HelpAndSupportAct"
             android:label="@string/help" />
         <activity
-            android:name=".ui.verifyaccount.VerifyAccountActivity"
+            android:name=".ui.verifyaccount.VerifyAccountAct"
             android:label="@string/verify"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.accountmanager.AccountManagerActivity"
+            android:name=".ui.accountmanager.AccountManagerAct"
             android:label="@string/account" />
         <activity
-            android:name=".ui.enablecloud.EnableCloudActivity"
+            android:name=".ui.enablecloud.EnableCloudAct"
             android:label="@string/enable_cloud_sync" />
         <activity
-            android:name=".ui.cloudmanager.CloudManagerActivity"
+            android:name=".ui.cloudmanager.CloudManagerAct"
             android:label="@string/cloud_manager" />
-        <activity android:name=".ui.checksystem.CheckSystemActivity"/>
+        <activity android:name=".ui.checksystem.CheckSystemAct" />
         <activity
-            android:name=".ui.trash.TrashActivity"
+            android:name=".ui.trash.TrashAct"
             android:label="@string/key_trash" />
-        <activity android:name=".ui.settings.AlbumSettingsActivity"/>
+        <activity android:name=".ui.settings.AlbumSettingsAct" />
         <activity
-            android:name=".ui.resetpin.ResetPinActivity"
+            android:name=".ui.resetpin.ResetPinAct"
             android:label="@string/reset_pin" />
         <activity
-            android:name=".ui.theme.ThemeSettingsActivity"
+            android:name=".ui.theme.ThemeSettingsAct"
             android:label="@string/key_update_theme" />
         <activity
-            android:name=".ui.breakinalerts.BreakInAlertsActivity"
+            android:name=".ui.breakinalerts.BreakInAlertsAct"
             android:label="@string/key_break_in_alert" />
         <activity
-            android:name=".ui.fakepin.FakePinActivity"
+            android:name=".ui.fakepin.FakePinAct"
             android:label="@string/key_fake_pin" />
-        <activity android:name=".ui.secretdoor.SecretDoorActivity"
-            android:label="@string/key_secret_door"/>
-        <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity"/>
-        <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity"/>
-        <activity android:name=".ui.secretdoor.SecretDoorSetUpActivity"/>
-        <activity android:name=".ui.facedown.FaceDownActivity"/>
         <activity
-            android:name=".ui.unlockalbum.UnlockAllAlbumActivity"
+            android:name=".ui.secretdoor.SecretDoorAct"
+            android:label="@string/key_secret_door" />
+        <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity" />
+        <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity" />
+        <activity android:name=".ui.secretdoor.SecretDoorSetUpAct" />
+        <activity android:name=".ui.facedown.FaceDownActivity" />
+        <activity
+            android:name=".ui.unlockalbum.UnlockAllAlbumAct"
             android:label="@string/unlock_all_albums" />
-        <activity android:name=".ui.help.HelpAndSupportContentActivity"
-            android:label="@string/help"/>
-        <activity android:name=".ui.sharefiles.ShareFilesActivity"
+        <activity
+            android:name=".ui.help.HelpAndSupportContentAct"
+            android:label="@string/help" />
+        <activity
+            android:name=".ui.sharefiles.ShareFilesAct"
             android:theme="@style/AppTheme.Share">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.premium.PremiumActivity"
+            android:name=".ui.premium.PremiumAct"
             android:label="@string/premium" />
-        <activity android:name=".ui.restore.RestoreActivity"/>
-        <activity android:name=".ui.albumcover.AlbumCoverActivity"/>
-        <activity android:name=".ui.switchbasic.SwitchBasicActivity"/>
-        <!--Portrait model for special mode-->
-        <activity android:name=".ui.player.PlayerActivity"/>
+        <activity android:name=".ui.albumcover.AlbumCoverAct" />
+        <activity android:name=".ui.switchbasic.SwitchBasicAct" /> <!-- Portrait model for special mode -->
+        <activity android:name=".ui.player.PlayerAct" />
     </application>
+
 </manifest>

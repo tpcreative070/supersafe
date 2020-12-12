@@ -89,10 +89,10 @@
     <string name="folder_not_selected">No folder selected, can not continue.</string>
     <string name="move_to_album">Move to album</string>
     <string name="new_album">New Album</string>
-
+    <string name="enter_name">Enter name</string>
     <string name="me">ME</string>
     <string name="privates">PRIVATE</string>
-
+    <string name="need_signed_in_to_google_drive_before_using_this_feature">Please connect to YOUR GOOGLE DRIVE before to use this feature</string>
     <string name="label_custom_color">Custom colors</string>
     <string name="label_custom_theme">Custom theme</string>
     <string name="label_add_action">Add action</string>
@@ -109,6 +109,8 @@
     <string name="login">SIGN IN with your Super Safe account email</string>
     <string name="email">Email</string>
     <string name="next">NEXT</string>
+    <string name="change">Change</string>
+    <string name="generate_secret_pin">Generate secret pin</string>
     <string name="confirm">Confirm</string>
     <string name="internet">Please check your connections</string>
     <string name="yes">YES</string>
@@ -123,7 +125,7 @@
     <string name="key_sign_in">Sign In</string>
     <string name="welcome">Welcome to SuperSafe</string>
     <string name="safe_detail">A safe place for your photos or videos</string>
-    <string name="title_forget">Add an email in the case you forget</string>
+    <string name="title_forget">Add an email in the case you forget PIN</string>
     <string name="name">Name</string>
     <string name="finish">Finish</string>
     <string name="camera_permission_confirmation">This app demonstrates the usage of CameraView. In order to do that, it needs permission to access camera.</string>
@@ -135,6 +137,11 @@
     <string name="flash_auto">Flash auto</string>
     <string name="flash_off">Flash off</string>
     <string name="flash_on">Flash on</string>
+    <string name="secret_pin">Secret Pin</string>
+    <string name="change_secret_pin">Change Secret Pin</string>
+    <string name="wrong_secret_pin">Wrong secret pin</string>
+    <string name="server_error_occurred">Server error occurred</string>
+    <string name="no_connection">No connection. Please check your internet connection</string>
 
 
     /*Clock Screen*/
@@ -182,6 +189,7 @@
     <string name="enable_now">ENABLE NOW</string>
     <string name="continue_value">Continue</string>
     <string name="did_not_receive_code">Didn\'t receive your code?</string>
+    <string name="contact_us">Contact US</string>
     <string name="send_an_email_to">Send an email to %1$s</string>
     <string name="upgrade_to_pro">Upgrade To Pro</string>
     <string name="upgrade">UPGRADE</string>
@@ -223,6 +231,7 @@
     <string name="choose_an_account">Please select %1$s to link to Google Drive</string>
     <string name="choose_an_new_account">Please select or add your Google account to sign in with SuperSafe</string>
     <string name="not_the_same_account">Not the same account</string>
+    <string name="are_you_sure_you_want_disable_two_factor_authentication">Are you sure. You want to disable TWO FACTOR AUTHENTICATION.</string>
     <string name="choose_the_same_account">Please select %1$s</string>
     <string name="select_again">SELECT AGAIN</string>
     <string name="user_another">USER ANOTHER</string>
@@ -246,6 +255,7 @@
     <string name="delete_all">Delete All</string>
     <string name="are_you_sure_you_want_to_empty_trash">Are you sure you want to empty Trash?</string>
     <string name="progressing">Progressing...</string>
+    <string name="improving_storage_fies">Improving storage files. Please wait...</string>
     <string name="importing">Importing...</string>
     <string name="exporting">Exporting...</string>
     <string name="Sending">Sending</string>
@@ -263,6 +273,7 @@
     <string name="upgrade_to_recover">UPGRADE TO RECOVER</string>
     <string name="empty_trash">EMPTY TRASH</string>
     <string name="select_all">Select All</string>
+    <string name="send">Send</string>
     <string name="refresh">Refresh</string>
     <string name="key_restore">Restore</string>
     <string name="key_delete">Delete</string>
@@ -270,8 +281,11 @@
     <string name="empty_all_trash">Are you sure to delete all items? You can not undo this!</string>
     <string name="restore">These items will be restored!</string>
     <string name="restore_now">Restore Now</string>
+    <string name="migration">%1$s/%2$s</string>
     <string name="tvPrimacyPolicy">https://sites.google.com/view/tpcreative/home</string>
     <string name="no_internet_connection">No Internet Connection</string>
+    <string name="secret_pin_was_created">Secret PIN was generated is %1$s</string>
+    <string name="secret_pin_was_changed">Secret PIN was changed is %1$s</string>
 
     <string name="pin_was_wrong">PIN was incorrect</string>
     <string name="forgot_your_pin">Forgot your pin? No problem. Here\'s how to reset it</string>
@@ -288,15 +302,18 @@
     <string name="premium_feature">Premium feature</string>
     <string name="premium">Premium</string>
     <string name="break_in_alerts">Whenever someone enters an incorrect PIN, We will log the date time and snap a secret photo</string>
-    <string name="disabled">Disabled</string>
+    <string name="disable">Disable</string>
     <string name="set_custom_covers">Set custom cover</string>
     <string name="enabled">Enabled</string>
     <string name="fake_pin">Create a second PIN or pattern that opens to a decoy SuperSafe</string>
-    <string name="secret_door">Disguise SuperSafe as a different app. Simply press and hold on the Supersafe logo to bring up the lock screen.</string>
+    <string name="secret_door">Disguise SuperSafe as a different app. Simply press and hold on the SuperSafe logo to bring up the lock screen.</string>
     <string name="recent_alerts">Recent alerts</string>
     <string name="create_fake_pin">Create Fake PIN</string>
     <string name="change_fake_pin">Change Fake PIN</string>
     <string name="time_ago_prefix"></string>
+    <string name="key_alert">Alert</string>
+    <string name="warning_expired_subscription">The first of all. Thank you for using our services and purchased items. Currently your packages was expired. Please subscription to continue using our premium features.</string>
+    <string name="key_already_asked_expiration">is_already_asked_expiration</string>
     <string name="time_ago_suffix">ago</string>
     <string name="time_ago_seconds">less than a minute</string>
     <string name="time_ago_minute">about a minute</string>
@@ -404,9 +421,22 @@
     <string name="key_album_cover">Album Cover</string>
     <string name="key_custom">Custom</string>
     <string name="key_switch_to_basic">switch_to_basic</string>
-
+    <string name="enable_two_factor_secret">Two-Factor SECRET PIN</string>
+    <string name="enable_two_factor_secret_detail">Increase your account\'s security by enabling Two-Factor SECRET PIN</string>
+    <string name="enter_new_secret_pin">Enter new secret pin</string>
+    <string name="enter_secret_pin">Enter secret pin</string>
+    <string name="verify_secret_pin_to_disable_two_factor_authentication">Verify secret pin to disable TWO FACTOR AUTHENTICATION</string>
+    <string name="verify_secret_pin_to_enable_two_factor_authentication">Verify secret pin to enable TWO FACTOR AUTHENTICATION</string>
+    <string name="verify_secret_pin">Verify secret pin</string>
+    <string name="generate_two_factor_authentication">Generate Two-factor authentication</string>
+    <string name="send_request">Send request</string>
+    <string name="verify_account">You need to verify account first. In order to turn on two-factor authentication</string>
+    <string name="lb_verify_account">Verify account</string>
 
     /*Preference keys*/
+    <string name="key_enable_two_factor_authentication">key_enable_two_factor_authentication</string>
+    <string name="key_request_sync_data">request_sync_data</string>
+    <string name="key_last_time_sync_data">last_time_sync_data</string>
     <string name="key_grant_access">grant_access</string>
     <string name="key_data">data</string>
     <string name="key_pin">pin</string>
@@ -423,7 +453,7 @@
     <string name="key_rotate">rotate</string>
     <string name="key_seek_to">seek_to</string>
     <string name="key_lastWindowIndex">lastWindowIndex</string>
-
+    <string name="key_position_theme">key_position_theme</string>
     /*Google Drive api*/
     <string name="key_parents">parents</string>
     <string name="key_appDataFolder">appDataFolder</string>
@@ -462,9 +492,10 @@
     <string name="key_info">Info</string>
     <string name="key_account">Account</string>
     <string name="key_upgrade">Upgrade</string>
-    <string name="key_lock_screen">Lock screen</string>
+    <string name="key_lock_screen">Lock screen &amp; security</string>
     <string name="key_private_cloud">Private Cloud</string>
     <string name="key_theme">Themes</string>
+    <string name="key_dark_mode">Dark mode</string>
     <string name="key_break_in_alert">Break-In alerts</string>
     <string name="key_fake_pin">Fake PIN</string>
     <string name="key_secret_door">Secret Door</string>
@@ -488,7 +519,6 @@
     <string name="key_update_theme">Update Theme</string>
     <string name="key_theme_object">theme_object</string>
     <string name="key_theme_list">theme_list</string>
-    <string name="key_pause_cloud_sync">pause_cloud_sync</string>
     <string name="key_saving_space">saving_space</string>
     <string name="key_count_to_rate">count_to_rate</string>
     <string name="download_private_cloud_files">Download Private Cloud Files</string>
@@ -496,6 +526,7 @@
     <string name="key_cloud_sync_only_wifi">cloud_sync_only_wifi</string>
     <string name="key_face_down_lock">Face down lock</string>
     <string name="key_face_down_lock_detail">When you place your phone face down, SuperSafe will automatically close and lock itself.</string>
+    <string name="key_checkout_items">key_checkout_items</string>
     <string name="space_required">Space required: %1$s</string>
     <string name="locked">Locked</string>
     <string name="unlocked">Unlocked</string>
@@ -503,6 +534,7 @@
     <string name="lock_album">Lock Album</string>
     <string name="enter_a_password_for_this_album">Enter a password for this album.</string>
     <string name="remove_password">Remove password</string>
+    <string name="type_password">Type password</string>
     <string name="unlock">Unlock</string>
     <string name="wrong_password">Wrong password</string>
     <string name="album_is_locked">Album is locked</string>
@@ -527,13 +559,16 @@
     <string name="i_love_it">I love it</string>
     <string name="report_problem">Report problem</string>
     <string name="no_thanks">No, thanks</string>
-
-
+    <string name="change_mode">Change mode</string>
+    <string-array name="themeEntryArray">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
     <!--Help and Support -->
     <string name="faq">FAQ</string>
     <string name="Support">Support</string>
     <string name="more_about_private_cloud">More detail Private Cloud(Google Drive)</string>
-
+    <string name="warning_fake_checkout">Sorry for inconvenience. It seems FAKE order. Please contact to us via care@tpcreative.co</string>
     <string name="i_have_a_new_phone">I have a new phone</string>
     <string name="i_have_a_new_phone_content">file:///android_asset/new_phone.html</string>
 
@@ -551,6 +586,8 @@
 
     <string name="what_is_the_fake_pin_and_how_do_i_use_it">What\'s the fake PIN and how do I use it?</string>
     <string name="what_is_the_fake_pin_and_how_do_i_use_it_content">file:///android_asset/fake_pin.html</string>
+    <string name="what_is_the_secret_pin_and_how_do_i_use_it">What\'s the Two-factor SECRET PIN and how do I use it?</string>
+    <string name="what_is_the_secret_pin_and_how_do_i_use_it_content">file:///android_asset/secret_pin.html?</string>
 
     <string name="contact_support">Contact support</string>
     <string name="contact_support_content">Contact support</string>
@@ -641,7 +678,7 @@
     <string name="switch_to_supersafe_basic_detail">It\'s the free version of SuperSafe. It still protect your important files and you still can upload file to Google Drive 50 files per month. All of them behind a lock screen and gives you good privacy features</string>
     <string name="switch_to_basic">SWITCH TO BASIC</string>
     <string name="imported_file_successful">Imported %1$s files successful</string>
-    <string name="we_sent_access_code_to_your_email">We sent access code to your email. Please check it.</string>
+    <string name="we_sent_access_code_to_your_email">We sent access code to your email is %1$s. Please check it.</string>
     <string name="error_occurred">Error occurred!</string>
     <string name="verify_occurred_error">Verify occurred error</string>
     <string name="sent_email_occurred_error">Sent email occurred error</string>
@@ -678,7 +715,15 @@
         <item>Calculator</item>
     </string-array>
 
+    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/MyCustomTextAppearance</item>
+    </style>
 
+    <style name="MyCustomTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">12sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
 
 
 </resources>

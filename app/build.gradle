@@ -1,7 +1,9 @@
-
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion appCompileSdkVersion
@@ -50,74 +52,82 @@ android {
     dexOptions {
         preDexLibraries = false
     }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs = ["-Xallow-result-return-type"]
+    }
+
+    buildFeatures {
+        dataBinding true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:'+appSupportVersion
-    implementation 'androidx.recyclerview:recyclerview:' + appRecyclerView
-    implementation 'com.google.android.material:material:' + appGoogleMaterial
-    implementation 'androidx.legacy:legacy-preference-v14:' + apppreferenceV14
-    implementation 'androidx.cardview:cardview:' + appCardView
-    implementation 'androidx.constraintlayout:constraintlayout:' + appConstraintlayout
-    implementation 'androidx.multidex:multidex:' + appMultidex
+    implementation "androidx.appcompat:appcompat:$appSupportVersion"
+    implementation "androidx.recyclerview:recyclerview:$appRecyclerView"
+    implementation "com.google.android.material:material:$appGoogleMaterial"
+    implementation "androidx.legacy:legacy-preference-v14:$apppreferenceV14"
+    implementation "androidx.cardview:cardview:$appCardView"
+    implementation "androidx.constraintlayout:constraintlayout:$appConstraintlayout"
+    implementation "androidx.multidex:multidex:$appMultidex"
 
     /*Support grant permission*/
-    implementation 'com.karumi:dexter:5.0.0'
+    implementation 'com.karumi:dexter:6.2.1'
 
     // Dependency for Google Sign-In
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
     // Dependencies for the REST API example
-    implementation 'com.google.api-client:google-api-client-android:1.23.0'
+    implementation 'com.google.api-client:google-api-client-android:1.26.0'
     /*Google drive*/
     implementation 'com.google.apis:google-api-services-drive:v3-rev126-1.24.1'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
     // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
+    implementation 'com.google.android.gms:play-services-basement:17.5.0'
     // Add the Firebase Crashlytics SDK.
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
 
     /*Call Floating button*/
-    implementation project(':floatingbuttonlibrary')
+    implementation "com.leinardi.android:speed-dial:3.1.1"
 
     /*Add butter knife*/
-    implementation 'com.jakewharton:butterknife:10.1.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    implementation 'androidx.sqlite:sqlite-ktx:2.1.0'
+
 
     /*Adding Edittext Android Material*/
-    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    implementation project(':material-edit-text')
 
     /*Waiting for progress*/
     implementation 'com.github.vajro:MaterialDesignLibrary:1.6'
 
     /*Gson*/
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     /*Room**/
-    implementation "androidx.room:room-runtime:" + appRoomVersion
-    annotationProcessor "androidx.room:room-compiler:" + appRoomVersion
+    implementation "androidx.room:room-runtime:$appRoomVersion"
+    annotationProcessor "androidx.room:room-compiler:$appRoomVersion"
 
     /*Camera view */
     implementation 'com.otaliastudios:cameraview:2.6.4'
 
     /*Material Design*/
-    implementation 'com.github.bumptech.glide:glide:' + glide
-    annotationProcessor 'com.github.bumptech.glide:compiler:'+glide
+    implementation "com.github.bumptech.glide:glide:$glide"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide"
     /*Circle for image theme*/
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     /*Retrofit and RXJava 2*/
-    implementation 'com.jakewharton.timber:timber:4.1.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:' + appReactivexAndroid
-    implementation 'io.reactivex.rxjava2:rxjava:' + appReactivexJava
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:' + appRetrofit
-    implementation 'com.squareup.retrofit2:retrofit:' + appRetrofit
-    implementation 'com.squareup.retrofit2:converter-gson:' + appRetrofit
-    implementation 'com.squareup.retrofit2:converter-scalars:' + appRetrofit
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation "com.squareup.retrofit2:retrofit:$appRetrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$appRetrofit"
+    implementation "com.squareup.retrofit2:converter-scalars:$appRetrofit"
 
     /*Material Dialog*/
     implementation project(':materialstyledialoglibrary')
-    implementation 'com.afollestad.material-dialogs:core:0.9.0.2'
+    implementation 'com.afollestad.material-dialogs:input:3.3.0'
+    implementation 'com.afollestad.material-dialogs:core:3.3.0'
 
     /*api project(':oauthor common')*/
     implementation project(':library-common')
@@ -126,14 +136,7 @@ dependencies {
     implementation project(':library-circular')
     implementation project(':library-progress')
 
-    /*Apache*/
-    implementation files('libs/httpmime-4.3.6.jar')
-    implementation files('libs/httpcore-4.3.3.jar')
-    implementation files('libs/httpclient-4.3.6.jar')
-    implementation files('libs/systembartint-1.0.3.jar')
-
     /*Android Storage*/
-    implementation project(':storage')
 
     /*PhotoView*/
     implementation project(':photoview')
@@ -141,18 +144,11 @@ dependencies {
     /*Exoplayer video*/
     implementation 'com.google.android.exoplayer:exoplayer:2.8.4'
 
-    /*Progress dialog */
-    implementation project(':library-progress-dialog')
-
     /*Compress image*/
-    implementation project(':compressorlibrary')
+    //implementation project(':compressorlibrary')
 
     /*Adding detect extension files*/
     implementation 'commons-io:commons-io:2.6'
-
-    /*Image picker
-    implementation project(':image-picker-library')
-    */
 
     /*Time ago*/
     implementation project(':time_ago_library')
@@ -166,32 +162,54 @@ dependencies {
     /*simplerecyclerviewlibrary*/
     implementation project(':simplerecyclerviewlibrary')
 
-    /*Fingerprint*/
-    implementation project(':fingerprint-auth-library')
-
     /*In app purchase*/
-    implementation project(':checkoutlibrary')
-
-    /*Google ads*/
-    implementation 'com.google.android.gms:play-services-ads:18.1.1'
+    //implementation project(':checkoutlibrary')
+    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
 
     /*bungeelibrary*/
-    implementation project (':bungeelibrary')
-
-    /*dialogsuccessprogresslibrary*/
-    implementation project(':dialogsuccessprogresslibrary')
+    //implementation project (':bungeelibrary')
 
     /*Circle progress*/
     implementation project(':library-circleprogress')
 
     /*Even Bus*/
-    implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+
+    /*Support web view*/
+    implementation 'com.github.delight-im:Android-AdvancedWebView:v3.2.1'
 
     /*Material style dialog*/
-    implementation project(':materialdialoglibrary')
+    //implementation project(':materialdialoglibrary')
+    implementation 'com.github.michael-rapp:android-material-dialog:5.2.3'
 
     /*Animation textview*/
     implementation 'me.grantland:autofittextview:0.2.1'
+
+    implementation 'commons-codec:commons-codec:1.13'
+
+    implementation 'com.tapadoo.android:alerter:6.2.0'
+
+    implementation project(':library-hidden-camera')
+
+    /*Finger print*/
+    implementation 'co.infinum:goldfinger:2.0.1'
+
+    /*Kotlin*/
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "androidx.core:core-ktx:$kotlin_core_version"
+    implementation "androidx.room:room-runtime:$appRoomVersion"
+    kapt "androidx.room:room-compiler:$appRoomVersion"
+    implementation "androidx.room:room-ktx:$appRoomVersion"
+    /*Duplicate class com.google.common.util.concurrent.ListenableFuture found in modules jetified-guava-20.0 (com.google.guava:guava:20.0) and jetified-listenablefuture-1.0 (com.google.guava:listenablefuture:1.0)*/
+    implementation "com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava"
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
+    implementation 'android.arch.lifecycle:extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'id.zelory:compressor:3.0.0'
+    kapt "com.github.bumptech.glide:compiler:$glide"
+    implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:3.2.0'
+    implementation "androidx.security:security-crypto:1.1.0-alpha03"
+    implementation 'com.github.Binary-Finery:Bungee:3.0'
 }
 /*Resolved duplicated for Google api client*/
 

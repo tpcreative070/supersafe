@@ -18,44 +18,38 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="50dp">
-
         <LinearLayout
             android:gravity="center"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent">
-
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgShare"
                 android:padding="7dp"
                 android:src="@drawable/baseline_share_white_36"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size" />
-
         </LinearLayout>
         <LinearLayout
             android:gravity="center"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent">
-
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgExport"
                 android:padding="7dp"
                 android:src="@drawable/baseline_launch_white_36"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size" />
-
         </LinearLayout>
         <LinearLayout
             android:gravity="center"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent">
-
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgMove"
                 android:padding="7dp"
                 android:src="@drawable/baseline_input_white_36"
@@ -63,14 +57,13 @@
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size" />
         </LinearLayout>
-
         <LinearLayout
             android:id="@+id/llDelete"
             android:gravity="center"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent">
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgDelete"
                 android:padding="7dp"
                 android:src="@drawable/baseline_delete_sweep_white_36"

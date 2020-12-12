@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.camera.CameraActivity">
-
+    tools:context=".ui.camera.CameraAct">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,7 +13,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
         <com.otaliastudios.cameraview.CameraView
             android:id="@+id/camera"
             android:layout_width="match_parent"
@@ -25,7 +23,7 @@
             app:cameraPreview="glSurface"
             app:cameraPlaySounds="true"
             app:cameraGrid="off"
-            app:cameraFlash="auto"
+            app:cameraFlash="off"
             app:cameraAudio="off"
             app:cameraFacing="back"
             app:cameraGestureTap="autoFocus"
@@ -35,53 +33,41 @@
             app:cameraGestureScrollVertical="exposureCorrection"
             app:cameraMode="picture"
             app:cameraPictureSizeAspectRatio="4:3"/>
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true" />
-
         <RelativeLayout
+            android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:background="#7F000000">
-
-
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btnSwitch"
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:background="@null"
                 app:srcCompat="@drawable/ic_switch_camera" />
-
-
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btnAutoFocus"
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:background="@null"
                 app:srcCompat="@drawable/ic_center_focus_strongdp" />
-
         </RelativeLayout>
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_alignParentBottom="true"
             android:background="#7F000000">
-
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/take_picture"
                 android:layout_width="wrap_content"
@@ -89,23 +75,30 @@
                 android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
                 app:srcCompat="@drawable/ic_camera"
+                app:backgroundTint="@color/white"
                 app:useCompatPadding="true" />
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgReview"
+                android:layout_marginEnd="5dp"
+                android:layout_toLeftOf="@+id/take_picture"
+                android:layout_centerInParent="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btnFlash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:background="@null"
                 app:srcCompat="@drawable/ic_flash_off" />
-
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnDone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
                 android:background="@null"
@@ -113,7 +106,6 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_normal"
                 android:textStyle="bold" />
-
         </RelativeLayout>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

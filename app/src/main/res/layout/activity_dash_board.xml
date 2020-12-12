@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.dashboard.DashBoardActivity">
-
+    tools:context=".ui.dashboard.DashBoardAct">
     <RelativeLayout
         android:background="@color/colorBackground"
         app:layout_constraintTop_toTopOf="parent"
@@ -14,15 +13,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <RelativeLayout
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:layout_above="@+id/llFooter"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_marginBottom="50dp"
                 android:layout_centerInParent="true"
                 android:layout_above="@+id/tvWelcome"
@@ -30,8 +27,7 @@
                 android:layout_gravity="center"
                 android:layout_width="80dp"
                 android:layout_height="80dp"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_large"
                 android:textColor="@color/white"
                 android:gravity="center"
@@ -40,7 +36,7 @@
                 android:layout_centerInParent="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:layout_marginTop="20dp"
                 android:gravity="center"
@@ -50,9 +46,7 @@
                 android:textColor="@color/colorTextDark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
         </RelativeLayout>
-
         <LinearLayout
             android:id="@+id/llFooter"
             android:orientation="vertical"
@@ -72,7 +66,6 @@
                 android:text="@string/sign_up"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_high"/>
-
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnLogin"
                 android:textSize="@dimen/text_size_normal"
@@ -81,7 +74,6 @@
                 android:text="@string/login_action"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
         </LinearLayout>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
         <RelativeLayout
             android:id="@+id/rlHome"
             android:layout_width="match_parent"
@@ -12,9 +11,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-
-
             <co.tpcreative.supersafe.common.views.SquaredImageView
                 android:scaleType="centerCrop"
                 android:id="@+id/imgAlbum"
@@ -22,21 +18,18 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:src="@drawable/image_background_audio_video" />
-
-            <View
+            <co.tpcreative.supersafe.common.views.SquaredView
+                android:layout_centerInParent="true"
                 android:id="@+id/view_alpha"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorButton"/>
-
-
             <co.tpcreative.supersafe.common.views.SquaredImageView
                 android:clickable="false"
                 android:layout_centerInParent="true"
                 android:id="@+id/imgIcon"
                 android:layout_width="@dimen/finger_icon"
                 android:layout_height="@dimen/finger_icon"/>
-
             <co.tpcreative.supersafe.common.views.SquaredImageView
                 android:padding="5dp"
                 android:src="@drawable/ic_done_white"
@@ -45,16 +38,14 @@
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size"
                 android:layout_centerInParent="true"/>
-
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgVideoCam"
                 android:visibility="invisible"
                 android:src="@drawable/baseline_videocam_white_36"
                 android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_alignParentBottom="true"
                 android:layout_width="@dimen/image_size_video_cam"
                 android:layout_height="@dimen/image_size_video_cam"/>
-
         </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

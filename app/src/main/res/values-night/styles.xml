@@ -1,0 +1,23 @@
+<resources>
+    <!--Change theme -->
+    <style name="LightDialogTheme" parent="@style/MaterialDialog.Light">
+        <item name="colorPrimary">?attr/dialogColorPrimary</item>
+        <item name="colorPrimaryDark">?attr/dialogColorPrimaryDark</item>
+        <item name="colorAccent">?attr/dialogColorAccent</item>
+        <!--
+        <item name="android:fontFamily">@font/brandon_regs</item>
+        !-->
+    </style>
+
+    <style name="DarkDialogTheme" parent="@style/MaterialDialog">
+        <!--
+        Grey color for dialog of button
+        !-->
+        <item name="colorPrimary">@color/grey_lighter</item>
+        <item name="colorPrimaryDark">?attr/dialogColorPrimaryDark</item>
+        <item name="colorAccent">?attr/dialogColorAccent</item>
+        <!--
+        <item name="android:fontFamily">@font/brandon_regs</item>
+        !-->
+    </style>
+</resources>

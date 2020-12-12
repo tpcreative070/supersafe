@@ -18,7 +18,7 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:tint="?attr/preference_icon"
                 android:layout_centerInParent="true"
                 android:src="@color/grey_light"
@@ -29,14 +29,14 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="6dp"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
             android:layout_weight="1">
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_marginBottom="5dp"
                 android:textAllCaps="false"
                 android:textSize="@dimen/text_size_preference_item_title"
@@ -47,7 +47,7 @@
                 android:textColor="?attr/preference_title"
                 android:ellipsize="marquee"
                 android:fadingEdge="horizontal" />
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_marginTop="5dp"
                 android:textAllCaps="false"
                 android:textSize="@dimen/text_size_preference_item_summary"
@@ -62,12 +62,12 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgCover"
                 android:layout_centerInParent="true"
                 android:layout_width="@dimen/image_size_custom_60"
                 android:layout_height="@dimen/image_size_custom_60"/>
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgIcon"
                 android:layout_centerInParent="true"
                 android:layout_width="@dimen/image_size_custom_40"

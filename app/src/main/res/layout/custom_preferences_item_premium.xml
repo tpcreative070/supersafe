@@ -18,7 +18,7 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:tint="?attr/preference_icon"
                 android:layout_centerInParent="true"
                 android:src="@color/grey_light"
@@ -30,14 +30,14 @@
 
         <RelativeLayout
             android:layout_gravity="center"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="6dp"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
             android:layout_weight="1">
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:padding="2dp"
                 android:textAllCaps="false"
                 android:textSize="@dimen/text_size_preference_item_title"
@@ -48,7 +48,7 @@
                 android:textColor="?attr/preference_title"
                 android:ellipsize="marquee"
                 android:fadingEdge="horizontal" />
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:padding="2dp"
                 android:textAllCaps="false"
                 android:textSize="@dimen/text_size_preference_item_summary"
@@ -59,7 +59,6 @@
                 android:layout_alignStart="@android:id/title"
                 android:textColor="?attr/preference_summary"
                 android:maxLines="2"/>
-
         </RelativeLayout>
         <androidx.appcompat.widget.SwitchCompat
             android:visibility="invisible"

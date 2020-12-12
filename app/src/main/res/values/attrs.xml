@@ -29,7 +29,14 @@
     <attr name="preference_title" format="reference"/>
     <attr name="preference_summary" format="reference"/>
     <attr name="preference_icon" format="reference"/>
-
+    <attr name="colorPremiumText" format="reference" />
+    <attr name="colorPremiumIcon" format="reference" />
+    <attr name="dialogColorPrimary" format="reference"/>
+    <attr name="dialogColorPrimaryDark" format="reference"/>
+    <attr name="dialogColorAccent" format="reference"/>
+    <attr name="dialogMaterialTitle" format="reference"/>
+    <attr name="dialogMaterialContent" format="reference"/>
+    <attr name="dialogMaterialButton" format="reference"/>
 
     <declare-styleable name="CircleProgressBar">
         <attr name="progressColor" format="color"/>
@@ -43,6 +50,13 @@
         <attr name="progressText" format="string"/>
         <attr name="suffix" format="string"/>
         <attr name="prefix" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="Dialog">
+        <attr name="DialogTitleAppearance" format="reference" />
+        <attr name="DialogTitleText" format="reference|string" />
+        <attr name="DialogSpotColor" format="reference|color"/>
+        <attr name="DialogSpotCount" format="integer"/>
     </declare-styleable>
 
 </resources>
