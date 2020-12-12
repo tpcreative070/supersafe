@@ -22,8 +22,8 @@ fun VerifyAct.initUI(){
     setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    val result: String? = Utils.getFontString(R.string.verify_title, Utils.getUserId() ?: "")
-    tvTitle?.text = result?.toSpanned()
+    val result: String = Utils.getFontString(R.string.verify_title, Utils.getUserId() ?: "")
+    tvTitle?.text = result.toSpanned()
     edtCode?.setOnEditorActionListener(this)
     edtCode?.addTextChangedListener(mTextWatcher)
     btnLogin.setOnClickListener {
