@@ -4,14 +4,10 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
-import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
-import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
@@ -19,7 +15,6 @@ import co.tpcreative.supersafe.common.extension.getScreenStatus
 import co.tpcreative.supersafe.common.extension.isFaceDown
 import co.tpcreative.supersafe.common.extension.putScreenStatus
 import co.tpcreative.supersafe.model.EnumPinAction
-import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.ui.move_album.MoveAlbumFragment
 import co.tpcreative.supersafe.ui.move_album.openAlbum
@@ -33,7 +28,9 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveAlbumFragment.OnGa
     fun attachFragment(layoutId: Int) {
         fragment = MoveAlbumFragment.newInstance() as MoveAlbumFragment
         val fragmentManager: FragmentManager = supportFragmentManager
-        fragmentManager.beginTransaction().replace(layoutId, fragment!!).commit()
+        fragment?.let {
+            fragmentManager.beginTransaction().replace(layoutId, it).commit()
+        }
     }
 
     fun openAlbum() {

@@ -622,11 +622,13 @@ object Utils {
         for (index in mDataList) {
             if (isNotSync) {
                 if (!index.originalSync) {
+                    Log(TAG,"getMergedOriginalThumbnailList original ${index.global_original_id}")
                     mList.add(ItemModel(index, true))
                 }
                 val mType = EnumFormatType.values()[index.formatType]
                 if (EnumFormatType.IMAGE == mType || EnumFormatType.VIDEO == mType) {
                     if (!index.thumbnailSync) {
+                        Log(TAG,"getMergedOriginalThumbnailList thumb ${index.global_thumbnail_id}")
                         mList.add(ItemModel(index, false))
                     }
                 }

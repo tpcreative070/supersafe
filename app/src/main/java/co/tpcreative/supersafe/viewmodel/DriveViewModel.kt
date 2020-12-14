@@ -100,6 +100,11 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                             }
                         } ?: run {
                             /*Not found path*/
+                            if (index.isOriginalGlobalId){
+                                Utils.Log(TAG,"uploadData ${index.global_original_id}")
+                            }else{
+                                Utils.Log(TAG,"uploadData ${index.global_thumbnail_id}")
+                            }
                             SQLHelper.deleteItem(index)
                         }
                     }
@@ -354,8 +359,10 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
         val mContentEvent = DriveEvent()
         if (items.isOriginalGlobalId) {
             mContentEvent.fileType = EnumFileType.ORIGINAL.ordinal
+            Utils.Log(TAG,"uploadData ${items.global_original_id}")
         } else {
             mContentEvent.fileType = EnumFileType.THUMBNAIL.ordinal
+            Utils.Log(TAG,"uploadData ${items.global_thumbnail_id}")
         }
         if (!Utils.isNotEmptyOrNull(items.categories_id)) {
             return null
