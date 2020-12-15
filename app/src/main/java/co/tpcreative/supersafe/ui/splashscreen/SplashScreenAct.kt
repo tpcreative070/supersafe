@@ -56,14 +56,15 @@ class SplashScreenAct : BaseActivityNoneSlide() {
             }
         }
         if(SuperSafeApplication.getInstance().isRequestMigration() && SuperSafeApplication.getInstance().isLiveMigration()){
+            tvTotal.text = getString(R.string.loading)
             SingletonManagerProcessing.getInstance()?.onStartProgressing(this@SplashScreenAct,R.string.improving_storage_fies)
             CoroutineScope(Dispatchers.Main).launch {
-                val mPreparing = async {
-                    SuperSafeApplication.getInstance().onPreparingMigration()
+                SuperSafeApplication.getInstance().onPreparingMigration()
+                if (!SuperSafeApplication.getInstance().isRequestMigration()){
+                    SuperSafeApplication.getInstance().getSuperSafeOldPath().deleteDirectory()
+                    onMessageEvent(EnumStatus.MIGRATION_DONE)
+                    Utils.Log(TAG,"Migrated done...")
                 }
-                mPreparing.await()
-                SuperSafeApplication.getInstance().getSuperSafeOldPath().deleteDirectory()
-                onMessageEvent(EnumStatus.MIGRATION_DONE)
             }
         }else {
             if (grantAccess) {
