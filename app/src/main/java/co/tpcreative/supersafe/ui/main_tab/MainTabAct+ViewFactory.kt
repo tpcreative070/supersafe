@@ -230,36 +230,6 @@ fun MainTabAct.onShowSuggestion() {
     }
 }
 
-
-fun MainTabAct.onAskingRateApp() {
-    val view: View = LayoutInflater.from(this).inflate(R.layout.custom_view_rate_app_dialog, null)
-    val builder: MaterialDialog = MaterialDialog(this)
-            .title(text = getString(R.string.how_are_we_doing))
-            .customView(view = view, scrollable = true)
-            .cancelable(true)
-            .positiveButton(text = getString(R.string.i_love_it))
-            .negativeButton(text = getString(R.string.report_problem))
-            .neutralButton(text = getString(R.string.no_thanks))
-            .neutralButton {
-                Utils.putWeAreATeam(true)
-                Navigator.onMoveSeeYou(this)
-                finish()
-            }
-            .negativeButton {
-                val categories = Categories(1, getString(R.string.contact_support))
-                val support = HelpAndSupportModel(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null)
-                Navigator.onMoveReportProblem(this, support)
-                Utils.putWeAreATeam(true)
-            }
-            .positiveButton {
-                Utils.Log(TAG, "Positive")
-                onRateApp()
-                Utils.putWeAreATeam(true)
-                Utils.putWeAreATeamOfPositive(true)
-            }
-    builder.show()
-}
-
 fun MainTabAct.onRateApp() {
     val uri = Uri.parse("market://details?id=" + getString(R.string.supersafe_live))
     val goToMarket = Intent(Intent.ACTION_VIEW, uri)
