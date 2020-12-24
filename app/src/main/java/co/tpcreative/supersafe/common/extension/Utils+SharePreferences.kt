@@ -128,30 +128,6 @@ fun Utils.getCountToRate() : Int {
     return PrefsController.getInt(getString(R.string.key_count_to_rate),0)
 }
 
-fun Utils.putWeAreATeam(value : Boolean){
-    PrefsController.putBoolean(getString(R.string.we_are_a_team), value)
-}
-
-fun Utils.getWeAreATeam() : Boolean {
-    return PrefsController.getBoolean(getString(R.string.we_are_a_team),false)
-}
-
-fun Utils.putWeAreATeamOfPositive(value : Boolean){
-    PrefsController.putBoolean(getString(R.string.we_are_a_team_positive), value)
-}
-
-fun Utils.getWeAreATeamOfPositive() : Boolean {
-    return PrefsController.getBoolean(getString(R.string.we_are_a_team_positive),false)
-}
-
-fun Utils.putSecondLoads(value : Boolean){
-    PrefsController.putBoolean(getString(R.string.second_loads), value)
-}
-
-fun Utils.isSecondLoads() : Boolean {
-    return PrefsController.getBoolean(getString(R.string.second_loads),false)
-}
-
 fun Utils.putFirstEnableSyncData(value : Boolean){
     PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), value)
 }
@@ -257,10 +233,8 @@ fun Utils.getCurrentCodeVersion(): Int {
 fun Utils.onCheckNewVersion() {
     if (getCurrentCodeVersion() == BuildConfig.VERSION_CODE) {
         Log(TAG, "Already install this version")
-        return
     } else {
         putCurrentCodeVersion(BuildConfig.VERSION_CODE)
-        putWeAreATeam(false)
         Log(TAG, "New install this version")
     }
 }

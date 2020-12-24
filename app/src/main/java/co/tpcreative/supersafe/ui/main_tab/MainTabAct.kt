@@ -6,10 +6,10 @@ import android.view.*
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
+import co.tpcreative.supersafe.common.controller.PremiumManager
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
-import co.tpcreative.supersafe.common.controller.PremiumManager
 import co.tpcreative.supersafe.common.dialog.DialogListener
 import co.tpcreative.supersafe.common.dialog.DialogManager
 import co.tpcreative.supersafe.common.extension.*
@@ -19,8 +19,9 @@ import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.tasks.Task
 import kotlinx.android.synthetic.main.activity_main_tab.*
-import kotlinx.android.synthetic.main.activity_main_tab.toolbar
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -31,12 +32,15 @@ class MainTabAct : BaseGoogleApi(){
     var animation: AnimationsContainer.FramesSequenceAnimation? = null
     var mMenuItem: MenuItem? = null
     var previousStatus: EnumStatus? = null
-    var mCountToRate = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_tab)
         initUI()
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken())
+        if (Utils.getCountToRate() > Utils.COUNT_RATE) {
+            reviewInApp()
+            Utils.Log(TAG,"Call review...")
+        }
     }
     override fun onOrientationChange(isFaceDown: Boolean) {
         Utils.Log(TAG, "onOrientationChange")
@@ -102,17 +106,36 @@ class MainTabAct : BaseGoogleApi(){
             EnumStatus.NO_SPACE_LEFT_CLOUD -> {
                 onAlert(getString(R.string.key_no_space_left_space_cloud))
             }
-            EnumStatus.EXPIRED_SUBSCRIPTIONS ->{
-                DialogManager.getInstance()?.onStartDialog(this,R.string.key_alert,R.string.warning_expired_subscription, object : DialogListener{
+            EnumStatus.EXPIRED_SUBSCRIPTIONS -> {
+                DialogManager.getInstance()?.onStartDialog(this, R.string.key_alert, R.string.warning_expired_subscription, object : DialogListener {
                     override fun onClickButton() {
                         Navigator.onMoveToPremium(this@MainTabAct)
                     }
+
                     override fun dismiss() {
                         Utils.stoppingPremiumFeatures()
                     }
                 })
             }
-            else -> Utils.Log(TAG,"Nothing")
+            else -> Utils.Log(TAG, "Nothing")
+        }
+    }
+
+    private fun reviewInApp(){
+        val manager = ReviewManagerFactory.create(this)
+        val request = manager.requestReviewFlow()
+        request.addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                // We got the ReviewInfo object
+                val reviewInfo = request.result
+                val flow: Task<Void> = manager.launchReviewFlow(this, reviewInfo)
+                flow.addOnCompleteListener { tasks ->
+                    Utils.Log(TAG,"Review completed")
+                }
+            } else {
+                // There was some problem, continue regardless of the result.
+                Utils.Log(TAG,"Nothing")
+            }
         }
     }
 
@@ -134,7 +157,6 @@ class MainTabAct : BaseGoogleApi(){
         Utils.Log(TAG, "OnDestroy")
         Utils.onUpdatedCountRate()
         EventBus.getDefault().unregister(this)
-        Utils.putSecondLoads(true)
         if (SingletonManager.getInstance().isReloadMainTab()) {
             SingletonManager.getInstance().setReloadMainTab(false)
         } else {
@@ -144,7 +166,7 @@ class MainTabAct : BaseGoogleApi(){
 
     override fun onStart() {
         super.onStart()
-        Utils.Log(TAG,"onStart !!!!")
+        Utils.Log(TAG, "onStart !!!!")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -181,7 +203,7 @@ class MainTabAct : BaseGoogleApi(){
             Navigator.COMPLETED_RECREATE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     SingletonManager.getInstance().setReloadMainTab(true)
-                    Navigator.onMoveToMainTab(this,true)
+                    Navigator.onMoveToMainTab(this, true)
                     Utils.Log(TAG, "New Activity")
                 } else {
                     Utils.Log(TAG, "Nothing Updated theme")
@@ -209,7 +231,7 @@ class MainTabAct : BaseGoogleApi(){
                     mData?.let {
                         val list: MutableList<MainCategoryModel> = SQLHelper.getList()
                         val mCategory: MainCategoryModel = list[0]
-                        val mResult = mCategory.let { it1 -> Utils.getDataItemsFromImport(it1,it) }
+                        val mResult = mCategory.let { it1 -> Utils.getDataItemsFromImport(it1, it) }
                         importingData(mResult)
                     }
                 } else {
@@ -229,21 +251,21 @@ class MainTabAct : BaseGoogleApi(){
         }
         toolbar?.inflateMenu(R.menu.main_tab)
         mMenuItem = toolbar?.menu?.getItem(0)
-        Utils.Log(TAG,"Created menu")
+        Utils.Log(TAG, "Created menu")
         return true
     }
 
     override fun onPause() {
-        Utils.Log(TAG,"onResume ->putHomePressed")
+        Utils.Log(TAG, "onResume ->putHomePressed")
         super.onPause()
         if (!Utils.isConnectedToGoogleDrive()){
             onAnimationIcon(EnumStatus.SYNC_ERROR)
-            Utils.Log(TAG," onAnimationIcon(EnumStatus.SYNC_ERROR)")
+            Utils.Log(TAG, " onAnimationIcon(EnumStatus.SYNC_ERROR)")
         }
     }
 
     override fun onStop() {
-        Utils.Log(TAG,"onResume ->putHomePressed")
+        Utils.Log(TAG, "onResume ->putHomePressed")
         super.onStop()
     }
 
@@ -253,23 +275,8 @@ class MainTabAct : BaseGoogleApi(){
         } else {
             PremiumManager.getInstance().onStop()
             Utils.onDeleteTemporaryFile()
-            if (Utils.getWeAreATeam()) {
-                Navigator.onMoveSeeYou(this)
-                super.onBackPressed()
-            } else {
-                if (Utils.isSecondLoads()) {
-                    mCountToRate = Utils.getCountToRate()
-                    if (!Utils.getWeAreATeam() && mCountToRate > Utils.COUNT_RATE) {
-                        onAskingRateApp()
-                    } else {
-                        Navigator.onMoveSeeYou(this)
-                        super.onBackPressed()
-                    }
-                } else {
-                    Navigator.onMoveSeeYou(this)
-                    super.onBackPressed()
-                }
-            }
+            Navigator.onMoveSeeYou(this)
+            super.onBackPressed()
         }
     }
 
@@ -285,7 +292,7 @@ class MainTabAct : BaseGoogleApi(){
 
     override fun onDriveError() {}
     override fun onDriveSignOut() {
-        Navigator.onCheckSystem(this,null)
+        Navigator.onCheckSystem(this, null)
     }
     override fun onDriveRevokeAccess() {}
     override fun startServiceNow() {}
@@ -336,9 +343,5 @@ class MainTabAct : BaseGoogleApi(){
                         Utils.Log(TAG, "onTargetCancel")
                     }
                 })
-    }
-
-    companion object {
-        private val TAG = MainTabAct::class.java.simpleName
     }
 }

@@ -66,7 +66,7 @@ object Utils {
     * HH for 24h
     * */
 
-    const val COUNT_RATE = 9
+    const val COUNT_RATE = 3
     const val CODE_EXCEPTION = 1111
     const val MAX_LENGTH = 100
     val TAG = Utils::class.java.simpleName
