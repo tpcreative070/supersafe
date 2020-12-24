@@ -22,6 +22,9 @@ import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.tasks.Task
 import kotlinx.android.synthetic.main.activity_main_tab.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -32,15 +35,12 @@ class MainTabAct : BaseGoogleApi(){
     var animation: AnimationsContainer.FramesSequenceAnimation? = null
     var mMenuItem: MenuItem? = null
     var previousStatus: EnumStatus? = null
+    var isRequestRating = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_tab)
         initUI()
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken())
-        if (Utils.getCountToRate() > Utils.COUNT_RATE) {
-            reviewInApp()
-            Utils.Log(TAG,"Call review...")
-        }
     }
     override fun onOrientationChange(isFaceDown: Boolean) {
         Utils.Log(TAG, "onOrientationChange")
@@ -52,6 +52,15 @@ class MainTabAct : BaseGoogleApi(){
         when (event) {
             EnumStatus.UNLOCK -> {
                 PremiumManager.getInstance().onStartInAppPurchase()
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (Utils.getCountToRate() > Utils.COUNT_RATE) {
+                        if (isRequestRating){
+                            reviewInApp()
+                            isRequestRating = false
+                            Utils.Log(TAG,"Call review...")
+                        }
+                    }
+                }
             }
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
