@@ -240,7 +240,9 @@ public class VusikView extends View {
     //Stop the animation
     public void stopNotesFall() {
         mFallNotesState = FallNotesState.STOP;
-        mFallNotesThread.interrupt();
+        if (mFallNotesThread!=null){
+            mFallNotesThread.interrupt();
+        }
 //        FallNotesThread.s
     }
 
