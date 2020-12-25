@@ -24,6 +24,7 @@ import com.google.android.play.core.tasks.Task
 import kotlinx.android.synthetic.main.activity_main_tab.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -55,6 +56,7 @@ class MainTabAct : BaseGoogleApi(){
                 CoroutineScope(Dispatchers.Main).launch {
                     if (Utils.getCountToRate() > Utils.COUNT_RATE) {
                         if (isRequestRating){
+                            delay(1000)
                             reviewInApp()
                             isRequestRating = false
                             Utils.Log(TAG,"Call review...")
