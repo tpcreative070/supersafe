@@ -40,6 +40,7 @@ import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
@@ -408,9 +409,10 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
                 mResult.createDirectory()
             }
         }
-        if (mMapMigrationItem.isNotEmpty()) {
-            mMapMigrationItem.onEach {index ->
-                val mValue = index.value
+        Utils.Log(TAG,"Preparing migration....")
+        with(mMapMigrationItem){
+            forEach {
+                val mValue = it.value
                 moveTo(mValue.mInput, mValue.mOutput)
                 responseMigration.invoke(mMapMigrationItem.size)
                 Utils.Log(TAG, "loop of index ${mValue.Id}")
