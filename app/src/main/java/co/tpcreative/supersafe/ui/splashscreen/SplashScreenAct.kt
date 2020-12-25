@@ -64,6 +64,8 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                     SuperSafeApplication.getInstance().getSuperSafeOldPath().deleteDirectory()
                     onMessageEvent(EnumStatus.MIGRATION_DONE)
                     Utils.Log(TAG,"Migrated done...")
+                }else{
+                    finish()
                 }
             }
         }else {

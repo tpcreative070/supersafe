@@ -142,10 +142,13 @@ class MainTabAct : BaseGoogleApi(){
                 val flow: Task<Void> = manager.launchReviewFlow(this, reviewInfo)
                 flow.addOnCompleteListener { tasks ->
                     Utils.Log(TAG,"Review completed")
+                    Utils.putCountToRate(0)
+                }.addOnFailureListener {
+                    Utils.Log(TAG,"Review failure")
                 }
             } else {
                 // There was some problem, continue regardless of the result.
-                Utils.Log(TAG,"Nothing")
+                Utils.Log(TAG,"Not now")
             }
         }
     }
