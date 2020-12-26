@@ -29,7 +29,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveAlbumFragment.OnGa
         fragment = MoveAlbumFragment.newInstance() as MoveAlbumFragment
         val fragmentManager: FragmentManager = supportFragmentManager
         fragment?.let {
-            fragmentManager.beginTransaction().replace(layoutId, it).commit()
+            fragmentManager.beginTransaction().replace(layoutId, it).commitAllowingStateLoss()
         }
     }
 
