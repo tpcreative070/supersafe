@@ -9,7 +9,6 @@ import android.os.*
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.*
-import android.widget.Toast
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.extension.sizeInKb
@@ -50,6 +49,7 @@ class ImageSelectActivity : HelperActivity() {
             toggleSelection(position)
             actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
         }
+        title = album
     }
 
     override fun onStart() {
