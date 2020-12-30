@@ -424,7 +424,7 @@ fun EnterPinAct.onDisplayView() {
             rlAttempt?.visibility = View.VISIBLE
             val result: String = kotlin.String.format(getString(R.string.in_correct_pin), count.toString() + "", countAttempt.toString() + "")
             tvAttempt?.text = result
-            Utils.Log(TAG, EnterPinAct.mPinAction!!.name)
+            Utils.Log(TAG, EnterPinAct.mPinAction?.name)
         }
         else -> Utils.Log(TAG,"Nothing")
     }
@@ -570,13 +570,15 @@ fun EnterPinAct.initBiometric(){
 }
 
 fun EnterPinAct.startBiometricPrompt(){
-    if (goldfinger!!.canAuthenticate()){
-        goldfinger!!.authenticate(buildPromptParams()!!, object : Goldfinger.Callback {
+    if (goldfinger?.canAuthenticate() == true){
+        buildPromptParams()?.let {
+            goldfinger?.authenticate(it, object : Goldfinger.Callback {
             override fun onError(e: Exception) {}
             override fun onResult(result: Goldfinger.Result) {
                 handleGoldFingerResult(result)
             }
         })
+        }
     }
 }
 
