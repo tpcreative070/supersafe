@@ -39,7 +39,7 @@ class CustomImageSelectAdapter(context: Context?, images: ArrayList<ImageModel>?
             viewHolder.imgAudioVideo = mConvertView?.imgAudioVideo
             viewHolder.tvTitle = mConvertView?.tvTitle
             viewHolder.view = mConvertView?.view_alpha
-            mConvertView?.setTag(viewHolder)
+            mConvertView?.tag = viewHolder
         } else {
             viewHolder = mConvertView.tag as ViewHolder
         }
@@ -47,17 +47,17 @@ class CustomImageSelectAdapter(context: Context?, images: ArrayList<ImageModel>?
         viewHolder.imageView?.layoutParams?.height = size
         viewHolder.view?.layoutParams?.width = size
         viewHolder.view?.layoutParams?.height = size
-        if (arrayList?.get(position)?.isSelected!!) {
+        if (arrayList?.get(position)?.isSelected == true) {
             viewHolder.view?.alpha = 0.5f
-            (mConvertView as FrameLayout?)?.setForeground(ContextCompat.getDrawable(context!!,R.drawable.ic_done_white))
+            (mConvertView as FrameLayout?)?.foreground = ContextCompat.getDrawable(context!!,R.drawable.ic_done_white)
         } else {
             viewHolder.view?.alpha = 0.0f
             (mConvertView as FrameLayout?)?.foreground = null
         }
         val data = arrayList!![position]
         try {
-            val extensionFile: String? = Utils.getFileExtension(data.path)
-            val mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport().get(extensionFile)
+            val extensionFile: String = Utils.getFileExtension(data.path)
+            val mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport()[extensionFile]
             if (mimeTypeFile != null) {
                 when (EnumFormatType.values()[mimeTypeFile.formatType?.ordinal!!]) {
                     EnumFormatType.AUDIO -> {
